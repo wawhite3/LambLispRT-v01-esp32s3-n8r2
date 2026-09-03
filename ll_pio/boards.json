@@ -1,0 +1,169 @@
+{
+  "_comment": "LambLisp board registry.  Edit this file to add/modify boards.",
+  "_comment2": "Run: python3 w3_ai_scripts/gen_platformio.py  to regenerate platformio.ini",
+  "common": {
+    "build_type": "release",
+    "variants_dir": "w3_pio/variants",
+    "variant": "ll_variant-generic",
+    "monitor_speed": 115200,
+    "upload_speed": 460800,
+    "build_flags": [
+      "-Wformat",
+      "-O3",
+      "-DNDEBUG",
+      "-DCONFIG_DISABLE_HAL_LOCKS",
+      "-DETHERNET_SPI_SPEED=26000000",
+      "-DETHERNET_MAX_SOCK_NUM=2",
+      "-DETHERNET_LARGE_BUFFERS",
+      "-DCONFIG_LWIP_IPV6=1",
+      "-DCONFIG_LWIP_IPV6_AUTOCONFIG=1",
+      "-DCONFIG_LWIP_IPV6_NUM_ADDRESSES=3"
+    ]
+  },
+  "feature_flags": {
+    "comment": "Map feature name \u2192 compile flag(s)",
+    "arduino": [
+      "-DLL_ARDUINO=1"
+    ],
+    "commonio": [
+      "-DLL_COMMONIO=1"
+    ],
+    "complex": [
+      "-DLL_COMPLEX=1"
+    ],
+    "cuda": [
+      "-DLL_CUDA=1",
+      "-lcudart"
+    ],
+    "hip": [
+      "-DLL_HIP=1"
+    ],
+    "i2c": [
+      "-DLL_I2C=1"
+    ],
+    "lcd1602": [
+      "-DLL_LCD1602=1"
+    ],
+    "pca9685": [
+      "-DLL_PCA9685=1"
+    ],
+    "posix": [
+      "-DLL_POSIX=1"
+    ],
+    "psram": [
+      "-DBOARD_HAS_PSRAM",
+      "-mfix-esp32-psram-cache-issue"
+    ],
+    "bignum": [
+      "-DLL_BIGNUM=1"
+    ],
+    "modbus": [
+      "-DLL_MODBUS=1"
+    ],
+    "profibus": [
+      "-DLL_PROFIBUS=1"
+    ],
+    "profinet": [
+      "-DLL_PROFINET=1"
+    ],
+    "rational": [
+      "-DLL_RATIONAL=1"
+    ],
+    "sonar": [
+      "-DLL_SONAR=1"
+    ],
+    "camera": [
+      "-DLL_CAMERA=1"
+    ],
+    "spi": [
+      "-DLL_SPI=1"
+    ],
+    "onewire": [
+      "-DLL_ONEWIRE=1"
+    ],
+    "littlefs": [
+      "-DLL_LITTLEFS=1"
+    ],
+    "wifi": [
+      "-DLL_WIFI=1"
+    ],
+    "wire": [
+      "-DLL_WIRE=1"
+    ],
+    "ws2812": [
+      "-DLL_WS2812=1"
+    ],
+    "fake_arduino": [
+      "-DLL_FAKE_ARDUINO=1"
+    ],
+    "lto": [
+      "-flto=auto"
+    ],
+    "native_march": [
+      "-march=native"
+    ],
+    "armv82": [
+      "-march=armv8.2-a"
+    ],
+    "glibc_compat": [
+      "-D_POSIX_C_SOURCE=200809L",
+      "-Wl,--wrap=fmod",
+      "-Wl,--wrap=strtol",
+      "-Wl,--wrap=__isoc23_strtol",
+      "-Wl,--undefined=__wrap_fmod",
+      "-Wl,--undefined=__wrap_strtol",
+      "-Wl,--undefined=__wrap___isoc23_strtol"
+    ]
+  },
+  "partitions": {
+    "comment": "Map flash_mb \u2192 partition CSV path",
+    "4": "w3_pio/partitions/partitions_4M.csv",
+    "8": "w3_pio/partitions/partitions_8M.csv",
+    "16": "w3_pio/partitions/partitions_16M.csv"
+  },
+  "lib_deps": {
+    "esp32_arduino": [
+      "arduino-libraries/ArduinoBLE@^1.3.2",
+      "h2zero/NimBLE-Arduino@^1.4.0",
+      "arduino-libraries/ArduinoHttpClient@^0.4.0",
+      "bblanchon/ArduinoJson@^6.19.4"
+    ]
+  },
+  "boards": {
+    "esp32s3-n8r2": {
+      "comment": "ESP32-S3 N8R2: 8MB flash, 2MB PSRAM",
+      "default": false,
+      "platform": "espressif32",
+      "framework": "arduino",
+      "board": "ll_board-esp32s3-n8r2",
+      "nxry": "N8R2",
+      "flash_mb": 8,
+      "filesystem": "littlefs",
+      "lib_deps": "esp32_arduino",
+      "monitor_filters": "esp8266_exception_decoder",
+      "chip_flags": [
+        "-DLL_ESP32=1",
+        "-DLL_ESP32S3=1",
+        "-DLL_ESP32S3_N8R2=1",
+        "-DCONFIG_ESP_INT_WDT_TIMEOUT_MS=300"
+      ],
+      "features": [
+        "arduino",
+        "commonio",
+        "i2c",
+        "lcd1602",
+        "modbus",
+        "pca9685",
+        "psram",
+        "sonar",
+        "littlefs",
+        "wifi",
+        "wire",
+        "ws2812",
+        "bignum",
+        "rational",
+        "complex"
+      ]
+    }
+  }
+}

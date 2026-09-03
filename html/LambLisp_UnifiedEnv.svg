@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="490" viewBox="0 0 1050 490">
+<rect width="1050" height="490" fill="#ffffff"/>
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#00468c"/>
+  </marker>
+  <marker id="arrd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#8899aa"/>
+  </marker>
+  <marker id="arro" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#cc8800"/>
+  </marker>
+</defs>
+
+<!-- Title -->
+<text x="525" y="32" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#00468c">Unified Distributed Environment</text>
+
+<!-- ═══════════════════════════════════════
+     ESP32 Board (left)  x=20 y=70 w=210 h=330
+     ═══════════════════════════════════════ -->
+<rect x="20" y="70" width="210" height="330" rx="8" fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+<rect x="20" y="70" width="210" height="28" rx="8" fill="#00468c"/>
+<rect x="20" y="92" width="210" height="6"  fill="#00468c"/>
+<text x="125" y="88" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">ESP32 Board</text>
+<text x="125" y="114" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#0d1a2e">Scheme env</text>
+
+<text x="36" y="138" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">get-sonar</text>
+<text x="36" y="157" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">robot-move!</text>
+<text x="36" y="176" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">Motor.speed</text>
+<text x="36" y="195" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">loop-elapsed-ms</text>
+<text x="36" y="214" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">llfsp-server</text>
+<line x1="33" y1="226" x2="217" y2="226" stroke="#8899aa" stroke-width="0.8"/>
+<text x="125" y="248" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">sensor &amp; actuator</text>
+<text x="125" y="264" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">code executes here</text>
+<text x="125" y="282" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">when board bindings</text>
+<text x="125" y="298" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">are called</text>
+
+<!-- ═══════════════════════════════════════
+     Jetson GPU (right)  x=820 y=70 w=210 h=330
+     ═══════════════════════════════════════ -->
+<rect x="820" y="70" width="210" height="330" rx="8" fill="#e0d8ff" stroke="#5533aa" stroke-width="2"/>
+<rect x="820" y="70" width="210" height="28" rx="8" fill="#5533aa"/>
+<rect x="820" y="92" width="210" height="6"  fill="#5533aa"/>
+<text x="925" y="88" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Jetson GPU</text>
+<text x="925" y="114" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#0d1a2e">Scheme env</text>
+
+<text x="836" y="138" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">run-model</text>
+<text x="836" y="157" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">update-weights!</text>
+<text x="836" y="176" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">get-embeddings</text>
+<text x="836" y="195" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">llfsp-server</text>
+<line x1="833" y1="208" x2="1017" y2="208" stroke="#8899aa" stroke-width="0.8"/>
+<text x="925" y="230" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">CUDA inference</text>
+<text x="925" y="246" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">executes here when</text>
+<text x="925" y="262" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">GPU bindings are called</text>
+
+<!-- ═══════════════════════════════════════
+     Supervisor / Unified Namespace (center)
+     x=285 y=48 w=480 h=388
+     ═══════════════════════════════════════ -->
+<rect x="285" y="48" width="480" height="392" rx="8" fill="#f0f5ff" stroke="#3355aa" stroke-width="2.2"/>
+<rect x="285" y="48" width="480" height="28" rx="8" fill="#3355aa"/>
+<rect x="285" y="70" width="480" height="6"  fill="#3355aa"/>
+<text x="525" y="66" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Supervisor (Linux) — Unified Namespace</text>
+
+<!-- Section: Projected from ESP32 -->
+<rect x="300" y="84" width="450" height="86" rx="5" fill="#d4e8ff" stroke="#00468c" stroke-width="1.2"/>
+<text x="315" y="100" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" font-style="italic" fill="#00468c">projected from ESP32 (llfsp-make-remote board '...):</text>
+<text x="315" y="118" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define get-sonar      (llfsp-make-remote board 'get-sonar))</text>
+<text x="315" y="134" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define robot-move!    (llfsp-make-remote board 'robot-move!))</text>
+<text x="315" y="150" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define Motor.speed    (llfsp-make-remote board 'Motor.speed))</text>
+
+<!-- Section: Projected from Jetson -->
+<rect x="300" y="180" width="450" height="72" rx="5" fill="#e8d4ff" stroke="#5533aa" stroke-width="1.2"/>
+<text x="315" y="196" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" font-style="italic" fill="#5533aa">projected from Jetson (llfsp-make-remote gpu '...):</text>
+<text x="315" y="214" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define run-inference  (llfsp-make-remote gpu 'run-model))</text>
+<text x="315" y="230" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define get-embeddings (llfsp-make-remote gpu 'get-embeddings))</text>
+
+<!-- Section: Local -->
+<rect x="300" y="262" width="450" height="86" rx="5" fill="#e8f0ff" stroke="#8899aa" stroke-width="1.2"/>
+<text x="315" y="278" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" font-style="italic" fill="#556677">local:</text>
+<text x="315" y="296" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define get-camera-frame  ...)   ; runs here</text>
+<text x="315" y="312" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define choose-action     ...)   ; runs here</text>
+<text x="315" y="328" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">(define perception-action-loop ...) ; orchestrates all</text>
+
+<!-- Footer note inside supervisor box -->
+<text x="525" y="370" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">application logic calls get-sonar, run-inference, robot-move!</text>
+<text x="525" y="386" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">as ordinary local procedures — distribution is invisible</text>
+<text x="525" y="406" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">change the node for a binding by redefining one llfsp-make-remote call</text>
+<text x="525" y="422" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">add a new node by adding new bindings at setup</text>
+
+<!-- ═══════════════════════════════════════
+     Arrows: setup (solid)  and  call dispatch (dashed)
+     ═══════════════════════════════════════ -->
+
+<!-- ESP32 ↔ Supervisor: solid setup arrow pointing right (bindings projected into supervisor) -->
+<line x1="232" y1="155" x2="283" y2="155" stroke="#00468c" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="257" y="148" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#00468c">project</text>
+
+<!-- Supervisor → ESP32: dashed arrow pointing left (calls dispatched back) -->
+<line x1="283" y1="230" x2="232" y2="230" stroke="#8899aa" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#arrd)"/>
+<text x="257" y="246" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa">dispatch</text>
+
+<!-- GPU ↔ Supervisor: solid setup arrow pointing left into supervisor -->
+<line x1="818" y1="155" x2="767" y2="155" stroke="#5533aa" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="793" y="148" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#5533aa">project</text>
+
+<!-- Supervisor → GPU: dashed arrow pointing right -->
+<line x1="767" y1="230" x2="818" y2="230" stroke="#8899aa" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#arrd)"/>
+<text x="793" y="246" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa">dispatch</text>
+
+<!-- Legend -->
+<line x1="310" y1="453" x2="355" y2="453" stroke="#334466" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="362" y="457" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#334466">project bindings (setup)</text>
+<line x1="560" y1="453" x2="605" y2="453" stroke="#8899aa" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#arrd)"/>
+<text x="612" y="457" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#8899aa">call dispatched at runtime</text>
+
+</svg>

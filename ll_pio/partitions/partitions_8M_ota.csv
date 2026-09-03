@@ -1,0 +1,11 @@
+# ESP32-S3 8 MB -- A/B hot spares + big FS (OTA). Sum below factory base = 0x7F0000.
+# factory=llloader (trusted recovery root) + ota_0/ota_1 hot VM slots (instant rollback) + big storage.
+# NOTE: staged for the 8 MB migration; NOT yet wired to any board (n8r2/s3-eye still use partitions_8M.csv).
+# Name,   Type, SubType,  Offset,   Size,     Flags
+nvs,      data, nvs,      0x9000,   0x5000,
+otadata,  data, ota,      0xE000,   0x2000,
+factory,  app,  factory,  0x10000,  0xB0000,
+ota_0,    app,  ota_0,    0xC0000,  0x200000,
+ota_1,    app,  ota_1,    0x2C0000, 0x200000,
+storage,  data, spiffs,   0x4C0000, 0x340000,
+# 0x10000 + 0xB0000 + 0x200000 + 0x200000 + 0x340000 = 0x800000 (8 MB) OK

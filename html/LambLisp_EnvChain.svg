@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="680" viewBox="0 0 1050 680">
+<rect width="1050" height="680" fill="#ffffff"/>
+<defs>
+  <marker id="arr"  markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker>
+  <marker id="arrd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#8899aa"/></marker>
+  <marker id="arro" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#cc8800"/></marker>
+</defs>
+
+<text x="525" y="32" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="bold" fill="#00468c">Environment Chain and Closure Capture</text>
+
+<!-- ══════════════════════════════════════════
+     Dict boxes — left column
+     Each box: x=80, width=260, height=92
+     y positions: 55, 215, 375 (gap=68 between boxes)
+     ══════════════════════════════════════════ -->
+
+<!-- innermost dict (let frame) — y=55 -->
+<rect x="80" y="55" width="260" height="92" rx="6" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<rect x="80" y="55" width="260" height="24" rx="6" fill="#4a90d9" stroke="none"/>
+<rect x="80" y="73"  width="260" height="6"  fill="#4a90d9" stroke="none"/>
+<text x="210" y="72" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" font-weight="bold" fill="#ffffff">T_DICT  (let frame)</text>
+<rect x="90" y="86"  width="240" height="17" rx="2" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="170" y="98" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">x = 3</text>
+<rect x="90" y="106" width="240" height="17" rx="2" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="170" y="118" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">y = 5</text>
+<text x="335" y="140" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">cdr→parent</text>
+<text x="210" y="162" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#1a6abf">innermost — dict_add_keyval_frame</text>
+
+<!-- mid-level dict (lambda frame) — y=215 -->
+<rect x="80" y="215" width="260" height="92" rx="6" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<rect x="80" y="215" width="260" height="24" rx="6" fill="#4a90d9" stroke="none"/>
+<rect x="80" y="233" width="260" height="6"  fill="#4a90d9" stroke="none"/>
+<text x="210" y="232" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" font-weight="bold" fill="#ffffff">T_DICT  (lambda frame)</text>
+<rect x="90" y="246"  width="240" height="17" rx="2" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="170" y="258" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">f = #&lt;proc&gt;</text>
+<rect x="90" y="266" width="240" height="17" rx="2" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="170" y="278" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">z = 10</text>
+<text x="335" y="300" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">cdr→parent</text>
+<text x="210" y="322" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#1a6abf">mid-level</text>
+
+<!-- bottom dict (interaction env) — y=375 -->
+<rect x="80" y="375" width="260" height="92" rx="6" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<rect x="80" y="375" width="260" height="24" rx="6" fill="#4a90d9" stroke="none"/>
+<rect x="80" y="393" width="260" height="6"  fill="#4a90d9" stroke="none"/>
+<text x="210" y="392" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" font-weight="bold" fill="#ffffff">T_DICT  (interaction env)</text>
+<rect x="90" y="406"  width="240" height="17" rx="2" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="170" y="418" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">cons = #&lt;nproc&gt;</text>
+<rect x="90" y="426" width="240" height="17" rx="2" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="170" y="438" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">map = #&lt;proc&gt;</text>
+<text x="335" y="460" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">cdr→parent</text>
+<text x="210" y="480" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#1a6abf">bottom — permanently rooted</text>
+
+<!-- ══════════════════════════════════════════
+     Parent chain arrows (right edge of each box → next box)
+     ══════════════════════════════════════════ -->
+<line x1="335" y1="147" x2="355" y2="202" stroke="#00468c" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="375" y="180" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">parent</text>
+<line x1="335" y1="307" x2="355" y2="362" stroke="#00468c" stroke-width="1.5" marker-end="url(#arr)"/>
+<text x="375" y="340" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">parent</text>
+
+<!-- ══════════════════════════════════════════
+     T_PROC closure box — right column, y=225
+     ══════════════════════════════════════════ -->
+<rect x="490" y="222" width="250" height="102" rx="6" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<rect x="490" y="222" width="250" height="24"  rx="6" fill="#cc8800" stroke="none"/>
+<rect x="490" y="240" width="250" height="6"   fill="#cc8800" stroke="none"/>
+<text x="615" y="240" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" font-weight="bold" fill="#ffffff">T_PROC  (closure)</text>
+<text x="615" y="264" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">formals: (a b)</text>
+<text x="615" y="282" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="15" fill="#0d1a2e">body:    (+ a b x)</text>
+<text x="615" y="302" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#cc8800">env_proc →</text>
+
+<!-- env_proc arrow: from closure box back to innermost dict
+     From right side of closure (740, 302) curving up and left to top of innermost dict -->
+<path d="M 740,280 Q 820,140 350,101" fill="none" stroke="#cc8800" stroke-width="1.8" marker-end="url(#arro)"/>
+<text x="790" y="175" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#cc8800">captured at</text>
+<text x="790" y="192" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#cc8800">definition</text>
+
+<!-- ══════════════════════════════════════════
+     dict_ref walk-up arrow (left side, vertical)
+     ══════════════════════════════════════════ -->
+<line x1="42" y1="80" x2="42" y2="467" stroke="#4a90d9" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrd)"/>
+<text x="37" y="274" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#4a90d9">dict_ref</text>
+<text x="37" y="292" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#4a90d9">walks up</text>
+
+<!-- ══════════════════════════════════════════
+     Key API box — bottom right
+     ══════════════════════════════════════════ -->
+<rect x="490" y="360" width="530" height="300" rx="6" fill="#f4f8ff" stroke="#8899aa" stroke-width="1"/>
+<text x="755" y="382" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" fill="#00468c">Key API</text>
+
+<rect x="500" y="393" width="510" height="20" rx="3" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="510" y="407" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#00468c">dict_ref(dict, key)</text>
+<text x="1012" y="407" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">walks chain up — finds any binding</text>
+
+<rect x="500" y="416" width="510" height="20" rx="3" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="510" y="430" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#00468c">dict_rebind_bang(d, k, v)</text>
+<text x="1012" y="430" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">rebinds in local frame only — safe</text>
+
+<rect x="500" y="439" width="510" height="20" rx="3" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="510" y="453" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#00468c">dict_bind_bang(d, k, v)</text>
+<text x="1012" y="453" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">walks chain — may clobber outer scope</text>
+
+<rect x="500" y="462" width="510" height="20" rx="3" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="510" y="476" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#00468c">dict_bind_local_bang(d, k, v)</text>
+<text x="1012" y="476" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">binds only in given frame</text>
+
+<rect x="500" y="485" width="510" height="20" rx="3" fill="#f0f5ff" stroke="#4a90d9" stroke-width="0.8"/>
+<text x="510" y="499" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#00468c">dict_add_keyval_frame(d, keys, vals)</text>
+<text x="1012" y="499" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">creates new frame on top of chain</text>
+
+<!-- Lookup rule -->
+<rect x="500" y="516" width="510" height="56" rx="4" fill="#e8f4ff" stroke="#00468c" stroke-width="1"/>
+<text x="755" y="534" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#00468c">Lookup rule</text>
+<text x="755" y="552" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#0d1a2e">dict_ref walks the chain from innermost to outermost.</text>
+<text x="755" y="568" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#0d1a2e">First frame containing the key wins (shadowing).</text>
+
+<!-- dict_ref_q note -->
+<text x="755" y="600" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#00468c">dict_ref_q(dict, key)</text>
+<text x="755" y="620" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">returns pair or HASHF — never throws; use for optional lookups</text>
+<text x="755" y="638" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">T_DICT is_any_pair()=true; env chains may contain T_DICT at any link</text>
+
+</svg>

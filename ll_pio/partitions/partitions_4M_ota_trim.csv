@@ -1,0 +1,11 @@
+# partitions_4M_ota_trim.csv -- 4MB flash, OTA preserved, expanded LittleFS.
+# P98: shrinks LittleFS 1 MB -> 384 KB, grows app0+app1 by 320 KB each.
+# Overflow fix (post-P98): coredump partition removed; storage grows 384 KB -> 448 KB.
+# app0: 1,792 KB  app1: 1,792 KB  storage: 448 KB  (coredump dropped; unused on 4WD target)
+# Verification: 0x010000 + 0x1C0000 + 0x1C0000 + 0x070000 = 0x400000
+# Name,   Type, SubType, Offset,    Size
+nvs,      data, nvs,     0x009000,  0x005000
+otadata,  data, ota,     0x00e000,  0x002000
+app0,     app,  ota_0,   0x010000,  0x1C0000
+app1,     app,  ota_1,   0x1D0000,  0x1C0000
+storage,  data, spiffs,  0x390000,  0x070000

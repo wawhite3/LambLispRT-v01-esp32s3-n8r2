@@ -1,0 +1,14 @@
+# ESP32 4 MB -- streaming-loader layout (OTA). Sum below factory base = 0x3F0000.
+# Tier1 factory=llloader (C, fallback-only) / Tier2 ota_0=LambLisp VM / Tier3 storage=LittleFS apps.
+# Single ota_0 (no ota_1): rollback = re-fetch from the image source, freeing FS (retires B65).
+# factory grown to 0x120000 (1152 KB): the trusted root carries WiFi+lwIP (~0.5 MB) AND a
+# BLE/NimBLE console (~0.2 MB) on top of the ~144 KB skeleton + OTA writer; 704 KB did not fit both.
+# k=1152 KB still < N=1728 KB VM, so constant-overhead OTA (N+k) still beats A/B 2N (which
+# needs ~3.5 MB of app region -- infeasible on 4 MB with a real FS).
+# Name,   Type, SubType,  Offset,   Size,     Flags
+nvs,      data, nvs,      0x9000,   0x5000,
+otadata,  data, ota,      0xE000,   0x2000,
+factory,  app,  factory,  0x10000,  0x120000,
+ota_0,    app,  ota_0,    0x130000, 0x1B0000,
+storage,  data, spiffs,   0x2E0000, 0x120000,
+# 0x10000 + 0x120000 + 0x1B0000 + 0x120000 = 0x400000 (4 MB) OK

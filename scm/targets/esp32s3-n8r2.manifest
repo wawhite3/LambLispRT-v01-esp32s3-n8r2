@@ -1,0 +1,80 @@
+# esp32s3-n8r2 — same as esp32-s3-devkitc-1.
+#
+# esp32s3-n8r2-00.manifest and -01.manifest are SYMLINKS to this file: two physical N8R2
+# units, one ship-list, so they cannot drift apart.  They are separate ENVS only so a flash
+# and a result bind to one board (see w3_ai_scripts/board_macs.tsv).  An env with no manifest
+# stages no data_staged/<env>/, and uploadfs then dies with
+#   Building FS image from 'data' directory ... warning: can't read source directory
+# which reads as a filesystem problem, not a missing manifest.  If the units ever need
+# different files, replace the symlink -- do not copy this file and edit one.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/esp32s3-n8r2.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+
+# Optional features
+features/Neopixel.scm
+features/rsa.scm
+features/dh_groups.scm
+features/csv.scm
+
+# Dev tools
+tools/llip-server.scm
+# LLIP serial receiver -- setup.scm loads it when present (see core/setup.scm).
+# NOTE ON WHAT A MANIFEST DECIDES: every target already RECEIVES all of the Scheme library --
+# w3_make_release_one copies the whole scm/ tree into every package (w3_make.sh ~line 354).
+# A manifest only chooses the DEFAULT on-device FS subset; anything omitted is still shipped
+# and can be staged or loaded at runtime.  This file is listed because it must be RESIDENT AT
+# BOOT to be useful: without it in the FS the board cannot accept `llip --serial PORT send`,
+# so pushing one settings file costs a full filesystem upload through pio -- which also wipes
+# .pio/build for every other env and forces concurrent sessions to rebuild.
+features/llip-serial.scm
+
+tools/test-framework.scm
+
+# Board-specific init
+boards/esp32s3-n8r2.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+runtime-defaults/Settings-Lamb.scm
+
+# Test suite
+# Perf/gcpause bench files only (small).  The correctness tiers (smoke/conform/subsystem/extend)
+# are delivered INCREMENTALLY per-tier by _w3_run_correct_esp32 -- the full ~460KB ll_tests suite
+# is NOT shipped to embedded FS.
+file: tests/ll_tests/bench-runner.scm   -> ll_tests/bench-runner.scm
+file: tests/ll_tests/benchmarks.scm     -> ll_tests/benchmarks.scm
+file: tests/ll_tests/gc-pause-bench.scm -> ll_tests/gc-pause-bench.scm
+file: tests/ll_tests/pause_bench.scm    -> ll_tests/pause_bench.scm
+file: tests/ll_tests/ncg-fusion-probe.scm -> ll_tests/ncg-fusion-probe.scm

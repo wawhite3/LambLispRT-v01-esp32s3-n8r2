@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500">
+<rect width="960" height="500" fill="#ffffff"/>
+<defs><marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker><marker id="arrr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker></defs>
+<text x="480" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="24.0" font-weight="bold" font-style="normal" fill="#00468c">Tail-Call Trampoline — O(1) Stack vs O(N) Recursive Eval</text>
+<line x1="480" y1="50" x2="480" y2="480" stroke="#8899aa" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="240" y="58" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="21.0" font-weight="bold" font-style="normal" fill="#cc4444">Naive Recursive eval</text>
+<text x="240" y="76" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="normal" font-style="italic" fill="#cc4444">stack depth = O(N)</text>
+<rect x="125" y="110" width="230" height="36" rx="5" fill="#d0e8ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="240" y="132" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.8" fill="#00468c">eval frame (depth 5)</text>
+<rect x="125" y="156" width="230" height="36" rx="5" fill="#d0e8ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="240" y="178" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.8" fill="#00468c">eval frame (depth 4)</text>
+<rect x="125" y="202" width="230" height="36" rx="5" fill="#d0e8ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="240" y="224" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.8" fill="#00468c">eval frame (depth 3)</text>
+<rect x="125" y="248" width="230" height="36" rx="5" fill="#d0e8ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="240" y="270" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.8" fill="#00468c">eval frame (depth 2)</text>
+<rect x="125" y="294" width="230" height="36" rx="5" fill="#d0e8ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="240" y="316" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.8" fill="#00468c">eval frame (depth 1)</text>
+<line x1="240" y1="344" x2="240" y2="370" stroke="#cc4444" stroke-width="1.5"  marker-end="url(#arrr)"/>
+<text x="240" y="386" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#cc4444">stack grows…</text>
+<text x="240" y="404" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#cc4444">…N more frames…</text>
+<rect x="180" y="416" width="120" height="24" rx="4" fill="#ffe0e0" stroke="#cc4444" stroke-width="1"/>
+<text x="240" y="432" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#cc4444">C stack: O(N)</text>
+<text x="720" y="58" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="21.0" font-weight="bold" font-style="normal" fill="#228844">Trampoline eval</text>
+<text x="720" y="76" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="normal" font-style="italic" fill="#228844">stack depth = O(1)</text>
+<rect x="580" y="110" width="280" height="60" rx="8" fill="#d4f7d4" stroke="#228844" stroke-width="2"/>
+<text x="720" y="132" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.0" font-weight="bold" font-style="normal" fill="#228844">while (result == 0)</text>
+<text x="720" y="152" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.8" font-weight="normal" font-style="italic" fill="#228844">outer eval loop</text>
+<rect x="610" y="210" width="220" height="56" rx="6" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<text x="720" y="230" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.0" font-weight="bold" font-style="normal" fill="#cc8800">T_THUNK_SEXPR</text>
+<text x="720" y="246" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.8" font-weight="normal" font-style="normal" fill="#cc8800">car=sexpr  cdr=env</text>
+<text x="720" y="260" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="italic" fill="#8899aa">(returned, not called)</text>
+<line x1="720" y1="170" x2="720" y2="210" stroke="#cc8800" stroke-width="1.5"  marker-end="url(#arr)"/>
+<text x="760" y="198" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#cc8800">tail call
+returns thunk</text>
+<path d="M 608,238 Q 550,238 550,140 580,140" fill="none" stroke="#228844" stroke-width="1.5"  marker-end="url(#arr)"/>
+<text x="512" y="218" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#228844">re-enter
+(no stack
+growth)</text>
+<rect x="660" y="316" width="120" height="24" rx="4" fill="#e0ffe0" stroke="#228844" stroke-width="1"/>
+<text x="720" y="332" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#228844">C stack: O(1)</text>
+<text x="720" y="356" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14.2" font-weight="normal" font-style="italic" fill="#8899aa">tail_state_set() signals tail position</text>
+<text x="720" y="370" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14.2" font-weight="normal" font-style="italic" fill="#8899aa">ll_gc_protect2(sexpr, env_exec, …) keeps roots live</text>
+</svg>

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#00468c"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="400" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="500" y="36" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="21" font-weight="bold" fill="#00468c">Adding a C++ Primitive to the Scheme Environment (mop3)</text>
+
+  <!-- Stage boxes -->
+  <!-- 1: Scheme call -->
+  <rect x="20" y="70" width="160" height="80" rx="6" fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+  <text x="100" y="96" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">Scheme call</text>
+  <text x="100" y="116" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#0d1a2e">(digitalWrite</text>
+  <text x="100" y="133" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#0d1a2e">  38 #t)</text>
+
+  <line x1="180" y1="110" x2="210" y2="110" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- 2: eval -->
+  <rect x="210" y="70" width="150" height="80" rx="6" fill="#fff3cd" stroke="#cc8800" stroke-width="2"/>
+  <text x="285" y="96" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">eval_list()</text>
+  <text x="285" y="116" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#553300">evaluate each</text>
+  <text x="285" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#553300">argument</text>
+
+  <line x1="360" y1="110" x2="390" y2="110" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- 3: args list -->
+  <rect x="390" y="70" width="155" height="80" rx="6" fill="#f8e8ff" stroke="#6a2d8c" stroke-width="2"/>
+  <text x="467" y="92" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">sexpr (args list)</text>
+  <text x="467" y="112" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#3d0060">(38 . (#t . ()))</text>
+  <text x="467" y="130" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">Sexpr_t linked list</text>
+
+  <line x1="545" y1="110" x2="575" y2="110" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- 4: C++ mop3 fn -->
+  <rect x="575" y="55" width="200" height="110" rx="6" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="2"/>
+  <text x="675" y="78" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">C++ mop3 function</text>
+  <text x="675" y="98" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" fill="#1a4a1a">mop3_cio_digitalWrite</text>
+  <text x="675" y="116" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" fill="#1a4a1a">(Lamb &amp;lamb,</text>
+  <text x="675" y="133" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" fill="#1a4a1a"> Sexpr_t sexpr,</text>
+  <text x="675" y="150" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" fill="#1a4a1a"> Sexpr_t env_exec)</text>
+
+  <line x1="775" y1="110" x2="805" y2="110" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- 5: result -->
+  <rect x="805" y="70" width="170" height="80" rx="6" fill="#00468c"/>
+  <text x="890" y="100" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="white">Sexpr_t result</text>
+  <text x="890" y="120" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#a0c8ff">OBJ_VOID</text>
+  <text x="890" y="138" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899cc">returned to Scheme</text>
+
+  <!-- Install section -->
+  <rect x="20" y="200" width="960" height="165" rx="8" fill="#f0f4f8" stroke="#c8d4e0" stroke-width="1.5"/>
+  <text x="500" y="226" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" fill="#00468c">Registration: binding the C++ function into the Scheme environment</text>
+
+  <!-- installer steps -->
+  <rect x="40" y="242" width="200" height="60" rx="5" fill="#d0e8ff" stroke="#00468c" stroke-width="1.5"/>
+  <text x="140" y="264" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">mk_Mop3_procst_t()</text>
+  <text x="140" y="283" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#334466">wrap fn ptr in</text>
+  <text x="140" y="298" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#334466">T_MOP3_PROC cell</text>
+
+  <line x1="240" y1="272" x2="270" y2="272" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="270" y="242" width="200" height="60" rx="5" fill="#fff3cd" stroke="#cc8800" stroke-width="1.5"/>
+  <text x="370" y="264" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">mk_symbol()</text>
+  <text x="370" y="283" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#553300">intern</text>
+  <text x="370" y="298" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#553300">"digitalWrite"</text>
+
+  <line x1="470" y1="272" x2="500" y2="272" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="500" y="242" width="220" height="60" rx="5" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="1.5"/>
+  <text x="610" y="264" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#0d1a2e">dict_bind_bang()</text>
+  <text x="610" y="283" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#1a4a1a">bind symbol → proc</text>
+  <text x="610" y="298" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#1a4a1a">in target env</text>
+
+  <line x1="720" y1="272" x2="750" y2="272" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="750" y="242" width="210" height="60" rx="5" fill="#00468c"/>
+  <text x="855" y="264" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="white">interaction env</text>
+  <text x="855" y="283" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#a0c8ff">digitalWrite → #&lt;mop3&gt;</text>
+  <text x="855" y="298" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899cc">visible to all Scheme code</text>
+
+  <!-- Label -->
+  <text x="500" y="388" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" font-style="italic" fill="#8899aa">Each mop3 installer runs once at startup via __lamb_NAME_install_mop3()</text>
+</svg>

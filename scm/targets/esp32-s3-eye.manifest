@@ -1,0 +1,64 @@
+# ESP32-S3-EYE (ESP32-S3-WROOM-1 N8R8, 8MB flash / 8MB octal PSRAM) -- P136 Phase 1.
+# Goal: boot LambLisp to LL=> over the NATIVE USB-Serial/JTAG (/dev/ttyACM0) with
+# USB-CDC-on-boot (no UART bridge on this board).  NO camera yet -- Phase 2 adds the
+# esp32-camera binding + the camera feature + CAMERA_MODEL_ESP32S3_EYE.
+# Own pin map: boards/pins/esp32-s3-eye.scm (generic S3 passthrough) (peripherals just stub out / tick empty
+# behaviour queues -- there is no motor/LED/sonar HW attached).
+
+# Core runtime (mirrors the S3 devkit core set -- proven to boot)
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/esp32-s3-eye.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/WiFi.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/array.scm
+# NOTE: the S3-EYE has no sonar and no I2C bus (GPIO13/14 are unwired), so Sonar.scm,
+# I2C.scm, Wire.scm, PCA9685.scm, PCF8574.scm and LCD1602.scm are deliberately NOT staged.
+# I2C.inventory on an empty/floating bus is 128 back-to-back ~1s timeouts (~2 min boot stall).
+# setup.scm guards these loads with file-exists? and stubs Sonar.loop/Sonar.latest for the loop.
+
+# Camera + LCD feature (P136 Phase 2)
+features/eye-cam.scm
+
+# LLIP serial receiver -- resident (llt) so a host can push/run/delete test files incrementally
+# over the native USB-CDC link (llip_test_runner.py --serial).  Keeps the FS lean: no baked corpus.
+features/llip-serial.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+
+# Target setup (loaded by setup.scm as setup-<env>.scm) -- installs the eye's app-loop
+boards/setup-esp32-s3-eye.scm
+
+# Perf benchmark files (for `w3 test perf LL esp32-s3-eye`) -- staged into ll_tests/ on-device.
+# Just the two perf files (bench-runner loads /ll_tests/benchmarks.scm), not the whole 572K test dir.
+file: tests/ll_tests/bench-runner.scm -> ll_tests/bench-runner.scm
+file: tests/ll_tests/benchmarks.scm -> ll_tests/benchmarks.scm
+# gcpause needs its OWN bench file staged -- omitting it is B65 exactly, on a different board.
+# 2026-08-29: `w3 test gcpause LL S3EYE` failed "truncated (no sentinel)" for 146 s because the
+# device said `open(): /littlefs/ll_tests/gc-pause-bench.scm does not exist` and then had nothing
+# to print.  The manifest IS the ship-list: a test that is not listed here does not exist on the
+# board, however well it runs elsewhere.  The S3 devkitc manifest has carried this line all along.
+file: tests/ll_tests/gc-pause-bench.scm -> ll_tests/gc-pause-bench.scm
+file: tests/ll_tests/ncg-fusion-probe.scm -> ll_tests/ncg-fusion-probe.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+runtime-defaults/Settings-Lamb.scm

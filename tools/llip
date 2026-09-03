@@ -1,0 +1,390 @@
+#!/usr/bin/env python3
+# Copyright 2026 by Frobenius Norm LLC 2026-07-02 21:40:00
+# Free for non-commercial use. Commercial use requires a license.
+"""llip -- LambLisp Interaction Protocol command-line client.
+
+LLIP (the LambLisp Interaction Protocol) is LambLisp's single interaction
+protocol: one s-expression-per-line codec that carries the interactive console,
+remote evaluation, and file transfer over a serial line, TCP, or TLS.  It is
+symmetric -- EITHER end may initiate an exchange, as long as the other end is
+listening.  This `llip` command is the host-side client and listener.
+
+  llip --serial PORT   send   SRC [DEST]      push a file into the device
+  llip --serial PORT   recv   REMOTE [LOCAL]  pull a file from the device
+  llip --serial PORT   eval   "FORM"          evaluate a form, stream its output
+  llip --serial PORT   repl                   interactive line REPL over the link
+  llip --serial PORT   listen DIR             serve a device that initiates (files/eval)
+  llip --tcp  HOST:PORT ...                   any verb over TCP instead of serial
+
+Transports:
+  --serial PORT [--baud N]   serial line (default 115200 baud); LLIP supplies its
+                             own stop-and-wait ARQ (Fletcher-16 + sequence number)
+                             because a raw serial line has no transport reliability.
+  --tcp HOST:PORT            TCP; reliability comes from TCP itself, so no app ARQ.
+                             For `listen`, an empty HOST (":PORT") binds all interfaces.
+
+One file, no dependencies beyond pyserial (only for --serial).  Drop it anywhere
+on your PATH.
+"""
+import argparse, os, socket, sys, time
+
+BAUD_DEFAULT = 115200
+EVAL_DONE = "===EVAL-DONE==="
+
+
+# ------------------------------------------------------------------ codec ----
+def fletcher16(s):
+    """Fletcher-16 over a string's codepoints -- must match `ck` in the device's
+    LLIP receiver byte-for-byte."""
+    a = b = 0
+    for c in s:
+        a = (a + ord(c)) % 255
+        b = (b + a) % 255
+    return b * 256 + a
+
+
+def esc(s):
+    """Escape a chunk for a LambLisp string literal (the reader un-escapes it)."""
+    out = []
+    for c in s:
+        o = ord(c)
+        if   c == '\\': out.append('\\\\')
+        elif c == '"':  out.append('\\"')
+        elif c == '\n': out.append('\\n')
+        elif c == '\r': out.append('\\r')
+        elif c == '\t': out.append('\\t')
+        elif o < 32:    out.append('\\x%x;' % o)   # LambLisp \xNN; needs the terminator
+        else:           out.append(c)
+    return ''.join(out)
+
+
+def da_frame(seq, chunk):
+    return '(da %d %d "%s")' % (seq, fletcher16(chunk), esc(chunk))
+
+
+# -------------------------------------------------------------- transports ----
+class Transport:
+    """A bidirectional line channel to a LambLisp REPL.  Subclasses provide the
+    byte plumbing; the LLIP frame logic above them is transport-agnostic."""
+    def write_line(self, line):
+        self._write((line + '\n').encode('utf-8'))
+
+    def read_until(self, needles, timeout):
+        buf = ''
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            chunk = self._read().decode('utf-8', errors='replace')
+            if chunk:
+                buf += chunk
+                if any(nd in buf for nd in needles):
+                    return buf
+            else:
+                time.sleep(0.003)
+        return None
+
+    def send_slow(self, line, delay=0.0012):
+        """Type a line char-by-char (used before quiet mode is on, when the device
+        still echoes per character)."""
+        for ch in line:
+            self._write(ch.encode('utf-8'))
+            if delay:
+                time.sleep(delay)
+        self._write(b'\n')
+
+    def send_frame(self, frame, timeout=8):
+        self.write_line(frame)
+        return self.read_until(['ACK', 'NAK', 'DONE', 'BYE'], timeout)
+
+    # --- to be provided by subclasses ---
+    def _write(self, b):     raise NotImplementedError
+    def _read(self):         raise NotImplementedError
+    def open(self):          pass
+    def close(self):         pass
+    def needs_arq(self):     return False
+
+
+class SerialTransport(Transport):
+    """Serial line to the device's interactive REPL.  Non-blocking reads, so LLIP
+    layers stop-and-wait ARQ on top for reliability."""
+    def __init__(self, port, baud=BAUD_DEFAULT):
+        self.port, self.baud, self.ser = port, baud, None
+
+    def needs_arq(self):
+        return True
+
+    def open(self):
+        import serial                       # deferred so --tcp never needs pyserial
+        s = serial.Serial()
+        s.port = self.port; s.baudrate = self.baud; s.timeout = 0.1
+        s.dtr = False; s.rts = False; s.open()
+        time.sleep(0.2)                      # settle DTR/RTS (else the bridge can glitch GPIO0 low)
+        s.rts = False; s.dtr = True; time.sleep(0.1); s.dtr = False   # reset pulse -> clean boot
+        self.ser = s
+        # The receiver is defined mid-boot, so wait for boot to complete before probing.
+        if not self.read_until(['All LambLisp files loaded'], 18):
+            self.read_until(['=>'], 5)
+        time.sleep(1.0); s.reset_input_buffer()
+        # Enter quiet mode: line I/O with no per-char echo and no async prompt flood,
+        # so frames are not garbled and literal markers are safe.
+        self.send_slow(',quiet'); time.sleep(0.3); s.reset_input_buffer()
+
+    def _write(self, b):
+        self.ser.write(b); self.ser.flush()
+
+    def _read(self):
+        return self.ser.read(self.ser.in_waiting or 1)
+
+    def close(self):
+        if self.ser:
+            try:
+                self.write_line(',verbose')   # restore the interactive console
+            finally:
+                self.ser.close()
+
+
+class TcpTransport(Transport):
+    """TCP line channel.  Reliability is native to TCP, so no app-layer ARQ and no
+    reset/boot/quiet dance -- it connects to a running LLIP TCP server on the device
+    (host-initiated) or accepts one connection (device-initiated `listen`)."""
+    def __init__(self, host, port, listen=False):
+        self.host, self.port, self.listen, self.sock, self.srv = host, port, listen, None, None
+
+    def open(self):
+        if self.listen:
+            self.srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.srv.bind((self.host or '0.0.0.0', self.port))
+            self.srv.listen(1)
+            sys.stderr.write('[llip] listening on %s:%d ...\n' % (self.host or '0.0.0.0', self.port))
+            self.sock, peer = self.srv.accept()
+            sys.stderr.write('[llip] device connected from %s:%d\n' % peer)
+        else:
+            self.sock = socket.create_connection((self.host, self.port), timeout=10)
+        self.sock.settimeout(0.1)
+
+    def _write(self, b):
+        self.sock.sendall(b)
+
+    def _read(self):
+        try:
+            return self.sock.recv(4096)
+        except socket.timeout:
+            return b''
+
+    def close(self):
+        for s in (self.sock, self.srv):
+            if s:
+                try: s.close()
+                except OSError: pass
+
+
+# ------------------------------------------------------------ file transfer ----
+def send_file(t, src, dest, chunk=256, retries=5):
+    """Push one file to the device over an open transport.  Returns True on a
+    length + aggregate-checksum verified transfer."""
+    with open(src, 'r', encoding='utf-8') as f:
+        text = f.read()
+    nchars = len(text)
+    if 'ACK' not in (t.send_frame('(op "%s")' % dest) or ''):
+        sys.stderr.write('[llip] ERROR: open %s not acknowledged\n' % dest)
+        return False
+    seq = exp_fc = retx = 0
+    for i in range(0, nchars, chunk):
+        piece = text[i:i + chunk]
+        frame = da_frame(seq, piece)
+        for _ in range(retries):
+            ack = t.send_frame(frame)
+            if ack and ('ACK %d' % seq) in ack:
+                break
+            retx += 1
+        else:
+            sys.stderr.write('[llip] ERROR: %s seq %d failed after %d retries\n' % (dest, seq, retries))
+            return False
+        exp_fc = (exp_fc + fletcher16(piece)) % 65521
+        seq += 1
+    done = t.send_frame('(cl)')
+    rn = rfc = -1
+    if done:
+        import re
+        m = re.search(r'DONE\s+(\d+)\s+(\d+)', done)
+        if m:
+            rn, rfc = int(m.group(1)), int(m.group(2))
+    ok = (rn == nchars and rfc == exp_fc)
+    sys.stderr.write('[llip] %s: %d/%d chars, cksum %d/%d, retx=%d -> %s\n'
+                     % (dest, rn, nchars, rfc, exp_fc, retx, 'OK' if ok else 'MISMATCH'))
+    return ok
+
+
+def eval_form(t, form, timeout=600):
+    """Evaluate a form over the link and return everything streamed up to the done
+    marker.  The marker is a literal, safe because quiet mode has no echo to trip on."""
+    t.write_line('(begin %s(newline)(display "%s"))' % (form, EVAL_DONE))
+    out = t.read_until([EVAL_DONE], timeout) or ''
+    return out.split(EVAL_DONE)[0].rstrip('\n')
+
+
+def repl(t):
+    """Relay an interactive line REPL: local stdin lines out, device output in."""
+    sys.stderr.write('[llip] interactive REPL -- Ctrl-D to exit\n')
+    import threading
+    stop = threading.Event()
+
+    def pump():
+        while not stop.is_set():
+            chunk = t.read_until(['\n'], 0.2)
+            if chunk:
+                sys.stdout.write(chunk); sys.stdout.flush()
+    th = threading.Thread(target=pump, daemon=True); th.start()
+    try:
+        for line in sys.stdin:
+            t.write_line(line.rstrip('\n'))
+    except KeyboardInterrupt:
+        pass
+    finally:
+        stop.set()
+
+
+# ------------------------------------------------ device-initiated listener ----
+def listen_serve(t, dest_dir):
+    """Serve a device that INITIATES the exchange (the symmetric direction).  This
+    host acts as the LLIP frame receiver -- the mirror of the device's op/da/cl
+    handler -- so a device can push files here, or drive eval, whenever it connects.
+    Runs until the peer disconnects or Ctrl-C."""
+    os.makedirs(dest_dir, exist_ok=True)
+    st = {'fp': None, 'name': None, 'n': 0, 'fc': 0, 'xp': 0}
+
+    def reply(line):
+        t.write_line(line)
+
+    sys.stderr.write('[llip] serving device-initiated LLIP into %s/ (Ctrl-C to stop)\n' % dest_dir)
+    try:
+        while True:
+            line = t.read_until(['\n'], 3600)
+            if not line:
+                continue
+            for raw in line.splitlines():
+                s = raw.strip()
+                if not s:
+                    continue
+                if s.startswith('(op '):
+                    name = _first_string(s)
+                    st['name'] = os.path.basename(name or 'inbound.dat')
+                    st['fp'] = open(os.path.join(dest_dir, st['name']), 'w', encoding='utf-8')
+                    st['n'] = st['fc'] = st['xp'] = 0
+                    reply('ACK')
+                elif s.startswith('(da '):
+                    sq, cr, data = _parse_da(s)
+                    if cr != fletcher16(data):
+                        reply('NAK %d' % st['xp'])
+                    elif sq == st['xp']:
+                        st['fp'].write(data)
+                        st['n'] += len(data); st['fc'] = (st['fc'] + cr) % 65521; st['xp'] += 1
+                        reply('ACK %d' % sq)
+                    elif sq == st['xp'] - 1:
+                        reply('ACK %d' % sq)
+                    else:
+                        reply('NAK %d' % st['xp'])
+                elif s.startswith('(cl'):
+                    if st['fp']:
+                        st['fp'].close()
+                    sys.stderr.write('[llip] received %s (%d chars)\n' % (st['name'], st['n']))
+                    reply('DONE %d %d' % (st['n'], st['fc']))
+                    st['fp'] = None
+                elif s in ('(en)', '(bye)'):
+                    reply('BYE'); return
+    except KeyboardInterrupt:
+        sys.stderr.write('\n[llip] listener stopped\n')
+
+
+def _first_string(s):
+    a = s.find('"'); b = s.find('"', a + 1)
+    return s[a + 1:b] if a >= 0 and b > a else None
+
+
+def _parse_da(s):
+    """Parse (da SEQ CRC "chunk") -> (seq, crc, unescaped-chunk)."""
+    body = s[s.find('(da') + 3:]
+    q = body.find('"')
+    seq, crc = (int(x) for x in body[:q].split()[:2])
+    lit = body[q + 1:body.rfind('"')]
+    out, i = [], 0
+    while i < len(lit):
+        c = lit[i]
+        if c == '\\' and i + 1 < len(lit):
+            n = lit[i + 1]
+            if   n == 'n': out.append('\n'); i += 2
+            elif n == 'r': out.append('\r'); i += 2
+            elif n == 't': out.append('\t'); i += 2
+            elif n == '\\': out.append('\\'); i += 2
+            elif n == '"': out.append('"'); i += 2
+            elif n == 'x':
+                j = lit.find(';', i)
+                out.append(chr(int(lit[i + 2:j], 16))); i = j + 1
+            else: out.append(n); i += 2
+        else:
+            out.append(c); i += 1
+    return seq, crc, ''.join(out)
+
+
+# --------------------------------------------------------------------- cli ----
+def make_transport(args):
+    if args.tcp:
+        host, _, port = args.tcp.rpartition(':')
+        return TcpTransport(host, int(port), listen=(args.cmd == 'listen'))
+    if not args.serial:
+        auto = _autodetect_serial()
+        if not auto:
+            sys.exit('[llip] no --serial PORT / --tcp HOST:PORT given and none auto-detected')
+        args.serial = auto
+        sys.stderr.write('[llip] using auto-detected serial port %s\n' % auto)
+    return SerialTransport(args.serial, args.baud)
+
+
+def _autodetect_serial():
+    import glob
+    cands = sorted(glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*'))
+    return cands[0] if len(cands) == 1 else None
+
+
+def build_parser():
+    p = argparse.ArgumentParser(prog='llip', description='LambLisp Interaction Protocol client.',
+                                formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
+    p.add_argument('--serial', metavar='PORT', help='serial device (e.g. /dev/ttyUSB0)')
+    p.add_argument('--baud', type=int, default=BAUD_DEFAULT, help='serial baud (default %d)' % BAUD_DEFAULT)
+    p.add_argument('--tcp', metavar='HOST:PORT', help='TCP endpoint (empty HOST binds all for listen)')
+    sub = p.add_subparsers(dest='cmd', required=True)
+    s = sub.add_parser('send', help='push a file to the device'); s.add_argument('src'); s.add_argument('dest', nargs='?')
+    r = sub.add_parser('recv', help='pull a file from the device'); r.add_argument('remote'); r.add_argument('local', nargs='?')
+    e = sub.add_parser('eval', help='evaluate a form, stream output'); e.add_argument('form')
+    sub.add_parser('repl', help='interactive line REPL over the link')
+    l = sub.add_parser('listen', help='serve a device that initiates'); l.add_argument('dir', nargs='?', default='.')
+    s.add_argument('--chunk', type=int, default=256); s.add_argument('--retries', type=int, default=5)
+    e.add_argument('--timeout', type=int, default=600)
+    return p
+
+
+def main():
+    args = build_parser().parse_args()
+    t = make_transport(args)
+    rc = 0
+    try:
+        t.open()
+        if args.cmd == 'send':
+            dest = args.dest or ('/' + os.path.basename(args.src))
+            rc = 0 if send_file(t, args.src, dest, args.chunk, args.retries) else 1
+        elif args.cmd == 'eval':
+            print(eval_form(t, args.form, args.timeout))
+        elif args.cmd == 'repl':
+            repl(t)
+        elif args.cmd == 'listen':
+            listen_serve(t, args.dir)
+        elif args.cmd == 'recv':
+            sys.exit('[llip] recv needs the device-side pull primitive (llip-send-file); '
+                     'not present in this firmware yet -- see the LLIP spec, file-transfer section')
+    finally:
+        t.close()
+    sys.exit(rc)
+
+
+if __name__ == '__main__':
+    main()

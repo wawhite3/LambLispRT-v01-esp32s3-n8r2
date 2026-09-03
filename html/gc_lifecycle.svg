@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="260" viewBox="0 0 660 260">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#444"/>
+    </marker>
+    <marker id="arrow-dash" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#888"/>
+    </marker>
+    <style>
+      .node rect { stroke: #555; stroke-width: 1.5; rx: 6; }
+      .node text { font: 13px sans-serif; fill: #111; text-anchor: middle; dominant-baseline: central; }
+      .edge { stroke: #444; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+      .edge-dash { stroke: #888; stroke-width: 1.4; fill: none; stroke-dasharray: 5,3; marker-end: url(#arrow-dash); }
+      .lbl { font: 9.5px sans-serif; fill: #333; text-anchor: middle; }
+      .legend { font: 10px sans-serif; fill: #666; }
+    </style>
+  </defs>
+
+  <!-- Nodes -->
+  <!-- free (80,100) -->
+  <g class="node">
+    <rect x="30"  y="82"  width="70" height="30" rx="6" fill="#ffaaaa"/>
+    <text x="65"  y="97">free</text>
+  </g>
+
+  <!-- idle (230,100) -->
+  <g class="node">
+    <rect x="185" y="82"  width="70" height="30" rx="6" fill="#aaffaa"/>
+    <text x="220" y="97">idle</text>
+  </g>
+
+  <!-- issued (230,195) -->
+  <g class="node">
+    <rect x="185" y="177" width="70" height="30" rx="6" fill="#ffffaa"/>
+    <text x="220" y="192">issued</text>
+  </g>
+
+  <!-- stacked (390,100) -->
+  <g class="node">
+    <rect x="345" y="82"  width="75" height="30" rx="6" fill="#aaaaff"/>
+    <text x="382" y="97">stacked</text>
+  </g>
+
+  <!-- marked (560,100) -->
+  <g class="node">
+    <rect x="520" y="82"  width="70" height="30" rx="6" fill="#aaffff"/>
+    <text x="555" y="97">marked</text>
+  </g>
+
+  <!-- Edges -->
+
+  <!-- free -> idle: alloc [i,s] -->
+  <line x1="100" y1="97" x2="183" y2="97" class="edge"/>
+  <text x="142" y="90" class="lbl">alloc [i,s]</text>
+
+  <!-- free -> issued: alloc [m,s] (down-left diagonal) -->
+  <path d="M 65 112 L 65 162 L 183 185" class="edge"/>
+  <text x="100" y="155" class="lbl">alloc [m,s]</text>
+
+  <!-- idle -> free: collect [s] (dashed arc below) -->
+  <path d="M 185 107 Q 142 138 102 107" class="edge-dash"/>
+  <text x="142" y="132" class="lbl" fill="#888">collect [s]</text>
+
+  <!-- idle -> stacked: reachable [m] -->
+  <line x1="255" y1="97" x2="343" y2="97" class="edge"/>
+  <text x="299" y="90" class="lbl">reachable [m]</text>
+
+  <!-- issued -> idle: reset [s] -->
+  <line x1="220" y1="177" x2="220" y2="114" class="edge"/>
+  <text x="235" y="150" class="lbl">reset [s]</text>
+
+  <!-- issued -> stacked: reachable [m] -->
+  <path d="M 255 185 Q 340 185 343 112" class="edge"/>
+  <text x="330" y="178" class="lbl">reachable [m]</text>
+
+  <!-- stacked -> marked: explored [m] -->
+  <line x1="420" y1="97" x2="518" y2="97" class="edge"/>
+  <text x="469" y="90" class="lbl">explored [m]</text>
+
+  <!-- marked -> idle: reset [s] (dashed arc over top) -->
+  <path d="M 555 82 Q 500 30 300 30 Q 240 30 220 80" class="edge-dash"/>
+  <text x="390" y="24" class="lbl" fill="#888">reset [s]</text>
+
+  <!-- Legend -->
+  <text x="30" y="240" class="legend">i = gc-idle</text>
+  <text x="110" y="240" class="legend">m = marking</text>
+  <text x="210" y="240" class="legend">s = sweeping</text>
+  <text x="320" y="240" class="legend">dashed = sweep reset (not collection)</text>
+</svg>

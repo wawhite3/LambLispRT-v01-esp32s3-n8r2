@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="380" viewBox="0 0 880 380">
+<rect width="880" height="380" fill="#ffffff"/>
+<defs>
+  <marker id="arr_b" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker>
+  <marker id="arr_r" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker>
+  <marker id="arr_g" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#228844"/></marker>
+</defs>
+
+<!-- Title -->
+<text x="440" y="26" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#00468c">T_CPP_HEAP — GC-Managed C++ Object</text>
+
+<!-- ══════════════════════════════════════════════════════
+     T_CPP_HEAP CELL  (left column)
+     ══════════════════════════════════════════════════════ -->
+<!-- Outer box -->
+<rect x="28" y="50" width="230" height="158" rx="8"
+      fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+<!-- Header band -->
+<rect x="28" y="50" width="230" height="26" rx="8" fill="#00468c" stroke="none"/>
+<rect x="28" y="68"  width="230" height="8"  fill="#00468c" stroke="none"/>
+<text x="143" y="67" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">T_CPP_HEAP cell</text>
+
+<!-- Divider between _car_ and _cdr_ rows -->
+<line x1="28" y1="130" x2="258" y2="130" stroke="#00468c" stroke-width="1"/>
+
+<!-- _car_ row (y=76..130, cy=103) -->
+<text x="40" y="98" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="14" font-weight="bold" fill="#00468c">_car_</text>
+<text x="40" y="114" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">CPPDeleterPtr</text>
+<text x="40" y="127" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">(fn ptr: called by GC on sweep)</text>
+
+<!-- _cdr_ row (y=130..208, cy=169) -->
+<text x="40" y="152" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="14" font-weight="bold" fill="#00468c">_cdr_</text>
+<text x="40" y="168" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">void *  (C++ object pointer)</text>
+<text x="40" y="184" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">(heap address, opaque to Lisp)</text>
+<text x="40" y="200" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">retrieved via any_cppobj_get_ptr()</text>
+
+<!-- Caption below cell -->
+<text x="143" y="225" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">one LambLisp Cell (two machine words)</text>
+
+<!-- ══════════════════════════════════════════════════════
+     ARROWS  Cell → Deleter,  Cell → PIDState
+     ══════════════════════════════════════════════════════ -->
+<!-- _car_ → pid_deleter box: from (258,103) → (310,90) -->
+<line x1="258" y1="103" x2="308" y2="85"
+      stroke="#00468c" stroke-width="1.8" marker-end="url(#arr_b)"/>
+
+<!-- _cdr_ → PIDState box: from (258,169) → (310,210) -->
+<line x1="258" y1="169" x2="308" y2="205"
+      stroke="#00468c" stroke-width="1.8" marker-end="url(#arr_b)"/>
+
+<!-- ══════════════════════════════════════════════════════
+     DELETER FUNCTION BOX  (right, upper)
+     ══════════════════════════════════════════════════════ -->
+<rect x="310" y="50" width="545" height="76" rx="7"
+      fill="#fff3cc" stroke="#cc8800" stroke-width="1.8"/>
+<rect x="310" y="50" width="545" height="22" rx="7" fill="#cc8800" stroke="none"/>
+<rect x="310" y="65"  width="545" height="7"  fill="#cc8800" stroke="none"/>
+<text x="582" y="65" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">deleter function  (called automatically by GC)</text>
+<text x="322" y="88" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#7a4a00">static void pid_deleter(void *p) {</text>
+<text x="322" y="105" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#7a4a00">    delete static_cast&lt;PIDState *&gt;(p);  }</text>
+
+<!-- ══════════════════════════════════════════════════════
+     PIDState STRUCT BOX  (right, lower)
+     ══════════════════════════════════════════════════════ -->
+<rect x="310" y="146" width="545" height="120" rx="7"
+      fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<rect x="310" y="146" width="545" height="22" rx="7" fill="#228844" stroke="none"/>
+<rect x="310" y="160" width="545" height="7"  fill="#228844" stroke="none"/>
+<text x="582" y="161" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">PIDState  (C++ heap)</text>
+
+<!-- Field grid: three rows -->
+<text x="322" y="186" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#1a5a1a">Real_t kp, ki, kd;</text>
+<text x="322" y="204" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#1a5a1a">Real_t integral, prev_error;</text>
+<text x="322" y="222" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#1a5a1a">Real_t out_min, out_max;</text>
+<text x="322" y="255" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">allocated with  new PIDState  in pid_make mop3;  freed via pid_deleter</text>
+
+<!-- ══════════════════════════════════════════════════════
+     GC LIFECYCLE  (bottom banner)
+     ══════════════════════════════════════════════════════ -->
+<rect x="28" y="290" width="827" height="66" rx="8"
+      fill="#ffe0e0" stroke="#cc4444" stroke-width="1.5"/>
+<rect x="28" y="290" width="827" height="22" rx="8" fill="#cc4444" stroke="none"/>
+<rect x="28" y="304" width="827" height="7"  fill="#cc4444" stroke="none"/>
+<text x="441" y="305" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">GC sweep lifecycle</text>
+<text x="441" y="326" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#8a0000">cell becomes unreachable  →  GC sweep calls  (*_car_)(_cdr_)</text>
+<text x="441" y="344" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#8a0000">→  pid_deleter() invoked  →  delete PIDState  →  C++ heap freed automatically</text>
+
+<!-- GC arrow: from GC box top-left (143,290) up to Cell bottom (143,208) -->
+<line x1="143" y1="290" x2="143" y2="212"
+      stroke="#cc4444" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#arr_r)"/>
+<text x="152" y="255" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#cc4444">GC sweep</text>
+
+</svg>

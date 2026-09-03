@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420">
+<rect width="960" height="420" fill="#ffffff"/>
+<defs><marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker></defs>
+<text x="480" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="27.0" font-weight="bold" font-style="normal" fill="#00468c">LambLisp 3-Word Cell Layout</text>
+<text x="60" y="128" text-anchor="end" font-family="Courier New, Courier, monospace" font-size="18.0" font-weight="bold" font-style="normal" fill="#1a6abf">T_PAIR</text>
+<text x="60" y="288" text-anchor="end" font-family="Courier New, Courier, monospace" font-size="18.0" font-weight="bold" font-style="normal" fill="#1a6abf">T_INT</text>
+<rect x="70" y="100" width="62" height="46" fill="#ffd6b3" stroke="#00468c" stroke-width="1.6"/>
+<text x="101" y="117" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">T_PAIR</text>
+<text x="101" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">type code</text>
+<rect x="132" y="100" width="62" height="46" fill="#d4f7d4" stroke="#00468c" stroke-width="1.6"/>
+<text x="163" y="117" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">idle</text>
+<text x="163" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">gcst</text>
+<rect x="194" y="100" width="43" height="46" fill="#d0e8ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="215" y="117" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">—</text>
+<text x="215" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">imm0</text>
+<rect x="237" y="100" width="43" height="46" fill="#d0e8ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="258" y="117" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">—</text>
+<text x="258" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">imm1</text>
+<rect x="70" y="260" width="62" height="46" fill="#ffd6b3" stroke="#00468c" stroke-width="1.6"/>
+<text x="101" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">T_INT</text>
+<text x="101" y="293" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">type code</text>
+<rect x="132" y="260" width="62" height="46" fill="#d4f7d4" stroke="#00468c" stroke-width="1.6"/>
+<text x="163" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">idle</text>
+<text x="163" y="293" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">gcst</text>
+<rect x="194" y="260" width="43" height="46" fill="#d0e8ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="215" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">—</text>
+<text x="215" y="293" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">imm0</text>
+<rect x="237" y="260" width="43" height="46" fill="#d0e8ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="258" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">—</text>
+<text x="258" y="293" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">imm1</text>
+<rect x="294" y="100" width="180" height="46" fill="#cce5ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="384" y="117" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">car</text>
+<text x="384" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">child pointer</text>
+<rect x="294" y="260" width="180" height="46" fill="#fff3cc" stroke="#00468c" stroke-width="1.6"/>
+<text x="384" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">value</text>
+<text x="384" y="293" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">integer value (42)</text>
+<rect x="488" y="100" width="180" height="46" fill="#e8e0ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="578" y="117" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">cdr</text>
+<text x="578" y="133" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">next pointer</text>
+<rect x="488" y="260" width="180" height="46" fill="#e8e0ff" stroke="#00468c" stroke-width="1.6"/>
+<text x="578" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">×</text>
+<text x="578" y="293" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">unused</text>
+<line x1="70" y1="70" x2="280" y2="70" stroke="#4a90d9" stroke-width="1"/>
+<line x1="70" y1="70" x2="70" y2="75" stroke="#4a90d9" stroke-width="1"/>
+<line x1="280" y1="70" x2="280" y2="75" stroke="#4a90d9" stroke-width="1"/>
+<text x="175" y="65" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="bold" font-style="normal" fill="#4a90d9">word 0  (tag word)</text>
+<text x="175" y="53" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" font-weight="normal" font-style="italic" fill="#8899aa">byte 0 | byte 1 | imm0 | imm1</text>
+<line x1="294" y1="70" x2="474" y2="70" stroke="#4a90d9" stroke-width="1"/>
+<line x1="294" y1="70" x2="294" y2="75" stroke="#4a90d9" stroke-width="1"/>
+<line x1="474" y1="70" x2="474" y2="75" stroke="#4a90d9" stroke-width="1"/>
+<text x="384" y="65" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="bold" font-style="normal" fill="#4a90d9">word 1  (car)</text>
+<line x1="488" y1="70" x2="668" y2="70" stroke="#4a90d9" stroke-width="1"/>
+<line x1="488" y1="70" x2="488" y2="75" stroke="#4a90d9" stroke-width="1"/>
+<line x1="668" y1="70" x2="668" y2="75" stroke="#4a90d9" stroke-width="1"/>
+<text x="578" y="65" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="bold" font-style="normal" fill="#4a90d9">word 2  (cdr)</text>
+<text x="101" y="152" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.8" font-weight="normal" font-style="normal" fill="#8899aa">byte 0</text>
+<text x="163" y="152" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.8" font-weight="normal" font-style="normal" fill="#8899aa">byte 1</text>
+<text x="225" y="152" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.8" font-weight="normal" font-style="normal" fill="#8899aa">byte 2</text>
+<text x="268" y="152" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.8" font-weight="normal" font-style="normal" fill="#8899aa">byte 3</text>
+<rect x="294" y="326" width="180" height="20" rx="3" fill="#e8ffe8" stroke="#228844" stroke-width="1"/>
+<text x="384" y="340" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.0" font-weight="normal" font-style="normal" fill="#228844">Scheme: car</text>
+<rect x="488" y="326" width="180" height="20" rx="3" fill="#e8ffe8" stroke="#228844" stroke-width="1"/>
+<text x="578" y="340" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.0" font-weight="normal" font-style="normal" fill="#228844">Scheme: cdr</text>
+<rect x="70" y="326" width="210" height="20" rx="3" fill="#f0f0f0" stroke="#8899aa" stroke-width="1"/>
+<text x="175" y="340" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="normal" fill="#8899aa">opaque to Scheme (tag/GC)</text>
+<text x="384" y="356" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.8" font-weight="normal" font-style="italic" fill="#1a6abf">T_INT: value in word 1 (car field)</text>
+<text x="384" y="371" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">cdr field unused (×)</text>
+<rect x="785" y="80" width="160" height="128" rx="5" fill="#f8f8f8" stroke="#aaa" stroke-width="1"/>
+<text x="865" y="97" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">Field colors</text>
+<rect x="793" y="110" width="14" height="12" rx="2" fill="#ffd6b3" stroke="#00468c" stroke-width="0.8"/>
+<text x="812" y="120" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#0d1a2e">type code (byte 0)</text>
+<rect x="793" y="127" width="14" height="12" rx="2" fill="#d4f7d4" stroke="#00468c" stroke-width="0.8"/>
+<text x="812" y="137" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#0d1a2e">GC state (byte 1)</text>
+<rect x="793" y="144" width="14" height="12" rx="2" fill="#d0e8ff" stroke="#00468c" stroke-width="0.8"/>
+<text x="812" y="154" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#0d1a2e">immediate data</text>
+<rect x="793" y="161" width="14" height="12" rx="2" fill="#cce5ff" stroke="#00468c" stroke-width="0.8"/>
+<text x="812" y="171" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#0d1a2e">car / child ptr</text>
+<rect x="793" y="178" width="14" height="12" rx="2" fill="#e8e0ff" stroke="#00468c" stroke-width="0.8"/>
+<text x="812" y="188" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#0d1a2e">cdr / next ptr</text>
+<rect x="793" y="195" width="14" height="12" rx="2" fill="#fff3cc" stroke="#00468c" stroke-width="0.8"/>
+<text x="812" y="205" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#0d1a2e">integer value</text>
+</svg>

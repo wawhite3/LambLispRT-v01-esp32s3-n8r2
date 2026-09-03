@@ -1,0 +1,54 @@
+# Freenove ESP32-WROVER-E (classic ESP32-D0WD, 4MB flash / 8MB PSRAM) --
+# LEAN RUNTIME (full features) / portable 4WD stand-in.  partitions_4M_ota_trim
+# (1.75MB dual-OTA app slots + 448KB LittleFS), same as the 4WD.
+# The full test suite does NOT fit the 448KB FS all at once, so tests are run in
+# SECTIONS: w3_ai_scripts/wrover_sectioned_tests.sh uploadfs's the runtime + one tier's
+# test files at a time, loads that tier's runner over serial, captures, repeats.
+# Own pin map: boards/pins/Freenove-ESP32-WROVER.scm (WROVER-CAM module pinout; sonar on GPIO12/15).
+# Core module set mirrors the S3 devkit (proven to boot); no motor/LED/robot HW so
+# Led/Buzzer/Motor .loop just tick empty behaviour queues (harmless).
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/Freenove-ESP32-WROVER.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+
+# Board-specific init
+boards/Freenove-ESP32-WROVER.scm
+
+# Serial file+command tunnel: resident LLIP receiver -- host sends (llt) then op/da/cl file
+# frames and/or (ev <form>) command frames; O(N) clean, no per-char REPL echo.
+features/llip-serial.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+runtime-defaults/Settings-Lamb.scm

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="460" viewBox="0 0 980 460">
+<rect width="980" height="460" fill="#ffffff"/>
+<defs><marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker><marker id="arrp" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#7755aa"/></marker></defs>
+<text x="490" y="32" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="25.5" font-weight="bold" font-style="normal" fill="#00468c">LambLisp Block Diagram — Interpreter and Bytecode Paths</text>
+<rect x="60" y="400" width="840" height="40" rx="5" fill="#f0f4fa" stroke="#8899aa" stroke-width="1" />
+<text x="480" y="425" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="normal" font-style="italic" fill="#8899aa">Shared: GC heap  ·  environment chain  ·  interaction env</text>
+<rect x="455" y="280" width="480" height="100" rx="8" fill="none" stroke="#7755aa" stroke-width="1.2" stroke-dasharray="6,3"/>
+<text x="695" y="274" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#7755aa">optional compilation</text>
+<rect x="40" y="158" width="100" height="44" rx="5" fill="#eaeaea" stroke="#8899aa" stroke-width="1.5" />
+<text x="90" y="185" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#8899aa">Source</text>
+<rect x="175" y="153" width="130" height="54" rx="7" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8" />
+<text x="240" y="176" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#00468c">Reader</text>
+<text x="240" y="193" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">tokenize + parse</text>
+<rect x="335" y="153" width="130" height="54" rx="7" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8" />
+<text x="400" y="176" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#00468c">AST</text>
+<text x="400" y="193" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">T_PAIR tree</text>
+<rect x="495" y="153" width="130" height="54" rx="7" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8" />
+<text x="560" y="176" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#00468c">Eval</text>
+<text x="560" y="193" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">interpreter</text>
+<rect x="665" y="153" width="110" height="54" rx="7" fill="#d4f7d4" stroke="#00468c" stroke-width="1.8" />
+<text x="720" y="185" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#00468c">Result</text>
+<rect x="486" y="293" width="148" height="54" rx="7" fill="#e8d4ff" stroke="#7755aa" stroke-width="1.8" />
+<text x="560" y="316" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#7755aa">Bytecode</text>
+<text x="560" y="333" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">Compiler</text>
+<rect x="646" y="293" width="148" height="54" rx="7" fill="#e8d4ff" stroke="#7755aa" stroke-width="1.8" />
+<text x="720" y="316" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#7755aa">T_BYTECODE</text>
+<text x="720" y="333" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">compiled object</text>
+<rect x="808" y="293" width="130" height="54" rx="7" fill="#e8d4ff" stroke="#7755aa" stroke-width="1.8" />
+<text x="873" y="316" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19.5" font-weight="bold" font-style="normal" fill="#7755aa">Executor</text>
+<text x="873" y="333" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">bytecode VM</text>
+<line x1="140" y1="180" x2="175" y2="180" stroke="#00468c" stroke-width="1.7"  marker-end="url(#arr)"/>
+<text x="175" y="160" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#00468c">text</text>
+<line x1="305" y1="180" x2="335" y2="180" stroke="#00468c" stroke-width="1.7"  marker-end="url(#arr)"/>
+<text x="320" y="160" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#00468c">S-exprs</text>
+<line x1="465" y1="180" x2="495" y2="180" stroke="#00468c" stroke-width="1.7"  marker-end="url(#arr)"/>
+<text x="480" y="172" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#00468c">direct eval</text>
+<line x1="625" y1="180" x2="665" y2="180" stroke="#00468c" stroke-width="1.7"  marker-end="url(#arr)"/>
+<path d="M 400,207 Q 400,320 486,320" fill="none" stroke="#7755aa" stroke-width="1.5"  marker-end="url(#arrp)"/>
+<text x="378" y="250" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#7755aa">compile</text>
+<line x1="634" y1="320" x2="646" y2="320" stroke="#7755aa" stroke-width="1.5"  marker-end="url(#arrp)"/>
+<line x1="794" y1="320" x2="808" y2="320" stroke="#7755aa" stroke-width="1.5"  marker-end="url(#arrp)"/>
+<line x1="873" y1="293" x2="720" y2="207" stroke="#7755aa" stroke-width="1.5"  marker-end="url(#arrp)"/>
+</svg>

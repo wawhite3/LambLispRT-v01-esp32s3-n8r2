@@ -1,0 +1,20 @@
+;;; Settings-local.scm -- LOCAL, UNTRACKED settings overlay.  COPY THIS FILE to
+;;; scm/runtime-defaults/Settings-local.scm and edit; the copy is .gitignore'd.
+;;; Copyright 2026 by Frobenius Norm LLC
+;;;
+;;; WHY THIS FILE EXISTS.  Settings.scm is tracked, and it rides data/ into the per-target
+;;; customer packages that `w3 make publish_one` FORCE-PUSHES to public GitHub repos
+;;; (github.com/<user>/LambLispRT-v01-<env>).  So a bench SSID and password typed into
+;;; Settings.scm is published to the world on the next release.  Put them here instead:
+;;;
+;;;   - this name is in .gitignore, so it cannot be committed by accident;
+;;;   - manifests pull it with `optional:`, so its absence is silent, not a warning;
+;;;   - w3_make_release_one DELETES it from the package, so it cannot ship even if
+;;;     it is sitting in data_staged/ when a release is cut.
+;;;
+;;; Keys here OVERRIDE the same keys in Settings.scm; anything not named here is unchanged.
+;;; Read by setup.scm immediately after Settings.scm.
+
+((wifi      . 1)                  ;; 1 = auto-connect at boot (needed by the `network` test_id)
+ (wifi_ssid . "your-bench-ssid")
+ (wifi_pass . "your-bench-password"))

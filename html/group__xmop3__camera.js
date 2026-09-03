@@ -1,0 +1,25 @@
+var group__xmop3__camera =
+[
+    [ "EYE_LCD_RST", "group__xmop3__camera.html#ga12911768793311f4dc7fdb1b71966c43", null ],
+    [ "EYE_LCD_BL", "group__xmop3__camera.html#ga9ca4d045a34853a4c62c22538eeeb653", null ],
+    [ "EYE_BL_TIMER", "group__xmop3__camera.html#ga8971a4cf1869070295c1953da307754a", null ],
+    [ "EYE_BL_CHANNEL", "group__xmop3__camera.html#ga17f714582a3f146402cb9b1e7881bb72", null ],
+    [ "EYE_LCD_HZ", "group__xmop3__camera.html#ga094f29253b09e8e5fd399e1cf95576a0", null ],
+    [ "EYE_LCD_BAND_ROWS", "group__xmop3__camera.html#ga2079b648bf79b095bf33d1ee30413505", null ],
+    [ "EYE_CAM_SIOD", "group__xmop3__camera.html#ga7fb1a5f4c1941bd18f0b38c594d6698a", null ],
+    [ "EYE_CAM_SIOC", "group__xmop3__camera.html#gafa8dbf9aeebdc8ed07904d053d486a2e", null ],
+    [ "mop3_lcd_init", "group__xmop3__camera.html#gaad39ffe430484b2adcd408bf94455d2b", null ],
+    [ "mop3_lcd_clear", "group__xmop3__camera.html#ga6c138d43ccc5c2c029e900856c009900", null ],
+    [ "mop3_lcd_box", "group__xmop3__camera.html#gabcb2b6861b1509758d89b7c75d6db1b9", null ],
+    [ "mop3_lcd_rgb565", "group__xmop3__camera.html#ga309f47bc0d936cc92a1b097dcf6a2df0", null ],
+    [ "mop3_camera_init", "group__xmop3__camera.html#gacfb8d1ffa8e362546472b41adcff2401", null ],
+    [ "mop3_camera_to_lcd", "group__xmop3__camera.html#ga299f88127f321aaaaf6f337bd8c0488c", null ],
+    [ "mop3_camera_preview", "group__xmop3__camera.html#ga435e14cb12f265067e97387442faded0", null ],
+    [ "mop3_camera_thumb", "group__xmop3__camera.html#ga6f429f9e5e3da2949448dadcf1a663cf", null ],
+    [ "mop3_camera_set", "group__xmop3__camera.html#gaa8ff7b3c338750f7fc547d221099c62e", null ],
+    [ "mop3_camera_capture", "group__xmop3__camera.html#gab21152a59b1991c7365194761b641480", null ],
+    [ "mop3_frame_brightness", "group__xmop3__camera.html#ga22e40e4d5d28bae96072695494e2028b", null ],
+    [ "mop3_lcd_backlight", "group__xmop3__camera.html#ga8ebc8fa7f17ab568494fb5d70ac79f4a", null ],
+    [ "mop3_lcd_testpat", "group__xmop3__camera.html#ga87d96091a1eaf4c0abade7ffa452f612", null ],
+    [ "EyeCam_install_mop3", "group__xmop3__camera.html#ga5347b2eca991f0497ef28b995eb28031", null ]
+];

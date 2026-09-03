@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['handling_0',['Handling',['../index.html#modbus-errors',1,'2.5 Error Handling'],['../index.html#autotoc_md153',1,'Exception Handling']]],
+  ['happens_20at_20startup_1',['What Happens at Startup',['../index.html#autotoc_md9',1,'']]],
+  ['hardware_2',['ESP32 Hardware',['../index.html#autotoc_md5',1,'']]],
+  ['hardware_3',['Why the compiled tier does not run on embedded hardware',['../index.html#autotoc_md30',1,'']]],
+  ['hardware_20does_20lamblisp_20run_20on_4',['What hardware does LambLisp run on?',['../index.html#autotoc_md158',1,'']]],
+  ['hardware_20setup_5',['2. Hardware Setup',['../index.html#fwd-hw',1,'']]],
+  ['hash_20table_20and_20hashing_20details_6',['Hash table and hashing details',['../index.html#autotoc_md53',1,'']]],
+  ['hash_20table_20sizing_20and_20collisions_7',['Hash table sizing and collisions',['../index.html#autotoc_md54',1,'']]],
+  ['hashing_20details_8',['Hash table and hashing details',['../index.html#autotoc_md53',1,'']]],
+  ['hc_20sr04_9',['Ultrasonic Sonar (HC-SR04)',['../index.html#ultrasonic-sonar-hc-sr04',1,'']]],
+  ['helpers_10',['2.4 Float32 Helpers',['../index.html#modbus-float32',1,'']]],
+  ['hierarchical_20dictionaries_11',['Hierarchical dictionaries',['../index.html#arch-hierdict',1,'']]],
+  ['hierarchical_20dictionaries_12',['hierarchical dictionaries',['../index.html#autotoc_md20',1,'First-class hierarchical dictionaries'],['../index.html#autotoc_md29',1,'Objects are wrappers around &lt;em&gt;hierarchical dictionaries&lt;/em&gt;']]],
+  ['hierarchical_20dictionary_13',['Execution environment is a &lt;em&gt;hierarchical dictionary&lt;/em&gt;',['../index.html#arch-envdict',1,'']]],
+  ['history_20of_20lisp_20and_20scheme_14',['Brief history of Lisp and Scheme',['../index.html#arch-history',1,'']]],
+  ['hot_20reload_15',['Code Lifecycle: Incremental Hot-Reload',['../index.html#arch-lifecycle',1,'']]],
+  ['how_20do_20i_20try_20lamblisp_20right_20now_16',['How do I try LambLisp right now?',['../index.html#autotoc_md156',1,'']]],
+  ['how_20do_20i_20update_20code_20without_20reflashing_17',['How do I update code without reflashing?',['../index.html#autotoc_md162',1,'']]],
+  ['how_20fast_20is_20lamblisp_18',['How fast is LambLisp?',['../index.html#autotoc_md169',1,'']]],
+  ['http_20llm_20layer_20llip_20http_20scm_19',['HTTP / LLM Layer (&lt;span class=&quot;tt&quot;&gt;llip-http.scm&lt;/span&gt;)',['../index.html#llip-http',1,'']]],
+  ['http_20scm_20',['HTTP / LLM Layer (&lt;span class=&quot;tt&quot;&gt;llip-http.scm&lt;/span&gt;)',['../index.html#llip-http',1,'']]],
+  ['hygiene_21',['Hygiene',['../index.html#autotoc_md52',1,'']]]
+];

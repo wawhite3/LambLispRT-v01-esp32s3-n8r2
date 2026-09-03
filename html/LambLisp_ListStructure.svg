@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="810" viewBox="0 0 1200 810">
+<rect width="1200" height="810" fill="white"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="6" refX="7.5" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1a4a8a"/></marker></defs>
+<text x="600" y="42" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="33.0" font-weight="bold" fill="#1a1a2e">Typical List Structure</text>
+<text x="600" y="68" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.8" font-style="italic" fill="#556">Diagram of the list:</text>
+<text x="600" y="92" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="21.0" font-weight="normal" fill="#223355">(42  (3.14 x)  "Hello World!")</text>
+<text x="54" y="174" text-anchor="end" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#445">root</text>
+<line x1="68" y1="169" x2="82" y2="169" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="82" y="148" width="172" height="42" rx="4" fill="#cce5ff" stroke="none"/>
+<text x="122" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_PAIR</text>
+<rect x="162" y="148" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="162" y1="150" x2="162" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="185" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">car</text>
+<rect x="208" y="148" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="208" y1="150" x2="208" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="231" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">cdr</text>
+<rect x="82" y="148" width="172" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="308" y="148" width="172" height="42" rx="4" fill="#cce5ff" stroke="none"/>
+<text x="348" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_PAIR</text>
+<rect x="388" y="148" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="388" y1="150" x2="388" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="411" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">car</text>
+<rect x="434" y="148" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="434" y1="150" x2="434" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="457" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">cdr</text>
+<rect x="308" y="148" width="172" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="560" y="148" width="172" height="42" rx="4" fill="#cce5ff" stroke="none"/>
+<text x="600" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_PAIR</text>
+<rect x="640" y="148" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="640" y1="150" x2="640" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="663" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">car</text>
+<rect x="686" y="148" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="686" y1="150" x2="686" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="709" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">cdr</text>
+<rect x="560" y="148" width="172" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="800" y="148" width="140" height="42" rx="4" fill="#e0e0e0" stroke="none"/>
+<text x="834" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_NIL</text>
+<rect x="868" y="148" width="36" height="42" fill="#e0e0e0" stroke="none"/>
+<line x1="868" y1="150" x2="868" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="886" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">×</text>
+<rect x="904" y="148" width="36" height="42" fill="#e0e0e0" stroke="none"/>
+<line x1="904" y1="150" x2="904" y2="188" stroke="#5580bb" stroke-width="1.3"/>
+<text x="922" y="174" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">×</text>
+<rect x="800" y="148" width="140" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="308" y="390" width="172" height="42" rx="4" fill="#cce5ff" stroke="none"/>
+<text x="348" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_PAIR</text>
+<rect x="388" y="390" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="388" y1="392" x2="388" y2="430" stroke="#5580bb" stroke-width="1.3"/>
+<text x="411" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">car</text>
+<rect x="434" y="390" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="434" y1="392" x2="434" y2="430" stroke="#5580bb" stroke-width="1.3"/>
+<text x="457" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">cdr</text>
+<rect x="308" y="390" width="172" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="534" y="390" width="172" height="42" rx="4" fill="#cce5ff" stroke="none"/>
+<text x="574" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_PAIR</text>
+<rect x="614" y="390" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="614" y1="392" x2="614" y2="430" stroke="#5580bb" stroke-width="1.3"/>
+<text x="637" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">car</text>
+<rect x="660" y="390" width="46" height="42" fill="#cce5ff" stroke="none"/>
+<line x1="660" y1="392" x2="660" y2="430" stroke="#5580bb" stroke-width="1.3"/>
+<text x="683" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">cdr</text>
+<rect x="534" y="390" width="172" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="760" y="390" width="140" height="42" rx="4" fill="#e0e0e0" stroke="none"/>
+<text x="794" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_NIL</text>
+<rect x="828" y="390" width="36" height="42" fill="#e0e0e0" stroke="none"/>
+<line x1="828" y1="392" x2="828" y2="430" stroke="#5580bb" stroke-width="1.3"/>
+<text x="846" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">×</text>
+<rect x="864" y="390" width="36" height="42" fill="#e0e0e0" stroke="none"/>
+<line x1="864" y1="392" x2="864" y2="430" stroke="#5580bb" stroke-width="1.3"/>
+<text x="882" y="416" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">×</text>
+<rect x="760" y="390" width="140" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="113" y="258" width="144" height="42" rx="4" fill="#d4f7d4" stroke="none"/>
+<text x="144" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_INT</text>
+<rect x="175" y="258" width="48" height="42" fill="#d4f7d4" stroke="none"/>
+<line x1="175" y1="260" x2="175" y2="298" stroke="#5580bb" stroke-width="1.3"/>
+<text x="199" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">42</text>
+<rect x="223" y="258" width="34" height="42" fill="#d4f7d4" stroke="none"/>
+<line x1="223" y1="260" x2="223" y2="298" stroke="#5580bb" stroke-width="1.3"/>
+<text x="240" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">×</text>
+<rect x="113" y="258" width="144" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="573" y="258" width="180" height="42" rx="4" fill="#fff3cc" stroke="none"/>
+<text x="603" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_STR</text>
+<rect x="633" y="258" width="40" height="42" fill="#fff3cc" stroke="none"/>
+<line x1="633" y1="260" x2="633" y2="298" stroke="#5580bb" stroke-width="1.3"/>
+<text x="653" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">12</text>
+<rect x="673" y="258" width="80" height="42" fill="#fff3cc" stroke="none"/>
+<line x1="673" y1="260" x2="673" y2="298" stroke="#5580bb" stroke-width="1.3"/>
+<text x="713" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">ptr</text>
+<rect x="573" y="258" width="180" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="334" y="500" width="154" height="42" rx="4" fill="#f9d0c8" stroke="none"/>
+<text x="368" y="526" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_REAL</text>
+<rect x="402" y="500" width="52" height="42" fill="#f9d0c8" stroke="none"/>
+<line x1="402" y1="502" x2="402" y2="540" stroke="#5580bb" stroke-width="1.3"/>
+<text x="428" y="526" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">3.14</text>
+<rect x="454" y="500" width="34" height="42" fill="#f9d0c8" stroke="none"/>
+<line x1="454" y1="502" x2="454" y2="540" stroke="#5580bb" stroke-width="1.3"/>
+<text x="471" y="526" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">×</text>
+<rect x="334" y="500" width="154" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="541" y="500" width="192" height="42" rx="4" fill="#ffd6b3" stroke="none"/>
+<text x="585" y="526" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_SYMBOL</text>
+<rect x="629" y="500" width="52" height="42" fill="#ffd6b3" stroke="none"/>
+<line x1="629" y1="502" x2="629" y2="540" stroke="#5580bb" stroke-width="1.3"/>
+<text x="655" y="526" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">hash</text>
+<rect x="681" y="500" width="52" height="42" fill="#ffd6b3" stroke="none"/>
+<line x1="681" y1="502" x2="681" y2="540" stroke="#5580bb" stroke-width="1.3"/>
+<text x="707" y="526" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">cdr</text>
+<rect x="541" y="500" width="192" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<text x="707" y="555" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.8" font-style="italic" fill="#556">(oblist chain)</text>
+<rect x="626" y="602" width="162" height="42" rx="4" fill="#fff3cc" stroke="none"/>
+<text x="670" y="628" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">T_IMMSTR</text>
+<rect x="714" y="602" width="36" height="42" fill="#fff3cc" stroke="none"/>
+<line x1="714" y1="604" x2="714" y2="642" stroke="#5580bb" stroke-width="1.3"/>
+<text x="732" y="628" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">1</text>
+<rect x="750" y="602" width="38" height="42" fill="#fff3cc" stroke="none"/>
+<line x1="750" y1="604" x2="750" y2="642" stroke="#5580bb" stroke-width="1.3"/>
+<text x="769" y="628" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.8" fill="#0d0d1a">"x"</text>
+<rect x="626" y="602" width="162" height="42" rx="4" fill="none" stroke="#1a4a8a" stroke-width="1.8"/>
+<rect x="775" y="263" width="120" height="32" rx="3" fill="#fffde0" stroke="#1a4a8a" stroke-width="1.2" stroke-dasharray="4,2"/>
+<text x="835" y="284" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="18.0" font-weight="normal" fill="#443300">"Hello World!"</text>
+<line x1="254" y1="169" x2="308" y2="169" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="480" y1="169" x2="560" y2="169" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="732" y1="169" x2="800" y2="169" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="480" y1="411" x2="534" y2="411" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="706" y1="411" x2="760" y2="411" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="185,190 185,252 185,252 185,258" fill="none" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="411,190 411,384 394,384 394,390" fill="none" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="429" y="285" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.8" font-style="italic" fill="#556">sublist</text>
+<polyline points="663,190 663,252 663,252 663,258" fill="none" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="411,432 411,494 411,494 411,500" fill="none" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="637,432 637,494 637,494 637,500" fill="none" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="753" y1="279" x2="775" y2="279" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="707,542 707,596 707,596 707,602" fill="none" stroke="#1a4a8a" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="74" y="138" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-style="italic" fill="#336699">top-level list</text>
+<text x="300" y="380" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-style="italic" fill="#336699">sublist  (3.14 x)</text>
+<rect x="985" y="655" width="200" height="138" rx="5" fill="#f8f8f8" stroke="#aaa" stroke-width="1"/>
+<text x="1085" y="673" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#223">Cell Types</text>
+<rect x="995" y="689" width="16" height="13" rx="2" fill="#cce5ff" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="700" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_PAIR  (cons cell)</text>
+<rect x="995" y="709" width="16" height="13" rx="2" fill="#d4f7d4" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="720" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_INT</text>
+<rect x="995" y="729" width="16" height="13" rx="2" fill="#f9d0c8" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="740" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_REAL</text>
+<rect x="995" y="749" width="16" height="13" rx="2" fill="#e8d4f8" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="760" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_BOOL  (#t / #f)</text>
+<rect x="995" y="769" width="16" height="13" rx="2" fill="#fff3cc" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="780" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_STR / T_IMMSTR</text>
+<rect x="995" y="789" width="16" height="13" rx="2" fill="#ffd6b3" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="800" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_SYMBOL</text>
+<rect x="995" y="809" width="16" height="13" rx="2" fill="#e0e0e0" stroke="#1a4a8a" stroke-width="1"/>
+<text x="1017" y="820" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="16.5" font-weight="normal" fill="#223">T_NIL  ( '() )</text>
+</svg>

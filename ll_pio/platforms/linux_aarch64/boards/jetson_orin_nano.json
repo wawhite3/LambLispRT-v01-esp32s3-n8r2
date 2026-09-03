@@ -1,0 +1,13 @@
+{
+  "build": {
+    "mcu": "cortex-a78ae",
+    "extra_flags": "-DLL_JETSON_ORIN_NANO=1 -march=armv8.2-a -mtune=cortex-a78"
+  },
+  "name": "NVIDIA Jetson Orin Nano",
+  "upload": {
+    "maximum_ram_size": 8589934592,
+    "maximum_size": 137438953472
+  },
+  "url": "https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/",
+  "vendor": "NVIDIA"
+}

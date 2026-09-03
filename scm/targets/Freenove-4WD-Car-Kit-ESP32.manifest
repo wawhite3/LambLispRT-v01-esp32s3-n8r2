@@ -1,0 +1,69 @@
+# Freenove 4WD Car Kit ESP32 — runtime + test suite.
+# Partition: 448 KB LittleFS (partitions_4M_ota_trim.csv) = 112 blocks @ 4KB.
+# 4KB-block LittleFS usage: ~46 blocks data + ~6 dir/superblock meta = ~52 blocks; ~60 free.
+# Added (2026-06-27) rxrs-tests (~6 blk), r5rs-pitfall (~3), gc-pause-bench (~1),
+# lamblisp-tests (~13) = ~23 blk -> ~75/112 used, ~37 free. Still fits; verify on flash.
+# Omitted vs S3 devkit: llip-server, rsa, dh_groups, rxrs_ai_overrides (redundant w/ r7rs).
+# Conform = r7rs+rxrs+r5rs-pitfall. Extend = ll-extensions + lamblisp-tests.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Terminal.scm
+file: boards/pins/Freenove-4WD-Car-Kit-ESP32.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+
+# P123 robot stack — cooperative behaviour queue, LED ring service, LLIP framing + signals
+core/Behaviors.scm
+core/Leds.scm
+features/llip-frame.scm
+features/llip-signals.scm
+features/llip-executor.scm
+features/llip-reactive.scm
+
+# Serial file tunnel: resident LLIP receiver (host = w3_ai_scripts/llip_tunnel.py)
+features/llip-serial.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+
+# Board-specific init
+boards/Freenove-4WD-Car-Kit-ESP32.scm
+
+# Perf/gcpause bench files only (small).  The correctness tiers (smoke/conform/subsystem/extend)
+# are delivered INCREMENTALLY per-tier by _w3_run_correct_esp32 (stage runtime + that tier's files
+# -> uploadfs -> load), so the ~460KB ll_tests suite is NOT shipped here -- it does not fit the
+# 448KB LittleFS partition all at once.  Only the perf/gcpause bench files (loaded from FS by the
+# perf/gcpause runners) stay resident.
+file: tests/ll_tests/bench-runner.scm   -> ll_tests/bench-runner.scm
+file: tests/ll_tests/benchmarks.scm     -> ll_tests/benchmarks.scm
+file: tests/ll_tests/gc-pause-bench.scm -> ll_tests/gc-pause-bench.scm
+file: tests/ll_tests/pause_bench.scm    -> ll_tests/pause_bench.scm
+file: tests/ll_tests/ncg-fusion-probe.scm -> ll_tests/ncg-fusion-probe.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+runtime-defaults/Settings-Lamb.scm

@@ -1,0 +1,80 @@
+# HISTORICAL NOTE -- a GC reproduction case that this FS NO LONGER CONTAINS.
+# Until P139 (faec5f4, "unify typed numeric arrays onto one array-* surface") this was the only
+# default FS staging ndarray.scm and tvec.scm.  Those read numeric VECTOR LITERALS heavily at load,
+# and car/cdr ALLOCATE for packed immediates (P70/P76), so a vector being filled is exactly where an
+# unrooted aggregate gets swept mid-fill (B43, fixed 2026-08-25 in 474e779 list_to_vector).
+# Measured 2026-08-25: the 08-04 cuda package binary segfaulted 10/10 during STARTUP on that old
+# filesystem, while the same binary on the x86 FS ran 0/10 -- neither the old binary nor that FS
+# reproduced it alone.  The rebuilt package is 0/10.
+# WHAT IS TRUE NOW: ndarray.scm and tvec.scm no longer exist (superseded by array.scm, which every
+# target stages), and this FS is file-for-file identical to the x86 one -- so it is NOT a canary any
+# more, and testing a rooting change here buys nothing over testing on x86.  The reproduction
+# survives only in bench_results/backup and the pre-rebuild package.  If you need that stress path
+# again, load numeric vector literals explicitly rather than expecting this manifest to do it.
+# x86 startup proves very little; this one exercises the failing path on every boot.
+# linux_x86_64 — full interactive + dev + test environment.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/linux.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+
+# R5RS/R7RS overrides (full set including syntax-rules)
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_syntax_rules.scm
+
+# Optional features
+features/rxrs_rational.scm
+features/rxrs_complex.scm
+features/rsa.scm
+features/dh_groups.scm
+features/csv.scm
+features/Cuda.scm
+features/Neopixel.scm
+
+# Dev tools
+tools/llip-client.scm
+tools/llip-server.scm
+tools/test-framework.scm
+tools/ncg-tests.scm
+tools/ncg_iota_bench.scm
+
+# Demos
+demos/demo-sandbox.scm
+demos/demo-supervisor.scm
+demos/demo-telemetry.scm
+demos/Music.scm
+demos/Personality.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+runtime-defaults/Settings-Lamb.scm
+
+# Test suite
+dir: tests/ll_tests -> ll_tests
