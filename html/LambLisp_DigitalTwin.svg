@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430">
+<rect width="1000" height="430" fill="#ffffff"/>
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#00468c"/>
+  </marker>
+  <marker id="arro" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#cc8800"/>
+  </marker>
+</defs>
+
+<!-- Title -->
+<text x="500" y="32" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#00468c">LambLisp Digital Twin</text>
+
+<!-- ═══════════════════════════════════════
+     Physical Board (left)  x=25 y=55 w=220 h=330
+     ═══════════════════════════════════════ -->
+<rect x="25" y="55" width="220" height="330" rx="8" fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+<rect x="25" y="55" width="220" height="28" rx="8" fill="#00468c"/>
+<rect x="25" y="77" width="220" height="6"  fill="#00468c"/>
+<text x="135" y="73" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Physical Board</text>
+<text x="135" y="100" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="13" fill="#0d1a2e">ESP32-S3</text>
+
+<text x="42" y="124" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">● control-loop (10 ms)</text>
+<text x="42" y="143" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">● motor-pid</text>
+<text x="42" y="162" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">● get-sonar → 42 cm</text>
+<text x="42" y="181" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">● get-heading → 1.2 rad</text>
+<text x="42" y="200" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">● get-battery → 78%</text>
+<text x="42" y="219" font-family="Courier New, Courier, monospace" font-size="12" fill="#0d1a2e">● loop-elapsed-ms → 8</text>
+
+<line x1="38" y1="232" x2="232" y2="232" stroke="#8899aa" stroke-width="0.8"/>
+<text x="135" y="252" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">llfsp-server running</text>
+<text x="135" y="269" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">on-board control loop</text>
+<text x="135" y="286" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">unchanged — no twin</text>
+<text x="135" y="303" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">awareness required</text>
+
+<!-- ═══════════════════════════════════════
+     LLFSP arrows  x=250..390
+     ═══════════════════════════════════════ -->
+<!-- Telemetry → -->
+<line x1="250" y1="165" x2="388" y2="165" stroke="#00468c" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="319" y="158" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#00468c">telemetry</text>
+<text x="319" y="180" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#8899aa">llfsp-eval</text>
+
+<!-- Deploy ← -->
+<line x1="388" y1="252" x2="250" y2="252" stroke="#cc8800" stroke-width="1.8" marker-end="url(#arro)"/>
+<text x="319" y="245" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#cc8800">deploy</text>
+<text x="319" y="267" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#8899aa">llfsp-upload + load</text>
+
+<rect x="276" y="300" width="86" height="22" rx="4" fill="#f0f5ff" stroke="#8899aa" stroke-width="1"/>
+<text x="319" y="315" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#00468c">LLFSP / TCP</text>
+
+<!-- ═══════════════════════════════════════
+     Digital Twin (right)  x=395 y=55 w=578 h=330
+     ═══════════════════════════════════════ -->
+<rect x="395" y="55" width="578" height="330" rx="8" fill="#eef4ff" stroke="#3366aa" stroke-width="2"/>
+<rect x="395" y="55" width="578" height="28" rx="8" fill="#3366aa"/>
+<rect x="395" y="77" width="578" height="6"  fill="#3366aa"/>
+<text x="684" y="73" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Digital Twin</text>
+<text x="684" y="100" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#334466">Linux / Jetson — Scheme environment mirrors the board</text>
+
+<!-- Sub-box: State Mirror  x=410 y=112 w=262 h=90 -->
+<rect x="410" y="112" width="262" height="90" rx="5" fill="#d0e0ff" stroke="#3366aa" stroke-width="1.3"/>
+<text x="541" y="130" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a3080">State Mirror</text>
+<text x="424" y="149" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">speed=0.5  heading=1.2</text>
+<text x="424" y="165" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">battery=78  sonar=42</text>
+<text x="424" y="181" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">loop-ms=8</text>
+
+<!-- Sub-box: Kinematic Model  x=682 y=112 w=278 h=90 -->
+<rect x="682" y="112" width="278" height="90" rx="5" fill="#d0e0ff" stroke="#3366aa" stroke-width="1.3"/>
+<text x="821" y="130" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a3080">Kinematic Model</text>
+<text x="696" y="149" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">twin-predict-position dt</text>
+<text x="696" y="165" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">twin-forecast steps</text>
+<text x="696" y="181" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">twin-simulate-fault type</text>
+
+<!-- Sub-box: Anomaly Log  x=410 y=212 w=262 h=90 -->
+<rect x="410" y="212" width="262" height="90" rx="5" fill="#d0e0ff" stroke="#3366aa" stroke-width="1.3"/>
+<text x="541" y="230" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a3080">Anomaly Log</text>
+<text x="424" y="249" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">rolling 200-tick window</text>
+<text x="424" y="265" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">freeze on anomaly</text>
+<text x="424" y="281" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">replay offline</text>
+
+<!-- Sub-box: Validator  x=682 y=212 w=278 h=90 -->
+<rect x="682" y="212" width="278" height="90" rx="5" fill="#fff0d0" stroke="#cc8800" stroke-width="1.3"/>
+<text x="821" y="230" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#884400">Validator</text>
+<text x="696" y="249" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">run candidate on model</text>
+<text x="696" y="265" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">compare N-step trajectory</text>
+<text x="696" y="281" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e">deploy only if pass ✓</text>
+
+<!-- Footer -->
+<text x="684" y="330" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">same llfsp-eval / llfsp-upload API as supervisory control</text>
+<text x="684" y="348" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#556677">validate-candidate! gates every hot-reload</text>
+<text x="684" y="366" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">board code unchanged — twin awareness not required</text>
+
+</svg>

@@ -1,0 +1,13 @@
+{
+  "build": {
+    "mcu": "x86_64",
+    "extra_flags": "-DLL_WINDOWS=1 -DLL_AMD64=1 -DLL_X86_64=1"
+  },
+  "name": "Windows x64 (MinGW-w64)",
+  "upload": {
+    "maximum_ram_size": 8589934592,
+    "maximum_size": 137438953472
+  },
+  "url": "https://www.mingw-w64.org/",
+  "vendor": "MinGW-w64"
+}

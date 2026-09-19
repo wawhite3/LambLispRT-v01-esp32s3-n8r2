@@ -1,0 +1,25 @@
+# =============================================================================================
+# NOT IN USE -- NOTHING BUILDS WITH THIS TABLE.  Verified 2026-09-15: no platformio.ini env and no
+# board JSON references `partitions_4M_ota_trim.csv`.  The 4WD, its last consumer, moved to
+# `partitions_4M_ota.csv` (the llloader layout) in 7d90224 on 2026-09-13.
+#
+# IT IS KEPT ONLY FOR HISTORY, AND IT IS A TRAP.  The numbers below -- app0/app1 at 1792 KB,
+# storage at 448 KB -- are still cited by B65 in the bug registry, and reading them as current
+# produces two wrong conclusions that were both actually reached on 2026-09-15: that the 4WD
+# firmware sits at 99.2% of its app slot (it is at 75.1% of ota_0), and that B65's third test file
+# cannot fit (it does).  A dead file that still answers questions is worse than a missing one.
+#
+# THE LIVE TABLE FOR EVERY 4 MB TARGET IS `partitions_4M_ota.csv`.  Take the geometry from
+# `board_build.partitions` in the env you are building, never from a filename that looks right.
+# =============================================================================================
+# partitions_4M_ota_trim.csv -- 4MB flash, OTA preserved, expanded LittleFS.
+# P98: shrinks LittleFS 1 MB -> 384 KB, grows app0+app1 by 320 KB each.
+# Overflow fix (post-P98): coredump partition removed; storage grows 384 KB -> 448 KB.
+# app0: 1,792 KB  app1: 1,792 KB  storage: 448 KB  (coredump dropped; unused on 4WD target)
+# Verification: 0x010000 + 0x1C0000 + 0x1C0000 + 0x070000 = 0x400000
+# Name,   Type, SubType, Offset,    Size
+nvs,      data, nvs,     0x009000,  0x005000
+otadata,  data, ota,     0x00e000,  0x002000
+app0,     app,  ota_0,   0x010000,  0x1C0000
+app1,     app,  ota_1,   0x1D0000,  0x1C0000
+storage,  data, spiffs,  0x390000,  0x070000

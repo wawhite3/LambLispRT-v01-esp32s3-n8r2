@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="290" viewBox="0 0 900 290">
+<rect width="900" height="290" fill="#ffffff"/>
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#00468c"/>
+  </marker>
+  <marker id="arro" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#cc8800"/>
+  </marker>
+</defs>
+
+<!-- Title -->
+<text x="450" y="28" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" fill="#00468c">Autonomous Floor Mapping — Three-Tier Architecture</text>
+
+<!-- ── Car box ────────────────────────── -->
+<rect x="18" y="50" width="230" height="218" rx="8" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<rect x="18" y="50" width="230" height="30" rx="8" fill="#00468c"/>
+<rect x="18" y="70"  width="230" height="10"  fill="#00468c"/>
+<text x="133" y="70" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">Car — ESP32 LX6  240 MHz</text>
+<text x="133" y="100" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#334455">llip-server on-board</text>
+<line x1="30" y1="108" x2="236" y2="108" stroke="#8899aa" stroke-width="0.8"/>
+<text x="30" y="126" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; sonar-read-cm  (10 ms loop)</text>
+<text x="30" y="144" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; robot-move! / robot-turn!</text>
+<text x="30" y="162" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; map-record-reading!</text>
+<text x="30" y="180" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; waypoint queue + nav</text>
+<text x="30" y="198" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; bee-forward! / bee-run!</text>
+<text x="30" y="216" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; map-get / bee-path-get</text>
+<text x="30" y="250" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#556677">real-time hard deadline</text>
+<text x="30" y="264" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#556677">SPIFFS local storage only</text>
+
+<!-- ── Jetson box ─────────────────────── -->
+<rect x="335" y="50" width="230" height="218" rx="8" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<rect x="335" y="50" width="230" height="30" rx="8" fill="#00468c"/>
+<rect x="335" y="70"  width="230" height="10"  fill="#00468c"/>
+<text x="450" y="70" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">Jetson Orin Nano</text>
+<text x="450" y="100" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#334455">llip-client (car + cloud)</text>
+<line x1="347" y1="108" x2="553" y2="108" stroke="#8899aa" stroke-width="0.8"/>
+<text x="347" y="126" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; mission orchestration</text>
+<text x="347" y="144" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; waypoint injection</text>
+<text x="347" y="162" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; digital twin sync (500ms)</text>
+<text x="347" y="180" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; map collection + relay</text>
+<text x="347" y="198" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; live telemetry display</text>
+<text x="347" y="250" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#556677">bridges car and cloud</text>
+<text x="347" y="264" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#556677">buffers maps if link drops</text>
+
+<!-- ── Cloud box ──────────────────────── -->
+<rect x="652" y="50" width="230" height="218" rx="8" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<rect x="652" y="50" width="230" height="30" rx="8" fill="#00468c"/>
+<rect x="652" y="70"  width="230" height="10"  fill="#00468c"/>
+<text x="767" y="70" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff">Cloud Server (Linux)</text>
+<text x="767" y="100" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#334455">llip-server exposed</text>
+<line x1="664" y1="108" x2="870" y2="108" stroke="#8899aa" stroke-width="0.8"/>
+<text x="664" y="126" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; boustrophedon-plan</text>
+<text x="664" y="144" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; bee-next-heading</text>
+<text x="664" y="162" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; map-store!</text>
+<text x="664" y="180" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; map-render-ascii</text>
+<text x="664" y="198" font-family="Courier New, monospace" font-size="11" fill="#0d1a2e">&#x25cf; global map persistence</text>
+<text x="664" y="250" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#556677">path planning + storage</text>
+<text x="664" y="264" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-style="italic" fill="#556677">serves multiple fleets</text>
+
+<!-- ── LLIP arrows Car ↔ Jetson ─────── -->
+<line x1="249" y1="138" x2="333" y2="138" stroke="#00468c" stroke-width="1.8" marker-end="url(#arr)"/>
+<line x1="333" y1="158" x2="249" y2="158" stroke="#cc8800" stroke-width="1.8" marker-end="url(#arro)"/>
+<text x="291" y="130" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#00468c">LLIP</text>
+<text x="291" y="175" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="9" font-style="italic" fill="#8899aa">llip-eval / llip-upload</text>
+
+<!-- ── LLIP arrows Jetson ↔ Cloud ────── -->
+<line x1="566" y1="138" x2="650" y2="138" stroke="#00468c" stroke-width="1.8" marker-end="url(#arr)"/>
+<line x1="650" y1="158" x2="566" y2="158" stroke="#cc8800" stroke-width="1.8" marker-end="url(#arro)"/>
+<text x="608" y="130" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#00468c">LLIP</text>
+<text x="608" y="175" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="9" font-style="italic" fill="#8899aa">llip-eval</text>
+</svg>

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#00468c"/>
+    </marker>
+    <marker id="arrr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#cc4444"/>
+    </marker>
+    <marker id="arrg" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#2d7a2d"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="520" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="21" font-weight="bold" fill="#00468c">Tail Recursion: Stack Growth vs. Constant Stack</text>
+
+  <!-- Divider -->
+  <line x1="450" y1="55" x2="450" y2="490" stroke="#c8d4e0" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Left header: non-tail -->
+  <rect x="20" y="55" width="410" height="40" rx="6" fill="#cc4444"/>
+  <text x="225" y="81" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="bold" fill="white">Non-tail recursion  ✗</text>
+
+  <!-- Right header: tail -->
+  <rect x="470" y="55" width="410" height="40" rx="6" fill="#2d7a2d"/>
+  <text x="675" y="81" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="bold" fill="white">Tail recursion (trampoline)  ✓</text>
+
+  <!-- Code snippets -->
+  <rect x="25" y="105" width="405" height="72" rx="5" fill="#0d1a2e"/>
+  <text x="42" y="124" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#a0c8ff">(define (sum n acc)</text>
+  <text x="42" y="142" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#a0c8ff">  (if (= n 0) acc</text>
+  <text x="42" y="160" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#cc6666">    (+ n (sum (- n 1) acc))))</text>
+  <text x="42" y="175" font-family="Courier New, Courier, monospace" font-size="11" fill="#8899aa">; result of sum used in addition — NOT tail</text>
+
+  <rect x="470" y="105" width="405" height="72" rx="5" fill="#0d1a2e"/>
+  <text x="487" y="124" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#a0c8ff">(define (sum n acc)</text>
+  <text x="487" y="142" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#a0c8ff">  (if (= n 0) acc</text>
+  <text x="487" y="160" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#66cc66">    (sum (- n 1) (+ acc n))))</text>
+  <text x="487" y="175" font-family="Courier New, Courier, monospace" font-size="11" fill="#8899aa">; sum is last — tail call, acc accumulates</text>
+
+  <!-- Left: growing stack frames -->
+  <text x="225" y="203" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#cc4444" font-weight="bold">Stack grows with each call</text>
+
+  <!-- Stack frames, growing upward (drawn top to bottom, deepening) -->
+  <rect x="100" y="215" width="250" height="32" rx="3" fill="#ffd0d0" stroke="#cc4444" stroke-width="1.5"/>
+  <text x="225" y="236" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(5, 0)  — waiting for +</text>
+
+  <rect x="110" y="250" width="230" height="32" rx="3" fill="#ffb0b0" stroke="#cc4444" stroke-width="1.5"/>
+  <text x="225" y="271" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(4, 0)  — waiting for +</text>
+
+  <rect x="120" y="285" width="210" height="32" rx="3" fill="#ff9090" stroke="#cc4444" stroke-width="1.5"/>
+  <text x="225" y="306" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(3, 0)  — waiting for +</text>
+
+  <rect x="130" y="320" width="190" height="32" rx="3" fill="#ff7070" stroke="#cc4444" stroke-width="2"/>
+  <text x="225" y="341" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="white">sum(2, 0)  — waiting for +</text>
+
+  <rect x="140" y="355" width="170" height="32" rx="3" fill="#cc4444" stroke="#990000" stroke-width="2"/>
+  <text x="225" y="376" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="white">sum(1, 0)  — waiting for +</text>
+
+  <text x="225" y="405" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" fill="#cc4444">⋮</text>
+
+  <!-- Stack overflow warning -->
+  <rect x="80" y="420" width="290" height="44" rx="5" fill="#cc4444"/>
+  <text x="225" y="439" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="white">Stack Overflow for large N</text>
+  <text x="225" y="457" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#ffd0d0">O(N) stack space</text>
+
+  <!-- Right: constant stack -->
+  <text x="675" y="203" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#2d7a2d" font-weight="bold">Single frame reused each iteration</text>
+
+  <!-- One constant frame, shown with iterations -->
+  <rect x="550" y="215" width="250" height="38" rx="3" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="2"/>
+  <text x="675" y="234" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(5, 0)</text>
+  <text x="675" y="250" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">trampoline loop, iter 1</text>
+
+  <!-- Loop arrow -->
+  <path d="M 800 234 Q 840 234 840 290 Q 840 346 800 346" stroke="#2d7a2d" stroke-width="2" fill="none" marker-end="url(#arrg)"/>
+  <text x="848" y="295" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#2d7a2d">loop</text>
+
+  <rect x="550" y="260" width="250" height="38" rx="3" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="1.5"/>
+  <text x="675" y="279" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(4, 5)</text>
+  <text x="675" y="295" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">same frame, updated args</text>
+
+  <rect x="550" y="305" width="250" height="38" rx="3" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="1.5"/>
+  <text x="675" y="324" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(3, 9)</text>
+  <text x="675" y="340" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa">same frame, updated args</text>
+
+  <text x="675" y="368" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" fill="#2d7a2d">⋮</text>
+
+  <rect x="550" y="378" width="250" height="38" rx="3" fill="#c8f0c8" stroke="#2d7a2d" stroke-width="2"/>
+  <text x="675" y="397" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">sum(0, 15)</text>
+  <text x="675" y="413" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#2d7a2d">base case → return 15</text>
+
+  <!-- Works for any N -->
+  <rect x="540" y="430" width="270" height="44" rx="5" fill="#2d7a2d"/>
+  <text x="675" y="449" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="white">Works for any N</text>
+  <text x="675" y="467" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#c8f0c8">O(1) stack space</text>
+
+  <!-- Bottom note -->
+  <text x="450" y="500" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" font-style="italic" fill="#8899aa">LambLisp detects tail calls and converts them to thunks; the trampoline loop runs them without growing the C stack.</text>
+</svg>

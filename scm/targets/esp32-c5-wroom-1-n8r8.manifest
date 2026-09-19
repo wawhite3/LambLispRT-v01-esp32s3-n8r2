@@ -1,0 +1,78 @@
+# esp32-c5-wroom-1-n8r8 -- ESP32-C5-WROOM-1-N8R8, the DELIVERABLE C5 target.
+#
+# B397: this file did not exist, and its absence shipped a broken package.  `deliverable` lives in
+# w3_pio/boards.json and the ship-list lives here, and nothing tied the two together -- so when the
+# C5 was switched to deliverable the only manifests in the tree were the PER-UNIT bench ones
+# (-00, -01), which are not deliverable.  `w3_assemble` therefore produced no data_staged for this
+# env, `w3_make_release_one` warned "release ships WITHOUT a data/ filesystem image" and carried on,
+# and the customer package went out with no embedded filesystem: the board boots with none of its
+# runtime .scm files present.  Measured on the 2026-09-14 03:08 release sweep, where it was the only
+# one of twelve deliverable envs missing a manifest.
+#
+# WHY THIS IS NOT A COPY OF THE -00 BENCH MANIFEST.  It is that list MINUS two lines:
+#     optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+#     optional: runtime-defaults/net-test-ca.pem    -> net-test-ca.pem
+# Those stage the BENCH WiFi credentials and the test CA.  Every other deliverable manifest still
+# carries them and relies on w3_make_release_one deleting them again by name afterwards ([B398],
+# [B399]) -- a denylist that has already been found leaking twice.  A manifest that never stages
+# them cannot be un-stripped by a future edit to the stripper, so this one does not.
+# The per-unit -00/-01 manifests KEEP those lines: a bench board legitimately needs both.
+#
+# Everything below is the -00 ship-list verbatim.  Keep the three in sync where they overlap --
+# if you add a module to -00 and -01, add it here too.
+
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/esp32-c5-wroom-1-n8r8.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Sonar.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/LCD1602.scm
+core/Buzzer.scm
+core/WiFi.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/array.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_continuations.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_library.scm
+rxrs/rxrs_srfi.scm
+
+# Serial file+command tunnel: resident LLIP receiver -- needed AT BOOT to accept pushed files,
+# which is how the ll_tests suite reaches an embedded FS at all (w3_ai_scripts/llip_test_runner.py).
+features/llip-serial.scm
+features/csv.scm
+features/dh_groups.scm
+features/rsa.scm
+features/Neopixel.scm
+
+tools/test-framework.scm
+tools/llip-server.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+runtime-defaults/Settings-Lamb.scm
+
+# Test suite -- the same lean embedded pattern as the S3 manifests: bench + the NCG fusion probe
+# ride the FS image; the correctness tiers are pushed incrementally over LLIP.
+file: tests/ll_tests/bench-runner.scm     -> ll_tests/bench-runner.scm
+file: tests/ll_tests/benchmarks.scm       -> ll_tests/benchmarks.scm
+file: tests/ll_tests/bignum-hw-probe.scm  -> ll_tests/bignum-hw-probe.scm
+file: tests/ll_tests/ncg-fusion-probe.scm -> ll_tests/ncg-fusion-probe.scm
+file: tests/ll_tests/gc-pause-bench.scm   -> ll_tests/gc-pause-bench.scm
+file: tests/ll_tests/pause_bench.scm      -> ll_tests/pause_bench.scm

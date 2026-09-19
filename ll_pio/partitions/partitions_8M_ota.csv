@@ -1,0 +1,40 @@
+# ESP32-S3 8 MB -- streaming-loader layout (OTA).
+# Tier1 factory=llloader (trusted C recovery root) / Tier2 ota_0=LambLisp VM / Tier3 storage=LittleFS.
+# NOTE: staged for the 8 MB migration; NOT yet wired to any board (n8r2/s3-eye still use partitions_8M.csv).
+#
+# REBUILT 2026-09-13.  This table previously carried TWO problems, and the second was mine.
+#
+# (1) factory WAS 0xB0000 (704 KB) -- the ORIGINAL size, from when the loader was designed as a
+#     "~144 KB skeleton", never revisited here.  The trusted root has since taken on WiFi + lwIP
+#     (~0.5 MB) AND a BLE/NimBLE console (~0.2 MB).  partitions_4M_ota.csv records that growth and
+#     was updated; this file was not.  The measured loaders are 144% of 704 KB --
+#         classic ESP32  1,036,080 B = 143.7%    ESP32-S3  1,064,475 B = 147.7%
+#     Wired up as it stood, the first `w3 make flash_loader` would have written 1,036,080 bytes at
+#     0x10000 into a 720,896-byte slot, running into ota_0 at 0xC0000: a truncated recovery root AND
+#     a corrupted VM slot.  Nothing caught it because no env points here -- a correct-looking file
+#     that had never been executed.  At 0x120000 (1152 KB) the loaders are 87.8% / 90.2%, the same
+#     fit the 4 MB table was sized from.
+#
+# (2) ota_1 IS GONE, AND KEEPING IT WAS THE MISTAKE.  This was the only OTA table with an A/B pair,
+#     and the first fix grew factory by taking 448 KB from storage to preserve it -- justified as
+#     "A/B is the point of the 8 MB layout".  THAT IS NOT THIS PROJECT'S DESIGN.  partitions_4M_ota
+#     states it: "Single ota_0 (no ota_1): rollback = re-fetch from the image source, freeing FS
+#     (retires B65)", and partitions_32M_ota repeats it -- the wired loader is single-slot, so a
+#     hot spare it never selects is dead flash AND a table advertising a rollback the firmware
+#     cannot perform.  Dropping ota_1 frees 2 MB, which is why factory and storage BOTH grow here
+#     rather than trading against each other.
+#
+# ota_0 at 3.5 MB is ~2x the largest VM yet linked (the WROVER VM is 1,763,411 B on IDF 5.5.5), the
+# same ratio partitions_32M_ota uses.  storage 3.31 MB is ~12x the largest staged FS in this repo
+# (228-284 KB), which is the headroom an 8 MB part is for.
+#
+# nvs + otadata are the system slots and both are required: otadata is what selects factory vs
+# ota_0 at boot, so a single-slot OTA layout still needs it.
+#
+# Name,   Type, SubType,  Offset,   Size,     Flags
+nvs,      data, nvs,      0x9000,   0x5000,
+otadata,  data, ota,      0xE000,   0x2000,
+factory,  app,  factory,  0x10000,  0x120000,
+ota_0,    app,  ota_0,    0x130000, 0x380000,
+storage,  data, spiffs,   0x4B0000, 0x350000,
+# 0x10000 + 0x120000 + 0x380000 + 0x350000 = 0x800000 (8 MB) OK

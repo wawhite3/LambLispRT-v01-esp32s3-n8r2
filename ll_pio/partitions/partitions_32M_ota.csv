@@ -1,0 +1,31 @@
+# ESP32-S3 32 MB -- streaming-loader layout (OTA), for esp32s3-n32r16-00.
+# Tier1 factory=llloader (C, trusted recovery root) / Tier2 ota_0=LambLisp VM / Tier3 storage=LittleFS.
+#
+# factory IS 0x120000 (1152 KB) AND MUST NOT BE COPIED FROM partitions_8M_ota.csv.  That table
+# still says 0xB0000 (704 KB) and is wired to no board, so nothing has caught it: the built loader
+# is 1,036,080 B, which does NOT FIT in 704 KB.  704 KB was the ORIGINAL size and partitions_4M_ota
+# records why it grew -- the trusted root carries WiFi+lwIP (~0.5 MB) AND a BLE/NimBLE console
+# (~0.2 MB) on top of the skeleton + OTA writer.  0x120000 is the size the loader was MEASURED to
+# fit in (87.8%, 143,568 B spare, ESP-IDF 5.5.5, 2026-09-04).  Size a new table from that
+# measurement, never from the older number that happens to be lying around.
+#
+# SINGLE ota_0, NO ota_1 -- AND THAT IS A DELIBERATE MATCH TO THE LOADER, NOT A SPACE DECISION.
+# At 32 MB an A/B pair costs nothing, so the temptation is to add ota_1 "because we can".  Do not:
+# the wired loader design is single-slot, where rollback is a RE-FETCH from the image source rather
+# than a swap (see partitions_4M_ota.csv, which retires B65 on exactly that basis).  An ota_1 the
+# loader never selects is dead flash AND a false promise to the next reader -- the partition table
+# would advertise instant rollback the firmware cannot perform.  If the loader gains A/B, add it
+# then, in the same commit as the code that uses it.
+#
+# ota_0 at 4 MB is ~2x the largest VM yet linked (the WROVER VM is 1,751,871 B on IDF 5.5.5, and
+# that build is 99.0% of a 1728 KB slot).  The remaining 27.8 MB is storage, which is the entire
+# reason for a 32 MB part: the staged filesystems this repo builds are 168-284 KB, so this is ~100x
+# headroom for on-device Scheme rather than a number chosen to fill the space.
+#
+# Name,   Type, SubType,  Offset,    Size,      Flags
+nvs,      data, nvs,      0x9000,    0x5000,
+otadata,  data, ota,      0xE000,    0x2000,
+factory,  app,  factory,  0x10000,   0x120000,
+ota_0,    app,  ota_0,    0x130000,  0x400000,
+storage,  data, spiffs,   0x530000,  0x1AD0000,
+# 0x10000 + 0x120000 + 0x400000 + 0x1AD0000 = 0x2000000 (32 MB) OK

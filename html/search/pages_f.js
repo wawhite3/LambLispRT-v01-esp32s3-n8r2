@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['handling_0',['Handling',['../index.html#modbus-errors',1,'2.5 Error Handling'],['../index.html#autotoc_md163',1,'Exception Handling']]],
+  ['happens_20at_20startup_1',['What Happens at Startup',['../index.html#startup',1,'']]],
+  ['hardware_2',['ESP32 Hardware',['../index.html#autotoc_md13',1,'']]],
+  ['hardware_3',['Why the compiled tier does not run on embedded hardware',['../index.html#autotoc_md35',1,'']]],
+  ['hardware_20does_20lamblisp_20run_20on_4',['What hardware does LambLisp run on?',['../index.html#autotoc_md168',1,'']]],
+  ['hardware_20setup_5',['2. Hardware Setup',['../index.html#fwd-hw',1,'']]],
+  ['has_20a_20socket_20must_20now_20say_20so_6',['platform. A guard that means &quot;has a socket&quot; must now SAY so.',['../ll__platform__generic_8h.html#autotoc_md206',1,'']]],
+  ['hash_20table_20and_20hashing_20details_7',['Hash table and hashing details',['../index.html#autotoc_md58',1,'']]],
+  ['hash_20table_20sizing_20and_20collisions_8',['Hash table sizing and collisions',['../index.html#autotoc_md59',1,'']]],
+  ['hashing_20details_9',['Hash table and hashing details',['../index.html#autotoc_md58',1,'']]],
+  ['hc_20sr04_10',['Ultrasonic Sonar (HC-SR04)',['../index.html#ultrasonic-sonar-hc-sr04',1,'']]],
+  ['helpers_11',['2.4 Float32 Helpers',['../index.html#modbus-float32',1,'']]],
+  ['hierarchical_20dictionaries_12',['Hierarchical dictionaries',['../index.html#arch-hierdict',1,'']]],
+  ['hierarchical_20dictionaries_13',['hierarchical dictionaries',['../index.html#autotoc_md25',1,'First-class hierarchical dictionaries'],['../index.html#autotoc_md34',1,'Objects are wrappers around &lt;em&gt;hierarchical dictionaries&lt;/em&gt;']]],
+  ['hierarchical_20dictionary_14',['Execution environment is a &lt;em&gt;hierarchical dictionary&lt;/em&gt;',['../index.html#arch-envdict',1,'']]],
+  ['history_20of_20lisp_20and_20scheme_15',['Brief history of Lisp and Scheme',['../index.html#arch-history',1,'']]],
+  ['host_20compatibility_16',['A note on host compatibility',['../index.html#autotoc_md11',1,'']]],
+  ['hot_20reload_17',['Code Lifecycle: Incremental Hot-Reload',['../index.html#arch-lifecycle',1,'']]],
+  ['hot_20reload_20without_20reboot_18',['Hot-Reload Without Reboot',['../index.html#llip-hotreload',1,'']]],
+  ['how_20do_20i_20try_20lamblisp_20right_20now_19',['How do I try LambLisp right now?',['../index.html#autotoc_md166',1,'']]],
+  ['how_20do_20i_20update_20code_20without_20reflashing_20',['How do I update code without reflashing?',['../index.html#autotoc_md172',1,'']]],
+  ['how_20fast_20is_20lamblisp_21',['How fast is LambLisp?',['../index.html#autotoc_md179',1,'']]],
+  ['http_20llm_20layer_20llip_20http_20scm_22',['HTTP / LLM Layer (&lt;span class=&quot;tt&quot;&gt;llip-http.scm&lt;/span&gt;)',['../index.html#llip-http',1,'']]],
+  ['http_20scm_23',['HTTP / LLM Layer (&lt;span class=&quot;tt&quot;&gt;llip-http.scm&lt;/span&gt;)',['../index.html#llip-http',1,'']]],
+  ['hygiene_24',['Hygiene',['../index.html#autotoc_md57',1,'']]]
+];

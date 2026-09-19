@@ -1,0 +1,63 @@
+# Copyright 2026 by Frobenius Norm LLC
+# P178 Ph1 -- lamblisp:runtime.  The host packages, no toolchain.
+#
+# THE BUILD CONTEXT IS ll_lib_staging/, NEVER THE REPO ROOT.  This is the containment gate from
+# P178 sec. 5 and it is the whole reason this file lives here rather than at the top of the tree:
+# a `COPY . /app` run from the repo root would ship the entire internal tree -- w3_ai_exch/ with
+# every proposal and bug registry, w3_ai_scripts/, ll_comparables/, the lot.  The published repos
+# are the ONLY legitimate source of image content, because they are the only thing that has been
+# through w3_make_release_one's stripping rules.  w3_make_container enforces the context; do not
+# build this file by hand from somewhere else.
+#
+# BASE IS DELIBERATELY OLD.  debian:bookworm-slim is glibc 2.36.  Our floor is 2.34 (RHEL 9), so
+# building on bookworm proves at image-build time that the packaged binary starts on a distro
+# older than the one that compiled it -- which is exactly the B274 class of defect, and exactly
+# what P178 sec. E3 asks for.  Do not "modernise" this to trixie or noble to quiet a warning:
+# a newer base silently removes the check.
+FROM debian:bookworm-slim
+
+# Which package to install.  Overridden by w3_make_container for the aarch64 build.
+ARG PKG=LambLispRT-v01-linux_x86_64
+
+# libgpiod2  -- linux_x86_64 and linux_aarch64 link against it (boards.json `gpiod` feature).
+# python3    -- tools/llip is a #!/usr/bin/env python3 script with no third-party imports.
+# ca-certificates -- so the PDF/html links in the manual resolve if the user curls anything.
+# NOTHING ELSE.  No compiler, no PlatformIO, no doxygen: the docs in the package are ALREADY BUILT
+# (P178 amendment sec. B), and a toolchain here would make this the 6 GB image instead of the small
+# one people pull to try the language.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libgpiod2 python3 ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+COPY ${PKG}/ /opt/lamblisp/
+
+# The binary resolves data/setup.scm by RELATIVE path, so the working directory is load-bearing,
+# not cosmetic.  Same constraint the Windows chapter documents.
+WORKDIR /opt/lamblisp
+RUN chmod +x /opt/lamblisp/LambLisp.bin /opt/lamblisp/tools/llip 2>/dev/null || true
+
+# PROVENANCE (P178 sec. 6): the image must not be able to drift from the package it was cut from.
+# BUILD-INFO carries the source commit; surfacing it as a label means `docker inspect` answers
+# "which commit is this customer running?" without unpacking anything.
+ARG LL_COMMIT=unknown
+ARG LL_PKG_NAME=unknown
+LABEL org.opencontainers.image.title="LambLisp runtime" \
+      org.opencontainers.image.description="Real-time R5RS/R7RS Scheme for embedded systems -- host runtime, no toolchain" \
+      org.opencontainers.image.vendor="Frobenius Norm LLC" \
+      org.opencontainers.image.revision="${LL_COMMIT}" \
+      com.frobeniusnorm.lamblisp.package="${LL_PKG_NAME}"
+
+# Boots straight to LL=>.  `docker run --rm -it <image>` is the quick start.
+#
+# THE RELATIVE PATH IS LOAD-BEARING AND MUST STAY PAIRED WITH THE WORKDIR ABOVE.  LambLisp resolves
+# data/setup.scm relative to the working directory, so the image has to START in /opt/lamblisp.
+# Writing this as an absolute /opt/lamblisp/LambLisp.bin would look tidier and would let the
+# container start under `-w /somewhere`, but it would start into a VM with no standard library --
+# trading a loud failure for a quiet one.
+#
+# CONSEQUENCE FOR USERS, and it is documented in the manual's container chapter: `docker run -w
+# /work` does not work.  It overrides the WORKDIR, so this CMD resolves to /work/LambLisp.bin and
+# the container dies before LambLisp runs, with a runc "no such file or directory" that mentions
+# neither Scheme nor the working directory.  The supported way to use your own files is to mount
+# them and load by absolute path (`(load "/work/prog.scm")`), which needs no -w at all.
+CMD ["./LambLisp.bin"]

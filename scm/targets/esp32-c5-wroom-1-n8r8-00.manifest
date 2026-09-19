@@ -1,0 +1,96 @@
+# esp32-c5-wroom-1-n8r8-00 -- ESP32-C5-WROOM-1-N8R8, physical unit 00 (MAC 10:bd:a3:e0:7f:3c).
+#
+# ONE OF TWO IDENTICAL C5 UNITS.  This manifest and esp32-c5-wroom-1-n8r8-01.manifest are the same
+# ship-list; they are separate files only because the ENV is per-unit, and the env is per-unit so a
+# flash and a result bind to ONE PHYSICAL BOARD.  Keep the two in sync -- if you change one, change
+# the other, the same way the three esp32s3-n8r2*.manifest files are kept identical.
+#
+# HARDWARE IS IN HAND (arrived 2026-09-09).  The header this file inherited said
+# "hardware ON ORDER" and "THIS SHIP-LIST HAS NEVER BEEN BOOTED", and went on to describe a C6
+# devkit -- it had been cloned from esp32-c6-devkitc-1 and never re-based.  Two of its warnings were
+# already false when read on 2026-09-11 and are corrected here rather than left to mislead:
+#   * PIN MAP: it warned that `boards/pins/linux.scm` (the no-hardware STUB) was staged as Pins.scm.
+#     It is not, and has not been since 2026-09-09 -- this manifest stages the real C5 pin map,
+#     boards/pins/esp32-c5-wroom-1-n8r8.scm, read from Espressif's own esp32c5 Arduino variant.
+#     That was B336.
+#   * FILESYSTEM SIZE: it warned of partitions_4M.csv "inherited from flash_mb=4".  This target is
+#     flash_mb=8 and takes the 8 MB partition table, so the WROVER's sectioned-test problem (suite
+#     does not fit the FS at once) does not obviously apply.  Re-measure before assuming either way.
+#
+# MEMORY IS MEASURED, NOT INFERRED.  This unit was flashed on 2026-09-11 and printed its own
+# report: `PSRAM free: 7917236 / 8388608`, `Flash size: 8192K` -- 8 MB of each, and the sibling
+# unit reports the identical total.  That measurement is why this env is named N8R8: it was briefly
+# named `-n8r4-` earlier the same day, from the module part number, before any board had been read.
+# THE BOARD LINE IS `w3_board-esp32c5-n8r8`, a w3-local board type, because the platform ships no
+# N8R8 definition and N8R4/N8R8 are different board types.  It was briefly pointed at the stock
+# `esp32-c5-devkitc1-n8r4` on 2026-09-11 and reverted: that builds identical bytes -- PSRAM size is
+# not expressible in a board JSON, ESP-IDF probes the chip at boot (B338) -- but it misnames the
+# hardware wherever the board id is read or logged.  Do not re-make that swap.
+# partitions_8M.csv is the right table and the flash is genuinely 8 MB.
+#
+# STILL TRUE AND STILL UNMEASURED: nothing in this list has been observed RUNNING on a C5.  The
+# board arrived only days ago and P173 Phase 0 has not been executed.  Treat the module list as a
+# starting point, not as a measurement.
+#
+# The module list mirrors the S3/WROVER core set because setup.scm loads most of these
+# UNCONDITIONALLY (ESP32.scm, WiFi.scm, WS2812.scm, LightSensor.scm ...): omitting one does not
+# make it optional, it makes the load fail.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/esp32-c5-wroom-1-n8r8.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Sonar.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/LCD1602.scm
+core/Buzzer.scm
+core/WiFi.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/array.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_continuations.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_library.scm
+rxrs/rxrs_srfi.scm
+
+# Serial file+command tunnel: resident LLIP receiver -- needed AT BOOT to accept pushed files,
+# which is how the ll_tests suite reaches an embedded FS at all (w3_ai_scripts/llip_test_runner.py).
+features/llip-serial.scm
+features/csv.scm
+features/dh_groups.scm
+features/rsa.scm
+features/Neopixel.scm
+
+tools/test-framework.scm
+tools/llip-server.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+runtime-defaults/Settings-Lamb.scm
+
+# Test suite -- the same lean embedded pattern as the S3 manifests: bench + the NCG fusion probe
+# ride the FS image; the correctness tiers are pushed incrementally over LLIP.
+file: tests/ll_tests/bench-runner.scm     -> ll_tests/bench-runner.scm
+file: tests/ll_tests/benchmarks.scm       -> ll_tests/benchmarks.scm
+file: tests/ll_tests/bignum-hw-probe.scm  -> ll_tests/bignum-hw-probe.scm
+file: tests/ll_tests/ncg-fusion-probe.scm -> ll_tests/ncg-fusion-probe.scm
+file: tests/ll_tests/gc-pause-bench.scm   -> ll_tests/gc-pause-bench.scm
+file: tests/ll_tests/pause_bench.scm      -> ll_tests/pause_bench.scm
