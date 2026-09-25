@@ -1,0 +1,17 @@
+# LambLisp release provenance
+env:            esp32s3-n8r2
+git_commit:     578db46361295e01d7857265e5ec3b5cfc60b7bc
+git_describe:   fs-esp32s3-aitrip-480x480-20260924_171806-23-g578db463
+git_branch:     HEAD
+git_origin:     https://github.com/wawhite3/Lamb-v01.git
+tree_state:     clean -- this binary is reproducible from the commit above
+pushed_to_origin: 0 commit(s) ahead of origin/master
+build_utc:      2026-09-25 00:45:56 UTC
+build_host:     fisher
+build_stamp:    W3_SYSTEM_VERSION "1.01.1790296521"
+feature_flags:  -DLL_BOARD_NAME='"esp32s3-n8r2"' -DLL_ESP_ARDUINO=1 -DLL_COMMONIO=1 -DLL_I2C=1 -DLL_LCD1602=1 -DLL_MODBUS=1 -DLL_PROFIBUS=1 -DLL_PCA9685=1 -DLL_SONAR=1 -DLL_LITTLEFS=1 -DLL_WIFI=1 -DLL_WIRE=1 -DLL_WS2812=1 -DLL_BIGNUM=1 -DLL_RATIONAL=1 -DLL_COMPLEX=1 -DLL_ESP32=1 -DLL_XTENSA=1 -DLL_ESP32S3=1 -DLL_ESP32S3_N8R2=1 
+toolchain:      gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+manual_source:  /home/sir/src/release/Lamb-v01/doc/LambLisp.pdf
+manual_built_utc: 2026-09-24 20:44:39 UTC
+demo_source:    /home/sir/src/release/Lamb-v01/.pio/build-s92fedd71/wasm32_browser
+demo_built_utc: 2026-09-25 00:35:19 UTC

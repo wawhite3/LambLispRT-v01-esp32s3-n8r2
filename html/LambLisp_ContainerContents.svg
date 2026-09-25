@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500">
+<rect width="960" height="500" fill="#ffffff"/>
+<text x="480" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="bold" font-style="normal" fill="#00468c">ghcr.io/lamblisp/lamblisp:runtime — what is inside</text>
+<text x="480" y="56" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">A layered filesystem image. It carries userland only: the kernel is the host’s, shared, never in the image.</text>
+<text x="268" y="88" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="bold" font-style="normal" fill="#228844">IN THE IMAGE</text>
+<rect x="60" y="104" width="416" height="56" rx="8" fill="#f2f6fb" stroke="#8899aa" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="268" y="126" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">host kernel — SHARED, not part of the image</text>
+<text x="268" y="146" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#667788">this is why an image runs on any host glibc or CPU</text>
+<rect x="60" y="172" width="416" height="70" rx="6" fill="#e8f2ff" stroke="#1a6abf" stroke-width="1.8"/>
+<text x="268" y="195" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#00468c">debian:bookworm-slim  (glibc 2.36)</text>
+<text x="268" y="215" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">the base userland. Deliberately OLD — older than the</text>
+<text x="268" y="233" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">build host, so the build proves the binary starts there</text>
+<rect x="60" y="254" width="416" height="52" rx="6" fill="#e8f2ff" stroke="#1a6abf" stroke-width="1.8"/>
+<text x="268" y="277" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#00468c">libgpiod2 · python3 · ca-certificates</text>
+<text x="268" y="297" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">libgpiod for the GPIO backend; python3 for tools/llip</text>
+<rect x="60" y="318" width="416" height="70" rx="6" fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<text x="268" y="341" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#00468c">/opt/lamblisp</text>
+<text x="268" y="361" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">LambLisp.bin · data/ · scm/ · LambLisp.pdf</text>
+<text x="268" y="379" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">html/ · demo/ · BUILD-INFO</text>
+<text x="700" y="88" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="bold" font-style="normal" fill="#cc4444">DELIBERATELY ABSENT</text>
+<rect x="500" y="104" width="400" height="52" rx="6" fill="#fdf6f6" stroke="#cc4444" stroke-width="1.5"/>
+<text x="700" y="127" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#8a2020">a C/C++ compiler</text>
+<text x="700" y="147" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">the binaries are already built</text>
+<rect x="500" y="168" width="400" height="52" rx="6" fill="#fdf6f6" stroke="#cc4444" stroke-width="1.5"/>
+<text x="700" y="191" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#8a2020">PlatformIO + xtensa toolchains</text>
+<text x="700" y="211" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">that is the esp32 image, ~6 GB</text>
+<rect x="500" y="232" width="400" height="52" rx="6" fill="#fdf6f6" stroke="#cc4444" stroke-width="1.5"/>
+<text x="700" y="255" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#8a2020">doxygen · LaTeX</text>
+<text x="700" y="275" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">the manual in the image is already generated</text>
+<rect x="500" y="296" width="400" height="70" rx="6" fill="#fdf6f6" stroke="#cc4444" stroke-width="1.5"/>
+<text x="700" y="319" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" font-style="normal" fill="#8a2020">the internal development tree</text>
+<text x="700" y="339" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">the build context is a staging copy, so the</text>
+<text x="700" y="357" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="normal" font-style="italic" fill="#445566">daemon never even sees it</text>
+<rect x="60" y="404" width="840" height="58" rx="8" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<text x="480" y="428" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" font-style="normal" fill="#8a5a00">MEASURED -- :runtime RESOLVES PER HOST</text>
+<text x="300" y="450" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="17" font-weight="bold" font-style="normal" fill="#8a5a00">279 MB   linux/amd64</text>
+<text x="660" y="450" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="17" font-weight="bold" font-style="normal" fill="#8a5a00">171 MB   linux/arm64</text>
+<text x="480" y="450" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" font-style="normal" fill="#8a5a00">·</text>
+</svg>

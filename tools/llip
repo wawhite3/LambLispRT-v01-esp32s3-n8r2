@@ -1,0 +1,813 @@
+#!/usr/bin/env python3
+# Copyright 2026 by Frobenius Norm LLC 2026-07-02 21:40:00
+# Free for non-commercial use. Commercial use requires a license.
+"""llip -- LambLisp Interaction Protocol command-line client.
+
+LLIP (the LambLisp Interaction Protocol) is LambLisp's single interaction
+protocol: one s-expression-per-line codec that carries the interactive console,
+remote evaluation, and file transfer over a serial line, TCP, or TLS.  It is
+symmetric -- EITHER end may initiate an exchange, as long as the other end is
+listening.  This `llip` command is the host-side client and listener.
+
+  llip --serial PORT   send   SRC [DEST]      push a file into the device
+  llip --serial PORT   recv   REMOTE [LOCAL]  pull a file from the device
+  llip --serial PORT   eval   "FORM"          evaluate a form, stream its output
+  llip --serial PORT   repl                   interactive line REPL over the link
+  llip --serial PORT   listen DIR             serve a device that initiates (files/eval)
+  llip --tcp  HOST:PORT ...                   any verb over TCP instead of serial
+
+Transports:
+  --serial PORT [--baud N]   serial line (default 115200 baud); LLIP supplies its
+                             own stop-and-wait ARQ (Fletcher-16 + sequence number)
+                             because a raw serial line has no transport reliability.
+  --tcp HOST:PORT            TCP; reliability comes from TCP itself, so no app ARQ.
+                             For `listen`, an empty HOST (":PORT") binds all interfaces.
+
+One file, no dependencies beyond pyserial (only for --serial).  Drop it anywhere
+on your PATH.
+"""
+import argparse, os, re, socket, sys, time
+
+BAUD_DEFAULT = 115200
+EVAL_DONE = "===EVAL-DONE==="
+
+
+# ------------------------------------------------------------------ codec ----
+def fletcher16(s):
+    """Fletcher-16 over a string's codepoints -- must match `ck` in the device's
+    LLIP receiver byte-for-byte."""
+    a = b = 0
+    for c in s:
+        a = (a + ord(c)) % 255
+        b = (b + a) % 255
+    return b * 256 + a
+
+
+def esc(s):
+    """Escape a chunk for a LambLisp string literal (the reader un-escapes it)."""
+    out = []
+    for c in s:
+        o = ord(c)
+        if   c == '\\': out.append('\\\\')
+        elif c == '"':  out.append('\\"')
+        elif c == '\n': out.append('\\n')
+        elif c == '\r': out.append('\\r')
+        elif c == '\t': out.append('\\t')
+        elif o < 32:    out.append('\\x%x;' % o)   # LambLisp \xNN; needs the terminator
+        else:           out.append(c)
+    return ''.join(out)
+
+
+def da_frame(seq, chunk):
+    return '(da %d %d "%s")' % (seq, fletcher16(chunk), esc(chunk))
+
+
+# -------------------------------------------------------------- transports ----
+class Transport:
+    """A bidirectional line channel to a LambLisp REPL.  Subclasses provide the
+    byte plumbing; the LLIP frame logic above them is transport-agnostic."""
+    def write_line(self, line):
+        self._write((line + '\n').encode('utf-8'))
+
+    def read_until(self, needles, timeout):
+        buf = ''
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            chunk = self._read().decode('utf-8', errors='replace')
+            if chunk:
+                buf += chunk
+                if any(nd in buf for nd in needles):
+                    return buf
+            else:
+                time.sleep(0.003)
+        return None
+
+    def _wait_idle(self, quiet_for=1.2, cap=25.0):
+        """[B589] Read and discard until the device has said nothing for `quiet_for` seconds.
+        That is the only reliable "boot has finished" signal here: the completion MARKER lands
+        while setup is still compiling, and everything after it assumes a device that is listening
+        rather than talking."""
+        t0 = last = time.time()
+        while time.time() - t0 < cap:
+            if self._read():
+                last = time.time()
+            elif time.time() - last >= quiet_for:
+                return True
+            else:
+                time.sleep(0.05)
+        return False
+
+    def send_slow(self, line, delay=0.0012):
+        """Type a line char-by-char (used before quiet mode is on, when the device
+        still echoes per character)."""
+        for ch in line:
+            self._write(ch.encode('utf-8'))
+            if delay:
+                time.sleep(delay)
+        self._write(b'\n')
+
+    def send_frame(self, frame, timeout=8):
+        self.write_line(frame)
+        r = self.read_until(['ACK', 'NAK', 'DONE', 'BYE'], timeout)
+        #! [B589] Count what the DEVICE sends back per frame.  A ratio in the tens means the REPL
+        #! is echoing -- it reprints the whole accumulated line per character, which is quadratic
+        #! and was 91x the payload on the dev tunnel before [B551] was fixed.  Near 1x means quiet
+        #! is engaged.  "The transfer is slow" is unactionable; this names the fault.
+        globals()['_LLIP_RX'] = globals().get('_LLIP_RX', 0) + len(r or '')
+        globals()['_LLIP_TX'] = globals().get('_LLIP_TX', 0) + len(frame) + 1
+        return r
+
+    # --- to be provided by subclasses ---
+    def _write(self, b):     raise NotImplementedError
+    def _read(self):         raise NotImplementedError
+    def open(self):          pass
+    def close(self):         pass
+    def needs_arq(self):     return False
+
+
+class SerialTransport(Transport):
+    """Serial line to the device's interactive REPL.  Non-blocking reads, so LLIP
+    layers stop-and-wait ARQ on top for reliability."""
+    def __init__(self, port, baud=BAUD_DEFAULT, no_reset=False):
+        self.port, self.baud, self.ser = port, baud, None
+        #! [P132] NO-RESET ATTACH.  See open() for why this is not merely a convenience.
+        self.no_reset = no_reset
+
+    def needs_arq(self):
+        return True
+
+    def open(self):
+        import serial                       # deferred so --tcp never needs pyserial
+        #! [P132] THE NO-RESET PATH MUST NOT TOUCH DTR/RTS AT ALL -- not even to clear them.
+        #!
+        #! AI_RULES.md:2079, measured on this hardware: "opening the CH340 with pyserial
+        #! s.dtr=False/s.rts=False (the 'no-reset' trick) ACTUALLY triggers the ESP32 auto-reset on
+        #! this board; the PLAIN default serial.Serial(port,baud) open does NOT reset (reached 216s
+        #! uptime across many calls)."  So the two lines that look like they PREVENT a reset are what
+        #! CAUSES one, and the first attempt at this flag kept them and duly rebooted the board it was
+        #! meant to leave running -- a marker set beforehand read back GONE.
+        #!
+        #! I had attributed that to the ESP32-S3 rebooting on a CDC open/close.  That was invented; I
+        #! had no source for it, and this entry -- which is measured, and was already in the tree --
+        #! says the opposite and names the bridge, not native USB.  Grep AI_RULES before theorising.
+        if self.no_reset:
+            s = serial.Serial(self.port, self.baud, timeout=0.1)   #!< plain open: no DTR/RTS at all
+        else:
+            s = serial.Serial()
+            s.port = self.port; s.baudrate = self.baud; s.timeout = 0.1
+            s.dtr = False; s.rts = False; s.open()
+            time.sleep(0.2)                  # settle DTR/RTS (else the bridge can glitch GPIO0 low)
+        #! [P132] NO-RESET ATTACH -- the last open item on that proposal.
+        #!
+        #! WHY IT IS NOT A CONVENIENCE.  The default open RESETS the board, which destroys exactly
+        #! the thing you usually want to look at: a run in progress, the heap as it stands, a
+        #! wedged state you are trying to explain.  Every question of the form "what is this board
+        #! DOING right now" was unanswerable, because asking rebooted it -- so the answer was always
+        #! about a freshly booted board and never about the one that had the problem.  It is the same
+        #! defect class as a probe that resets the device it measures (B584's cache note) and as
+        #! reading a file off a board being impossible before `recv` landed: the instrument changed
+        #! the thing it was reading.
+        #!
+        #! WHAT IS GIVEN UP, said plainly: a board mid-output is mid-line, so the first frame can
+        #! land in a partly-written line.  We drain and enter quiet, which fixes the steady state;
+        #! a board in a tight loop that never yields may still not answer, and that is a real
+        #! answer about that board rather than a failure of this flag.
+        if self.no_reset:
+            self.ser = s
+            #! SYNCHRONISE ON A LINE BOUNDARY BEFORE SAYING ANYTHING.  A running board is mid-line
+            #! as often as not -- it logs a `gc_pass` every few hundred ms -- so the `(quiet)` below
+            #! would be APPENDED to a half-written line, read as one malformed form, and raise.  Quiet
+            #! then never engages, echo stays on, and every subsequent frame is echoed back
+            #! character by character: the failure looks like "the board is not answering" when the
+            #! board is answering a question we garbled.  A bare newline closes whatever line is
+            #! open; the drain discards it and the reply to it.
+            s.write(b'\n'); s.flush(); time.sleep(0.4)
+            s.reset_input_buffer()
+        else:
+            s.rts = False; s.dtr = True; time.sleep(0.1); s.dtr = False   # reset pulse -> clean boot
+            self.ser = s
+            # The receiver is defined mid-boot, so wait for boot to complete before probing.
+            if not self.read_until(['All LambLisp files loaded'], 18):
+                self.read_until(['=>'], 5)
+            time.sleep(1.0); s.reset_input_buffer()
+        # Enter quiet mode: line I/O with no per-char echo and no async prompt flood,
+        # so frames are not garbled and literal markers are safe.
+        #! [B589] `(quiet)`, NOT `,quiet`.  The comma form was a local invention and the firmware
+        #! DELETED it on 2026-08-25 (src/ll_vm_term.cpp:318): a leading comma is `unquote` per
+        #! R7RS 4.2.8, so it could only ever work by being intercepted as a raw string before the
+        #! reader, which no longer happens.  That removal note predicted this exact failure --
+        #! "Callers then 'engaged quiet' and silently did not."
+        #!
+        #! WHAT IT COST while it was dead.  Echo stayed ON, so every character the device received
+        #! triggered a full-line `redisplay()` -- 1+2+...+n characters echoed for an n-char frame,
+        #! quadratic.  `sendbin` failed at chunk 0 with `last response: ''` (the device was echoing,
+        #! not receiving), and text transfer ran at **96.7 B/s against a 11,520 B/s line rate --
+        #! 0.84%**, with a 150-char frame taking 1,320 ms where the wire needs 13 ms.
+        #! [B589] WAIT FOR THE DEVICE TO GO IDLE BEFORE SILENCING IT.  `All LambLisp files loaded`
+        #! is NOT the end of boot -- `mop3_compile_environment` and the auto-compile keep printing
+        #! for seconds after it.  A `(quiet)` sent into that window IS evaluated and is then undone
+        #! when boot finishes restoring terminal state, so the client believed it was quiet while
+        #! the device echoed every frame: measured ratio=157.9x, 2.4 MB echoed for a 13.8 KB push,
+        #! which IS the transfer time.
+        #!
+        #! Measured with a debug read at this exact site: after `(quiet)` the device was still
+        #! emitting `[7734] ::mop3_compile_environment() compiled=303` and `[7742] ::setup()
+        #! auto-compile`, and after `(llt)` it logged `[7793] Lamb::loop() Input:  (llt)` -- the
+        #! form arrived and ran, mid-boot, and did not survive.
+        #!
+        #! A RETRY LOOP DOES NOT FIX THIS, and that was my first attempt: `(procedure? llt)` answers
+        #! `#t` while boot is still running, so the loop exits on a confirmation that is true and
+        #! irrelevant.  IDLENESS is the property that matters, so wait for that instead.
+        self._wait_idle()
+        self.send_slow('(quiet)'); time.sleep(0.3); s.reset_input_buffer()
+        #! [B589] AND ACTUALLY ENTER TUNNEL MODE.  `(quiet)` alone was not enough: the dev tunnel
+        #! sent it correctly for months and the device still echoed, at 96.6 B/s.  `(llt)` is the
+        #! receiver's own documented entry point (`(lamb-repl-quiet! #t)`), and sending it is what
+        #! actually silenced the per-character redisplay -- measured on the dev tunnel as
+        #! 1,494,560 B of echo becoming 5,778 B, 142.7 s becoming 12.1 s [B551, e04d24bf].
+        #! This client never mentioned `llt` at all, so it has never once been in tunnel mode --
+        #! which is also the standing suspect for `sendbin` never completing a transfer.
+        #! [B589] Enter tunnel mode.  NOTE: ON THIS CLIENT IT DOES NOT WORK AND I DO NOT KNOW WHY.
+        #! The same two forms silence `llip_tunnel.py` completely (1,494,560 B of echo -> 5,778 B),
+        #! and here the device still echoes at 157.9x.  A confirm-retry loop -- sending `(llt)` up
+        #! to twelve times and requiring a `#t` back from `(display (procedure? llt))` -- changed
+        #! NOTHING, so "the first keystrokes after reset are dropped" is refuted as the cause.
+        #! Something in this client's own transport is re-enabling verbose, or its writes and reads
+        #! are not the same channel.  Left as one send: the retry added cost and bought nothing.
+        self.send_slow('(llt)'); time.sleep(0.3); s.reset_input_buffer()
+
+    def _write(self, b):
+        self.ser.write(b); self.ser.flush()
+
+    def _read(self):
+        return self.ser.read(self.ser.in_waiting or 1)
+
+    def close(self):
+        if self.ser:
+            try:
+                self.write_line(',verbose')   # restore the interactive console
+            finally:
+                self.ser.close()
+
+
+class TcpTransport(Transport):
+    """TCP line channel.  Reliability is native to TCP, so no app-layer ARQ and no
+    reset/boot/quiet dance -- it connects to a running LLIP TCP server on the device
+    (host-initiated) or accepts one connection (device-initiated `listen`)."""
+    def __init__(self, host, port, listen=False, token=None):
+        self.host, self.port, self.listen, self.sock, self.srv = host, port, listen, None, None
+        self.token = token
+
+    #! THE SERVER AUTHENTICATES AND THIS CLIENT USED TO HAVE NO IDEA.
+    #! `llip-handle-session` in scm/tools/llip-server.scm sends `(hello "llip/1.0")`, waits for
+    #! `(auth TOKEN)`, and ON FAILURE "send nothing, just close".  This client never sent an auth
+    #! message -- the word `token` appeared nowhere in this file -- so every --tcp connection to a
+    #! LambLisp LLIP server sat waiting for a reply while the server sat waiting for auth.
+    #! IT PRESENTS AS A HANG, NOT AS AN ERROR, because a silent close is the server's deliberate
+    #! choice (it must not leak whether the token was merely wrong).  That is correct for
+    #! security and it makes a MISSING CLIENT FEATURE indistinguishable from a dead network, which
+    #! is how this survived: every symptom pointed at the link.
+    #! Found 2026-09-22 pushing a camera frame to the AITRIP panel for [P123] Part G.
+    def _readline(self, deadline):
+        buf = b''
+        while time.time() < deadline:
+            try:
+                c = self.sock.recv(1)
+            except socket.timeout:
+                continue
+            if not c:
+                return None          # peer closed
+            if c == b'\n':
+                return buf
+            buf += c
+        return None
+
+    def _handshake(self):
+        self.sock.settimeout(0.5)
+        deadline = time.time() + 15
+        hello = self._readline(deadline)
+        if hello is None:
+            raise SystemExit('[llip] no (hello) from %s:%d -- is an LLIP server listening there?'
+                             % (self.host, self.port))
+        if b'hello' not in hello:
+            raise SystemExit('[llip] unexpected greeting: %r' % hello[:120])
+        self.sock.sendall(('(auth "%s")\n' % self.token).encode())
+        resp = self._readline(deadline)
+        if resp is None:
+            raise SystemExit('[llip] AUTH REJECTED -- the server closed without replying.\n'
+                             '       That is what a wrong --token looks like: the server sends\n'
+                             '       nothing on failure, by design.  Check the token printed by\n'
+                             '       `w3 push_llip` (default: testtoken).')
+        if b'ok' not in resp:
+            raise SystemExit('[llip] server refused the session: %r' % resp[:120])
+
+    def open(self):
+        if self.listen:
+            self.srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.srv.bind((self.host or '0.0.0.0', self.port))
+            self.srv.listen(1)
+            sys.stderr.write('[llip] listening on %s:%d ...\n' % (self.host or '0.0.0.0', self.port))
+            self.sock, peer = self.srv.accept()
+            sys.stderr.write('[llip] device connected from %s:%d\n' % peer)
+        else:
+            self.sock = socket.create_connection((self.host, self.port), timeout=10)
+            if self.token:
+                self._handshake()
+        self.sock.settimeout(0.1)
+
+    def _write(self, b):
+        self.sock.sendall(b)
+
+    def _read(self):
+        try:
+            return self.sock.recv(4096)
+        except socket.timeout:
+            return b''
+
+    def close(self):
+        for s in (self.sock, self.srv):
+            if s:
+                try: s.close()
+                except OSError: pass
+
+
+# ------------------------------------------------------------ file transfer ----
+def fletcher16_bytes(b):
+    """Fletcher-16 over RAW BYTES -- the `db` frame's checksum.
+
+    NOT interchangeable with fletcher16() above, which hashes a string's CODEPOINTS for the `da`
+    text frame.  The two agree on ASCII and diverge on everything else, and mixing them is B369
+    exactly: the host hashed UTF-8 bytes while the device hashed codepoints, and every non-ASCII
+    file silently failed to push.  `db` is binary, so bytes is the only meaningful unit here."""
+    a = c = 0
+    for x in b:
+        a = (a + x) % 255
+        c = (c + a) % 255
+    return c * 256 + a
+
+
+#! [B551] RETRY PACING -- A BUSY RECEIVER IS A TRANSIENT, SO RIDE IT OUT INSTEAD OF GIVING UP.
+#!
+#! WHAT WENT WRONG WITHOUT THIS.  There is no flow control on this link.  The device writes each
+#! chunk straight to its file port, but a LittleFS write, a GC quantum or a compile pass can stall
+#! its receive loop for longer than the UART FIFO holds -- so bytes are simply dropped.  The ARQ
+#! then did five IMMEDIATE resends, all of which landed inside the same stall and were dropped
+#! the same way, and the push failed.  It presented as a file-SIZE limit (a bigger file is on the
+#! wire longer, so it meets more stalls) and was filed as one; the same file to the same path
+#! went through cleanly the moment the board was quiet.
+#!
+#! SILENCE AND A NAK ARE DIFFERENT FAILURES AND MUST NOT SHARE A DELAY.
+#!   * a NAK means the device HEARD us and is asking again -- it is alive and draining, so resend
+#!     at once; sleeping here would only slow a healthy recovery.
+#!   * SILENCE means nothing came back: the receiver was not listening.  Resending immediately is
+#!     the one thing guaranteed not to work.  Back off, and grow the wait, so the later attempts
+#!     land after a long stall rather than all inside the first one.
+#!
+#! The cap keeps a truly dead link from turning into a multi-minute hang: eight attempts with
+#! this schedule wait ~3.1 s in total, which is far longer than any stall measured on this bench
+#! and still bounded.
+_LLIP_BACKOFF_CAP = 0.8
+
+def _llip_retry_wait(attempt, got_nak):
+    """Seconds to wait before resending. 0 after a NAK; growing after silence."""
+    if got_nak:
+        return 0.0
+    return min(0.05 * (2 ** attempt), _LLIP_BACKOFF_CAP)
+
+
+def send_file_binary(t, src, dest, chunk=1024, retries=8):
+    """Push a file to the device as RAW BYTES using the P132 `db` chunk frame.
+
+    WHY THIS EXISTS ALONGSIDE send_file().  The text path (`da`) carries its payload inside a
+    Scheme string, and a LambLisp string cannot contain a NUL -- writing one does not set a byte,
+    it SHORTENS the object (B317).  So a .bin, a bytevector dump or a JPEG cannot go that way at
+    all, and escaping would not fix it.  `db` puts the bytes straight on the wire after a header
+    line, with no escaping and no base64, so the payload costs exactly its own size.
+
+    THE SEQUENCE PER CHUNK IS: header line, then the raw bytes with NO newline between them and
+    NO newline after.  The device arms on the header and counts exactly LEN bytes; anything this
+    side adds would be counted as payload and corrupt the chunk."""
+    data = open(src, 'rb').read()
+    if 'ACK' not in (t.send_frame('(op "%s")' % dest) or ''):
+        sys.stderr.write('[llip] ERROR: open %s not acknowledged\n' % dest)
+        return False
+
+    seq = retx = 0
+    slept = 0.0
+    for i in range(0, len(data), chunk):
+        piece = data[i:i + chunk]
+        for attempt in range(retries):
+            t.write_line('(db %d %d %d)' % (seq, len(piece), fletcher16_bytes(piece)))
+            t._write(piece)                       #!< raw, unterminated -- see the docstring
+            resp = t.read_until(['ACK', 'NAK'], 20) or ''
+            if 'ACK' in resp:
+                break
+            retx += 1
+            if attempt == retries - 1:
+                sys.stderr.write('[llip] ERROR: chunk %d not acknowledged after %d tries '
+                                 '(last response: %r).  The device was most likely BUSY -- a '
+                                 'flash write, a GC quantum or a compile pass stalls its receive '
+                                 'loop and bytes are dropped [B551].  Let it settle and retry.\n'
+                                 % (seq, retries, resp.strip()))
+                return False
+            w = _llip_retry_wait(attempt, 'NAK' in resp)
+            if w:
+                slept += w
+                time.sleep(w)
+        seq += 1
+
+    done = t.send_frame('(cl)') or ''
+    if 'DONE' not in done:
+        sys.stderr.write('[llip] ERROR: close not acknowledged (%s)\n' % done.strip())
+        return False
+    #! Report the retransmit count even on success: a transfer that needed 40 retries completed,
+    #! but the link is telling you something and a silent success hides it.
+    sys.stderr.write('[llip] sent %d bytes in %d chunk(s), %d retransmit(s)%s\n'
+                     % (len(data), seq, retx,
+                        (', %.2fs waiting for a busy device' % slept) if slept else ''))
+    return True
+
+
+def recv_file(t, remote, local, retries=8):
+    """Pull one file OFF the device using the P132 `sf`/`sd`/`sr`/`sc` frames.  Returns True on a
+    length-and-checksum verified transfer.
+
+    WHY THIS EXISTS: `llip recv` used to exit with "needs the device-side pull primitive
+    (llip-send-file); not present in this firmware yet".  There was no way to read a file off a
+    board, which is why "what settings does this board actually hold?" needed a flash and an
+    inference, and why a truncated push (B585) had to be diagnosed from a 21 ms load time rather
+    than by reading what had arrived.
+
+    THE CHUNKS ARE HEX, mirroring the device.  It doubles the wire bytes, which is irrelevant for a
+    settings file or a log, and it removes two whole problems: nothing needs escaping, and a NUL is
+    just "00" -- a LambLisp string cannot hold one at all (B317), which is why the PUSH needed a
+    separate binary frame.  One path pulls text and binary alike.
+
+    RETRIES USE `sr`, NOT `sd`.  The device advances on `sd`, so re-requesting with `sd` would skip
+    a chunk rather than repeat it; `sr` re-emits the last one without advancing or double-counting.
+    """
+    t.write_line('(sf "%s")' % remote)
+    r = t.read_until(['SF-ERR', 'SF'], 10) or ''
+    if 'SF-ERR' in r:
+        sys.stderr.write('[llip] device refused the pull of %s: %s\n'
+                         % (remote, r.strip().splitlines()[-1] if r.strip() else '?'))
+        return False
+    if 'SF' not in r:
+        sys.stderr.write('[llip] no SF reply from the device for %s\n' % remote)
+        return False
+
+    out = bytearray()
+    exp_seq = 0
+    fc = 0
+    frame = '(sd)'
+    tries = 0
+    while True:
+        t.write_line(frame)
+        r = t.read_until(['SD-EOF', 'SD-ERR', 'SR-ERR', 'SD '], 20) or ''
+        #! READ_UNTIL RETURNS ON FIRST SIGHT OF THE NEEDLE, NOT ON A COMPLETE LINE, and for this
+        #! frame that is the difference between working and never working.  It is the right
+        #! behaviour for the PUSH, whose replies are whole short tokens (ACK / NAK / DONE); an
+        #! `SD ` reply is a 6-character header followed by up to 256 characters of hex, so the
+        #! first read hands back a line cut at an arbitrary point.  The checksum of a partial
+        #! chunk never matches, so every chunk failed, retried, and failed identically -- which
+        #! presented as "the device is not answering" when the device had answered correctly and
+        #! completely every time (verified: the board emits SD 0 30021 <256 hex chars>).
+        #! So: having seen the header, keep reading until the line is TERMINATED.
+        if 'SD ' in r and 'SD-EOF' not in r:
+            tail = r.split('SD ', 1)[1]
+            waited = 0.0
+            while '\n' not in tail and waited < 10.0:
+                more = t.read_until(['\n'], 2)
+                if not more:
+                    waited += 2.0
+                    continue
+                r += more
+                tail = r.split('SD ', 1)[1]
+        m_eof = re.search(r'SD-EOF\s+(\d+)\s+(\d+)', r)
+        if m_eof:
+            n_dev, fc_dev = int(m_eof.group(1)), int(m_eof.group(2))
+            t.write_line('(sc)'); t.read_until(['SC-OK'], 5)
+            if len(out) != n_dev or fc != fc_dev:
+                sys.stderr.write('[llip] PULL MISMATCH for %s: got %d bytes fc=%d, '
+                                 'device says %d bytes fc=%d -- NOT writing %s\n'
+                                 % (remote, len(out), fc, n_dev, fc_dev, local))
+                return False
+            with open(local, 'wb') as fh:
+                fh.write(bytes(out))
+            print('[llip] %s -> %s: %d/%d bytes, cksum %d/%d'
+                  % (remote, local, len(out), n_dev, fc, fc_dev))
+            _rx,_tx = globals().get('_LLIP_RX',0), globals().get('_LLIP_TX',0)
+            if _tx: print('[llip] B589 rx=%d B from device, tx=%d B sent, ratio=%.1fx' % (_rx,_tx,_rx/_tx))
+            return True
+        if 'SD-ERR' in r or 'SR-ERR' in r:
+            sys.stderr.write('[llip] device error during pull of %s: %s\n' % (remote, r.strip()))
+            return False
+        m = re.search(r'SD\s+(\d+)\s+(\d+)\s+([0-9a-fA-F]*)', r)
+        if not m or int(m.group(1)) != exp_seq or fletcher16(m.group(3)) != int(m.group(2)):
+            tries += 1
+            if tries > retries:
+                sys.stderr.write('[llip] pull of %s failed at chunk %d after %d retries -- '
+                                 'the partial is NOT written\n' % (remote, exp_seq, retries))
+                t.write_line('(sc)'); t.read_until(['SC-OK'], 5)
+                return False
+            frame = '(sr)'          #!< re-emit the SAME chunk; `sd` would skip it
+            continue
+        out.extend(bytes.fromhex(m.group(3)))
+        fc = (fc + int(m.group(2))) % 65521
+        exp_seq += 1
+        tries = 0
+        frame = '(sd)'
+
+
+def send_file(t, src, dest, chunk=256, retries=8):
+    """Push one file to the device over an open transport.  Returns True on a
+    length + aggregate-checksum verified transfer."""
+    with open(src, 'r', encoding='utf-8') as f:
+        text = f.read()
+    nchars = len(text)
+    if 'ACK' not in (t.send_frame('(op "%s")' % dest) or ''):
+        sys.stderr.write('[llip] ERROR: open %s not acknowledged\n' % dest)
+        return False
+    seq = exp_fc = retx = 0
+    slept = 0.0
+    #! `chunk` IS A BYTE BUDGET, NOT A CODEPOINT COUNT -- and never split a multi-byte character.
+    #! It used to slice text[i:i+chunk] by codepoint, which is a different quantity the moment a
+    #! file contains non-ASCII: 256 codepoints of 3-byte UTF-8 is a ~768-byte payload.  The device
+    #! drops the overflow, the frame arrives truncated, no ACK is emitted, and every retry
+    #! re-truncates identically -- a HARD stop, not a slow transfer.  Measured on a 16 KB file with
+    #! 4,389 non-ASCII bytes: --chunk 256 died at seq 6; 64 pushed clean (B371).  An em-dash in a
+    #! comment is enough to trigger it, and 33% of scm/tests/ll_tests would fail.
+    def _byte_chunks(t, budget):
+        out, cur, n = [], [], 0
+        for ch in t:
+            w = len(ch.encode('utf-8'))
+            if n + w > budget and cur:
+                out.append(''.join(cur)); cur, n = [], 0
+            cur.append(ch); n += w
+        if cur: out.append(''.join(cur))
+        return out
+    for piece in _byte_chunks(text, chunk):
+        frame = da_frame(seq, piece)
+        for attempt in range(retries):
+            ack = t.send_frame(frame)
+            if ack and ('ACK %d' % seq) in ack:
+                break
+            retx += 1
+            #! See _llip_retry_wait: pause only when NOTHING came back.  A NAK means the device is
+            #! alive and asking again, so resending at once is right; silence means it was not
+            #! listening, and an immediate resend lands in the same stall that ate the first one.
+            w = _llip_retry_wait(attempt, bool(ack) and 'NAK' in ack)
+            if w:
+                slept += w
+                time.sleep(w)
+        else:
+            sys.stderr.write('[llip] ERROR: %s seq %d not acknowledged after %d tries '
+                             '(%.2fs of backoff).  The device was most likely BUSY -- a flash '
+                             'write, a GC quantum or a compile pass stalls its receive loop and '
+                             'bytes are dropped [B551].  This is NOT a size limit: let the board '
+                             'settle after a flash and retry.\n' % (dest, seq, retries, slept))
+            return False
+        exp_fc = (exp_fc + fletcher16(piece)) % 65521
+        seq += 1
+    done = t.send_frame('(cl)')
+    rn = rfc = -1
+    if done:
+        import re
+        m = re.search(r'DONE\s+(\d+)\s+(\d+)', done)
+        if m:
+            rn, rfc = int(m.group(1)), int(m.group(2))
+    ok = (rn == nchars and rfc == exp_fc)
+    #! retx IS A HEALTH SIGNAL, NOT TRIVIA.  A transfer that needed retransmissions completed,
+    #! but the link is telling you the next one may not -- so say it loudly enough to be read.
+    sys.stderr.write('[llip] %s: %d/%d chars, cksum %d/%d, retx=%d -> %s%s\n'
+                     % (dest, rn, nchars, rfc, exp_fc, retx, 'OK' if ok else 'MISMATCH',
+                        (' [device was busy: %d retransmit(s), %.2fs backoff]' % (retx, slept))
+                        if retx else ''))
+    _rx,_tx = globals().get('_LLIP_RX',0), globals().get('_LLIP_TX',0)
+    if _tx: sys.stderr.write('[llip] B589 rx=%d B from device, tx=%d B sent, ratio=%.1fx\n' % (_rx,_tx,_rx/_tx))
+    return ok
+
+
+def eval_form(t, form, timeout=600):
+    """Evaluate a form over the link and return everything streamed up to the done marker.
+
+    B303: THE MARKER MUST NOT APPEAR IN THE REQUEST.  This used to send the marker as a
+    literal -- `(display "===EVAL-DONE===")` -- and then read_until() for that same string.
+    The device ECHOES the request, so the FIRST match was the echo of our own line, not the
+    form's output: every eval returned the request back and `(display (+ 1 2))` returned
+    nothing at all.  The docstring claimed "safe because quiet mode has no echo to trip on",
+    which was the assumption that made it wrong -- the echo is the transport's, not the
+    REPL's, and quiet mode does not remove it.
+
+    Split the literal so the contiguous marker never occurs in what we transmit: the request
+    carries `"===EVAL" "-DONE==="`, the OUTPUT carries the joined string, and the first match
+    in the stream is therefore the real one.  Nothing downstream changes -- read_until and the
+    split still look for the whole marker.
+    """
+    half = len(EVAL_DONE) // 2
+    a, b = EVAL_DONE[:half], EVAL_DONE[half:]
+    assert a + b == EVAL_DONE and EVAL_DONE not in ('(string-append "%s" "%s")' % (a, b))
+    t.write_line('(begin %s(newline)(display (string-append "%s" "%s")))' % (form, a, b))
+    out = t.read_until([EVAL_DONE], timeout) or ''
+    return out.split(EVAL_DONE)[0].rstrip('\n')
+
+
+def repl(t):
+    """Relay an interactive line REPL: local stdin lines out, device output in."""
+    sys.stderr.write('[llip] interactive REPL -- Ctrl-D to exit\n')
+    import threading
+    stop = threading.Event()
+
+    def pump():
+        while not stop.is_set():
+            chunk = t.read_until(['\n'], 0.2)
+            if chunk:
+                sys.stdout.write(chunk); sys.stdout.flush()
+    th = threading.Thread(target=pump, daemon=True); th.start()
+    try:
+        for line in sys.stdin:
+            t.write_line(line.rstrip('\n'))
+    except KeyboardInterrupt:
+        pass
+    finally:
+        stop.set()
+
+
+# ------------------------------------------------ device-initiated listener ----
+def listen_serve(t, dest_dir):
+    """Serve a device that INITIATES the exchange (the symmetric direction).  This
+    host acts as the LLIP frame receiver -- the mirror of the device's op/da/cl
+    handler -- so a device can push files here, or drive eval, whenever it connects.
+    Runs until the peer disconnects or Ctrl-C."""
+    os.makedirs(dest_dir, exist_ok=True)
+    st = {'fp': None, 'name': None, 'n': 0, 'fc': 0, 'xp': 0}
+
+    def reply(line):
+        t.write_line(line)
+
+    sys.stderr.write('[llip] serving device-initiated LLIP into %s/ (Ctrl-C to stop)\n' % dest_dir)
+    try:
+        while True:
+            line = t.read_until(['\n'], 3600)
+            if not line:
+                continue
+            for raw in line.splitlines():
+                s = raw.strip()
+                if not s:
+                    continue
+                if s.startswith('(op '):
+                    name = _first_string(s)
+                    st['name'] = os.path.basename(name or 'inbound.dat')
+                    st['fp'] = open(os.path.join(dest_dir, st['name']), 'w', encoding='utf-8')
+                    st['n'] = st['fc'] = st['xp'] = 0
+                    reply('ACK')
+                elif s.startswith('(da '):
+                    sq, cr, data = _parse_da(s)
+                    if cr != fletcher16(data):
+                        reply('NAK %d' % st['xp'])
+                    elif sq == st['xp']:
+                        st['fp'].write(data)
+                        st['n'] += len(data); st['fc'] = (st['fc'] + cr) % 65521; st['xp'] += 1
+                        reply('ACK %d' % sq)
+                    elif sq == st['xp'] - 1:
+                        reply('ACK %d' % sq)
+                    else:
+                        reply('NAK %d' % st['xp'])
+                elif s.startswith('(cl'):
+                    if st['fp']:
+                        st['fp'].close()
+                    sys.stderr.write('[llip] received %s (%d chars)\n' % (st['name'], st['n']))
+                    reply('DONE %d %d' % (st['n'], st['fc']))
+                    st['fp'] = None
+                elif s in ('(en)', '(bye)'):
+                    reply('BYE'); return
+    except KeyboardInterrupt:
+        sys.stderr.write('\n[llip] listener stopped\n')
+
+
+def _first_string(s):
+    a = s.find('"'); b = s.find('"', a + 1)
+    return s[a + 1:b] if a >= 0 and b > a else None
+
+
+def _parse_da(s):
+    """Parse (da SEQ CRC "chunk") -> (seq, crc, unescaped-chunk)."""
+    body = s[s.find('(da') + 3:]
+    q = body.find('"')
+    seq, crc = (int(x) for x in body[:q].split()[:2])
+    lit = body[q + 1:body.rfind('"')]
+    out, i = [], 0
+    while i < len(lit):
+        c = lit[i]
+        if c == '\\' and i + 1 < len(lit):
+            n = lit[i + 1]
+            if   n == 'n': out.append('\n'); i += 2
+            elif n == 'r': out.append('\r'); i += 2
+            elif n == 't': out.append('\t'); i += 2
+            elif n == '\\': out.append('\\'); i += 2
+            elif n == '"': out.append('"'); i += 2
+            elif n == 'x':
+                j = lit.find(';', i)
+                out.append(chr(int(lit[i + 2:j], 16))); i = j + 1
+            else: out.append(n); i += 2
+        else:
+            out.append(c); i += 1
+    return seq, crc, ''.join(out)
+
+
+# --------------------------------------------------------------------- cli ----
+def make_transport(args):
+    if args.tcp:
+        host, _, port = args.tcp.rpartition(':')
+        return TcpTransport(host, int(port), listen=(args.cmd == 'listen'), token=args.token)
+    #! [P132] --no-reset is SERIAL-ONLY by construction: a TCP attach never resets anything, so the
+    #! flag would be meaningless there and accepting it silently would imply otherwise.
+    if not args.serial:
+        auto = _autodetect_serial()
+        if not auto:
+            sys.exit('[llip] no --serial PORT / --tcp HOST:PORT given and none auto-detected')
+        args.serial = auto
+        sys.stderr.write('[llip] using auto-detected serial port %s\n' % auto)
+    return SerialTransport(args.serial, args.baud, no_reset=getattr(args, 'no_reset', False))
+
+
+def _autodetect_serial():
+    import glob
+    cands = sorted(glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*'))
+    return cands[0] if len(cands) == 1 else None
+
+
+def build_parser():
+    p = argparse.ArgumentParser(prog='llip', description='LambLisp Interaction Protocol client.',
+                                formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
+    p.add_argument('--serial', metavar='PORT', help='serial device (e.g. /dev/ttyUSB0)')
+    p.add_argument('--baud', type=int, default=BAUD_DEFAULT, help='serial baud (default %d)' % BAUD_DEFAULT)
+    p.add_argument('--tcp', metavar='HOST:PORT', help='TCP endpoint (empty HOST binds all for listen)')
+    #! Defaulted rather than required: `w3 push_llip` starts the server with this exact token,
+    #! so the common case should not need the flag.  A server started by hand with a different
+    #! secret needs it, and a wrong one now reports AUTH REJECTED instead of hanging.
+    p.add_argument('--token', default='testtoken',
+                   help='shared secret for the (auth ...) handshake on --tcp (default: testtoken)')
+    sub = p.add_subparsers(dest='cmd', required=True)
+    s = sub.add_parser('send', help='push a file to the device'); s.add_argument('src'); s.add_argument('dest', nargs='?')
+    #! [P132] `sendbin` is a SEPARATE VERB, not a flag on `send`.  The two use different wire
+    #! frames (`db` raw bytes vs `da` escaped text) and different checksums (bytes vs
+    #! codepoints), so a mode flag on one verb would make the checksum choice implicit -- which
+    #! is the B369 mismatch waiting to happen again.  Distinct verbs keep the pairing visible.
+    sb = sub.add_parser('sendbin', help='push a file as RAW BYTES (P132 db frame) -- for .bin and anything with NULs')
+    sb.add_argument('src'); sb.add_argument('dest', nargs='?')
+    #! [B565] THESE TWO BELONG TO `sendbin` AS WELL, and for eight months they did not.
+    #! `main()` reads args.chunk / args.retries for BOTH verbs, but the line below attached them
+    #! to `s` only -- so `sendbin` raised AttributeError before reaching its first line of real
+    #! work, in every release package we have shipped.  A verb that dies that early is invisible
+    #! to any test that does not invoke that exact verb, which is why the careful comment above
+    #! about `db` vs `da` frames sat on top of a verb nobody could run.
+    sb.add_argument('--chunk', type=int, default=256); sb.add_argument('--retries', type=int, default=5)
+    r = sub.add_parser('recv', help='pull a file from the device'); r.add_argument('remote'); r.add_argument('local', nargs='?')
+    #! [P132] recv needs its OWN --retries: `--chunk`/`--retries` were added to the SEND parser,
+    #! so `args.retries` did not exist here and the first real pull died with an AttributeError
+    #! AFTER opening the port.  The mock test could not see it -- it called recv_file() directly
+    #! and so exercised the function, not the CLI wiring.
+    r.add_argument('--retries', type=int, default=8,
+                   help='re-request a bad chunk this many times via (sr) before giving up')
+    e = sub.add_parser('eval', help='evaluate a form, stream output'); e.add_argument('form')
+    sub.add_parser('repl', help='interactive line REPL over the link')
+    l = sub.add_parser('listen', help='serve a device that initiates'); l.add_argument('dir', nargs='?', default='.')
+    s.add_argument('--chunk', type=int, default=256); s.add_argument('--retries', type=int, default=5)
+    p.add_argument('--no-reset', action='store_true',
+                   help='[P132] attach to a RUNNING board without resetting it -- serial only. '
+                        'The default open pulses DTR, which reboots the device and destroys the '
+                        'state you were trying to inspect.')
+    e.add_argument('--timeout', type=int, default=600)
+    return p
+
+
+def main():
+    args = build_parser().parse_args()
+    t = make_transport(args)
+    rc = 0
+    try:
+        t.open()
+        if args.cmd == 'send':
+            dest = args.dest or ('/' + os.path.basename(args.src))
+            rc = 0 if send_file(t, args.src, dest, args.chunk, args.retries) else 1
+        elif args.cmd == 'sendbin':
+            dest = args.dest or ('/' + os.path.basename(args.src))
+            rc = 0 if send_file_binary(t, args.src, dest, args.chunk, args.retries) else 1
+        elif args.cmd == 'eval':
+            print(eval_form(t, args.form, args.timeout))
+        elif args.cmd == 'repl':
+            repl(t)
+        elif args.cmd == 'listen':
+            listen_serve(t, args.dir)
+        elif args.cmd == 'recv':
+            local = args.local or os.path.basename(args.remote)
+            rc = 0 if recv_file(t, args.remote, local, args.retries) else 1
+    finally:
+        t.close()
+    sys.exit(rc)
+
+
+if __name__ == '__main__':
+    main()

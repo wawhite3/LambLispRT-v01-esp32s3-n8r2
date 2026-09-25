@@ -1,0 +1,175 @@
+# Freenove 4WD Car Kit ESP32 — runtime + test suite.
+# Partition: 448 KB LittleFS (partitions_4M_ota_trim.csv) = 112 blocks @ 4KB.
+# 4KB-block LittleFS usage: ~46 blocks data + ~6 dir/superblock meta = ~52 blocks; ~60 free.
+# DO NOT HAND-MAINTAIN A BLOCK BUDGET HERE.  The line that used to sit here read
+# "~23 blk -> ~75/112 used, ~37 free. Still fits; verify on flash."  Both halves were wrong:
+# gc-pause-bench was estimated at ~1 block and is 8, and the verification it asked for was never
+# performed against the files that broke it.  The image reached 134 blocks and `make flash` died
+# at LFS_ERR_NOSPC ([B576]).  `w3 make assemble` now MEASURES this after staging and prints
+# "filesystem fits: N/CAP blocks" or warns with the overage -- read that, not a comment.
+# Omitted vs S3 devkit: llip-server, rsa, dh_groups, rxrs_ai_overrides (redundant w/ r7rs).
+# Conform = r7rs+rxrs+r5rs-pitfall. Extend = ll-extensions + lamblisp-tests.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Terminal.scm
+file: boards/pins/Freenove-4WD-Car-Kit-ESP32.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+
+# P123 robot stack — cooperative behaviour queue, LED ring service, LLIP framing + signals
+core/Behaviors.scm
+core/Leds.scm
+features/llip-frame.scm
+features/llip-signals.scm
+features/llip-executor.scm
+features/llip-reactive.scm
+
+# P123 Part D: carry a camera frame over LLIP as BINARY (s-expression header + raw bytes).
+# NOT base64 -- every LambLisp port is already a binary port, so a JPEG rides the same TCP
+# connection the move programs use, unencoded.  Codec only: it loads on a board with no camera.
+features/llip-vision.scm
+# The vehicle half of the mini-HUD: camera frames plus sonar/drive telemetry to a panel.
+# Needs the llip-vision codec above; the panel half is demos/hud-panel.scm.
+demos/hud-car.scm
+
+# Proximity alarm: WS2812 ring (and optionally an onboard LED) flashing faster as the target
+# nears.  Non-blocking tick, so it can share the 3 ms loop with Sonar.loop and the B5 reflex.
+features/sonar-flash.scm
+
+# P126 R6 arms A2 (blocking Sonar.ping) and A3 (ISR Sonar.start/Sonar.result), in one file so the
+# two cannot drift apart -- they must sample the same target in the same session to be comparable.
+tests/ll_tests/sonar-bench.scm
+
+# Serial file tunnel: resident LLIP receiver (host = w3_ai_scripts/llip_tunnel.py)
+features/llip-serial.scm
+
+# LLIP SERVER -- filesystem operations for a remote LambLisp client.  Added 2026-09-12: EVERY
+# PUBLISHED TARGET SUPPORTS LLIP BY DEFAULT.  This target staged the serial RECEIVER below but not
+# the SERVER, so `llip ls/send/run` against it answered nothing -- a capability the customer's own
+# `tools/llip` CLI advertises, shipped half-present.  The two halves are not interchangeable:
+# llip-serial.scm is the resident (llt) that accepts a serial session; llip-server.scm is what
+# serves the file operations inside it.
+tools/llip-server.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_continuations.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_library.scm
+rxrs/rxrs_srfi.scm
+
+# Board-specific init
+boards/Freenove-4WD-Car-Kit-ESP32.scm
+
+# ===========================================================================
+# THE 4WD IS AN APPLICATION RUNNER, NOT A TEST TARGET (owner, 2026-09-23).
+# ===========================================================================
+# The generic conformance and perf suites are GONE from this image and future conf/perf work goes
+# to the WROVER.  They were 58 blocks -- 43% of an image that no longer fit its own partition
+# ([B576]: 134 blocks needed, 128 available, `make flash` dying at LFS_ERR_NOSPC).
+#
+# Removed: bench-runner (14 blk), lamblisp-tests (12), rxrs-tests (9), gc-pause-bench (8),
+#          benchmarks (7), ncg-fusion-probe (4), r5rs-pitfall (3), pause_bench (1).
+#
+# WHY THE BOARD RATHER THAN THE SUITES.  A 4 MB part with a 512 KB filesystem cannot hold a
+# general-purpose test rig AND the robot stack it exists to run -- behaviours, LEDs, sonar, the
+# camera, the LLIP vision path and [P123] Part G's HUD sender.  Every block spent on a suite that
+# runs identically on any board is a block unavailable to the one thing only THIS board can do.
+# The WROVER has the space and no competing application.
+#
+# WHAT THIS DOES AND DOES NOT BREAK, checked rather than assumed:
+#   * CONFORM/SMOKE/SUBSYSTEM/EXTEND are UNAFFECTED.  `_w3_run_correct_esp32` stages "runtime +
+#     ONLY this test_id's files, uploadfs, reboot, THEN load the runner" -- the correctness tiers
+#     never used the resident copies.  The three conformance files removed above were dead weight
+#     in this image, carried since B65 and loaded from a per-tier stage in practice.
+#   * PERF-EMBEDDED and GCPAUSE on this board DO break: their runners load from the resident FS.
+#     That is intended -- the LX6 perf arena is `_W3_PERF_LX6`, which already defaults to WROVER,
+#     so nothing scheduled by default targets the 4WD.  Anyone setting _W3_PERF_LX6=4WD explicitly
+#     must re-add bench-runner/benchmarks/gc-pause-bench/pause_bench, and should expect the fit
+#     check to tell them whether it still fits.
+#
+# WHAT STAYS, and it is not an exception to the rule.  `sonar-bench.scm` above is P126 R6's two
+# sonar arms.  It measures THIS BOARD'S OWN HARDWARE and CANNOT move to the WROVER, which has no
+# sonar -- so it is application-domain measurement, not a portable suite.  2 blocks.
+#
+# B65, MEASURED 2026-09-15 against the partition table this env ACTUALLY BUILDS WITH.
+# All three of B65's missing files now ship.  They fit because the 4WD moved to the llloader
+# layout in 7d90224 (2026-09-13): `partitions_4M_ota.csv` -- factory=llloader (1152 KB, the C
+# recovery root), ota_0=the VM (2368 KB), storage=512 KB, and NO ota_1.  Dropping the OTA spare is
+# what paid for all of it; that table's own header says the single-ota_0 layout "retires B65".
+#
+# THE FIRST PASS OF THIS NOTE WAS WRONG AND IS KEPT AS THE WARNING.  It concluded only two of the
+# three could ship, from mklittlefs runs at `-s 0x070000` -- 448 KB, taken from
+# `partitions_4M_ota_trim.csv` because B65's registry entry names that file.  NOTHING BUILDS WITH
+# THAT TABLE.  No .ini and no board JSON references it; it is an orphan left behind by the move.
+# The real slot is 0x080000.  Measuring carefully against the wrong geometry is not measuring.
+#
+# Verified at the REAL size (-p 256 -b 4096 -s 0x080000): image builds rc=0 with all three added.
+# Re-run that before adding ANY file here, and take the size from platformio.ini's
+# board_build.partitions for THIS env -- never from a registry entry or a comment, this one
+# included.
+# (rxrs-tests, lamblisp-tests, r5rs-pitfall removed 2026-09-23 -- see the header above.)
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+optional: runtime-defaults/llip-test-privkey.scm -> llip-test-privkey.scm
+optional: runtime-defaults/llip-test-pubkey.scm -> llip-test-pubkey.scm
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+#
+# (HISTORICAL, superseded 2026-09-17 -- see the staged line below.)  NOT STAGED ON THIS TARGET -- B411.  The bench Settings-local.scm carries `(wifi . 1)` for every
+# board, and on this part that is FATAL rather than merely expensive: WiFi.begin() reserves the
+# radio's rx/tx buffers at setup.scm load time, internal DRAM is already down to ~45 KB free /
+# 26 KB largest by then, and the allocation that fails is the mutex uart_write needs -- so the
+# board aborts in lock_init_generic and reboots, forever, with no message explaining why.
+# Measured 2026-09-14 by controlled comparison on this board: `(wifi . 1)` boot-loops,
+# `(wifi . 0)` boots to a REPL.  Credentials were correct in both cases; this is not a
+# bad-password problem.
+#
+# WiFi.scm's own comment already says the connect is "critical on the 2MB-PSRAM" board (B60's
+# lesson) -- the defect is that a GLOBAL bench override silently re-enables it on the tightest
+# board in the fleet.  Staging is the per-target mechanism, so the decision belongs here.
+#
+# THE RADIO STILL WORKS.  This only removes the AUTO-CONNECT at boot; an app calls
+# (WiFi.begin ssid pass) when it actually needs it, which is exactly the contract WiFi.scm
+# documents.  Re-add the line if this board ever gets a memory budget that can afford it.
+# STAGED AGAIN 2026-09-17 -- B411's measurement is SUPERSEDED, not repealed by opinion.
+# B411 was measured 2026-09-14 and was correct THEN: WiFi.begin() reserves the radio's buffers at
+# setup.scm load time, and by then internal DRAM was down to ~45 KB free / 26 KB largest, so the
+# allocation that failed was the mutex uart_write needs -- abort in lock_init_generic, reboot,
+# forever, with no message saying why.
+#
+# WHAT CHANGED IS *WHEN* THE RADIO TAKES ITS MEMORY, WHICH IS THE WHOLE OF [P211] PHASE 0.
+# ll_xmop3_WiFi.cpp:497 now asks ll_wifi_wanted_at_boot() IN THE INSTALLER -- before setup.scm
+# loads a line of Scheme -- and reserves LL_WIFI_RESERVE_BYTES (48 KB) through ll_fastram while the
+# heap is still contiguous.  WiFi.begin() later RELEASES that reservation immediately before it
+# allocates, so the radio lands in a hole kept for it rather than competing for what is left.
+# The sibling WROVER is the same SoC with the same constraint and went from -49,100 to +3,836 on
+# exactly this change, which is why its own line (Freenove-ESP32-WROVER.manifest:95) is live.
+#
+# SO THIS IS A TEST, NOT A BELIEF.  If the board boot-loops it goes straight back to commented and
+# B411 is re-opened with a second measurement; recovery is a reflash from the Jetson.
+optional: runtime-defaults/Settings-local.scm.jetson -> Settings-local.scm
+runtime-defaults/Settings-Lamb.scm

@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="760" viewBox="0 0 1100 760">
+<rect width="1100" height="520" fill="#ffffff"/>
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker>
+  <marker id="arrr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker>
+  <marker id="arrg" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#228844"/></marker>
+  <marker id="arrb" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#4a90d9"/></marker>
+</defs>
+
+<text x="500" y="32" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="25.5" font-weight="bold" font-style="normal" fill="#00468c">Dijkstra Tricolor Mark — Yuasa Snapshot Write Barrier</text>
+
+<!-- Cell legend (top left) -->
+<rect x="20" y="50" width="180" height="42" rx="5" fill="#f4f8ff" stroke="#8899aa" stroke-width="1"/>
+<circle cx="40" cy="71" r="8" fill="#8899aa" stroke="#aaa" stroke-width="1"/>
+<text x="58" y="75" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" fill="#444">= one heap cell</text>
+
+<!-- WHITE ellipse (smaller: was rx=130,ry=155 → rx=105,ry=125) -->
+<ellipse cx="160" cy="250" rx="105" ry="125" fill="#f8f8f8" stroke="#8899aa" stroke-width="2"/>
+<text x="160" y="232" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="27.0" font-weight="bold" font-style="normal" fill="#0d1a2e">White</text>
+<text x="160" y="254" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="normal" font-style="italic" fill="#8899aa">unvisited</text>
+<!-- cells inside White -->
+<circle cx="122" cy="295" r="9" fill="#8899aa" stroke="#aaa" stroke-width="1"/>
+<circle cx="148" cy="320" r="9" fill="#8899aa" stroke="#aaa" stroke-width="1"/>
+<circle cx="188" cy="300" r="9" fill="#8899aa" stroke="#aaa" stroke-width="1"/>
+<circle cx="165" cy="335" r="9" fill="#8899aa" stroke="#aaa" stroke-width="1"/>
+
+<!-- GRAY ellipse (smaller: was rx=120,ry=140 → rx=95,ry=110) -->
+<ellipse cx="440" cy="215" rx="95" ry="110" fill="#8899aa" stroke="#00468c" stroke-width="2"/>
+<text x="440" y="207" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="27.0" font-weight="bold" font-style="normal" fill="#0d1a2e">Gray</text>
+<text x="440" y="229" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="normal" font-style="italic" fill="#444">mark stack</text>
+<!-- cells inside Gray -->
+<circle cx="415" cy="260" r="9" fill="#8899aa" stroke="#00468c" stroke-width="1.5"/>
+<circle cx="455" cy="275" r="9" fill="#8899aa" stroke="#00468c" stroke-width="1.5"/>
+<circle cx="438" cy="295" r="9" fill="#8899aa" stroke="#00468c" stroke-width="1.5"/>
+
+<!-- BLACK ellipse (smaller: was rx=120,ry=155 → rx=95,ry=125) -->
+<ellipse cx="690" cy="250" rx="95" ry="125" fill="#2c3e50" stroke="#00468c" stroke-width="2"/>
+<text x="690" y="232" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="27.0" font-weight="bold" font-style="normal" fill="#ffffff">Black</text>
+<text x="690" y="254" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="normal" font-style="italic" fill="#ccc">explored</text>
+<!-- cells inside Black -->
+<circle cx="658" cy="295" r="9" fill="#2c3e50" stroke="#555" stroke-width="1"/>
+<circle cx="695" cy="278" r="9" fill="#2c3e50" stroke="#555" stroke-width="1"/>
+<circle cx="718" cy="308" r="9" fill="#2c3e50" stroke="#555" stroke-width="1"/>
+<circle cx="672" cy="318" r="9" fill="#2c3e50" stroke="#555" stroke-width="1"/>
+
+<!-- Root set -->
+<rect x="340" y="430" width="130" height="38" rx="5" fill="#e8f4e8" stroke="#228844" stroke-width="1.5"/>
+<text x="405" y="446" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#228844">Root set</text>
+<text x="405" y="460" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" font-weight="normal" font-style="normal" fill="#228844">interaction env · stack</text>
+<path d="M 405,430 Q 440,400 440,325" fill="none" stroke="#228844" stroke-width="1.5"  marker-end="url(#arrg)"/>
+
+<!-- Transition arrows between ellipses -->
+<line x1="262" y1="225" x2="348" y2="197" stroke="#4a90d9" stroke-width="2"  marker-end="url(#arrb)"/>
+<text x="305" y="200" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#4a90d9">reachable from gray</text>
+
+<line x1="533" y1="195" x2="598" y2="220" stroke="#00468c" stroke-width="2"  marker-end="url(#arr)"/>
+<text x="566" y="192" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#00468c">fully explored</text>
+
+<!-- Sweep reclaims white -->
+<path d="M 160,375 Q 105,430 120,468" fill="none" stroke="#cc4444" stroke-width="1.5"  marker-end="url(#arrr)"/>
+<text x="90" y="460" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="italic" fill="#cc4444">sweep reclaims</text>
+<text x="90" y="475" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="italic" fill="#cc4444">unreachable white</text>
+
+<!-- Write Barrier panel (right side — now has 1100-785=315px room) -->
+<rect x="800" y="60" width="280" height="290" rx="8" fill="#f0f5ff" stroke="#00468c" stroke-width="1.5"/>
+<text x="940" y="78" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" font-style="normal" fill="#00468c">Write Barrier</text>
+<text x="940" y="92" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="normal" font-style="italic" fill="#8899aa">Yuasa snapshot</text>
+
+<circle cx="840" cy="122" r="16" fill="#2c3e50" stroke="#00468c" stroke-width="1.5"/>
+<text x="840" y="127" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#ffffff">B</text>
+<circle cx="1040" cy="122" r="16" fill="#f8f8f8" stroke="#8899aa" stroke-width="1.5"/>
+<text x="1040" y="127" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" font-style="normal" fill="#0d1a2e">C</text>
+<line x1="858" y1="122" x2="1022" y2="122" stroke="#cc4444" stroke-width="1.4"  marker-end="url(#arrr)"/>
+<text x="940" y="156" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#cc4444">B.field ← C  (store)</text>
+
+<rect x="820" y="175" width="240" height="26" rx="3" fill="#dde8ff" stroke="#00468c" stroke-width="1"/>
+<text x="940" y="191" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.0" font-weight="normal" font-style="normal" fill="#00468c">push old B.field</text>
+<rect x="820" y="205" width="240" height="26" rx="3" fill="#dde8ff" stroke="#00468c" stroke-width="1"/>
+<text x="940" y="221" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15.0" font-weight="normal" font-style="normal" fill="#00468c">push C</text>
+<text x="940" y="167" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#8899aa">→ mark stack</text>
+<text x="940" y="242" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" font-weight="normal" font-style="italic" fill="#00468c">both old and new values marked</text>
+
+<rect x="808" y="252" width="264" height="82" rx="4" fill="#fff0f0" stroke="#cc4444" stroke-width="1" stroke-dasharray="3,2"/>
+<text x="940" y="268" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15.0" font-weight="bold" font-style="normal" fill="#cc0000">⚠ without barrier</text>
+<text x="940" y="284" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#880000">B (black) → C (white)</text>
+<text x="940" y="298" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#880000">C unreachable from gray</text>
+<text x="940" y="312" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14.2" font-weight="normal" font-style="normal" fill="#880000">→ C swept, B has dangling ptr</text>
+
+<!-- ─── Before / After concrete example ─── -->
+<line x1="20" y1="528" x2="1080" y2="528" stroke="#c0c8d8" stroke-width="1.2"/>
+<text x="550" y="548" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17.5" font-weight="bold" fill="#00468c">Concrete Write Barrier Example</text>
+
+<!-- BEFORE panel -->
+<rect x="20" y="558" width="500" height="178" rx="6" fill="#f8f8f8" stroke="#8899aa" stroke-width="1.2"/>
+<text x="270" y="578" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" fill="#0d1a2e">Before:  A.field = X</text>
+
+<!-- Cell A (black) -->
+<circle cx="90" cy="660" r="24" fill="#2c3e50" stroke="#00468c" stroke-width="2"/>
+<text x="90" y="665" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#ffffff">A</text>
+<text x="90" y="698" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#2c3e50">black</text>
+
+<!-- Cell X (white — old target) -->
+<circle cx="255" cy="660" r="24" fill="#f8f8f8" stroke="#8899aa" stroke-width="2"/>
+<text x="255" y="665" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#0d1a2e">X</text>
+<text x="255" y="698" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#8899aa">white</text>
+
+<!-- Cell C (white — new target, unrelated) -->
+<circle cx="430" cy="660" r="24" fill="#f8f8f8" stroke="#8899aa" stroke-width="2"/>
+<text x="430" y="665" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#0d1a2e">C</text>
+<text x="430" y="698" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#8899aa">white</text>
+
+<!-- Arrow A → X -->
+<line x1="114" y1="660" x2="229" y2="660" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+<text x="171" y="652" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#00468c">A.field</text>
+
+<!-- AFTER panel -->
+<rect x="540" y="558" width="540" height="178" rx="6" fill="#f0f5ff" stroke="#00468c" stroke-width="1.2"/>
+<text x="810" y="578" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16.5" font-weight="bold" fill="#0d1a2e">After:  A.field ← C  (barrier fires)</text>
+
+<!-- Cell A (black) -->
+<circle cx="590" cy="650" r="24" fill="#2c3e50" stroke="#00468c" stroke-width="2"/>
+<text x="590" y="655" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#ffffff">A</text>
+<text x="590" y="688" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#2c3e50">black</text>
+
+<!-- Cell C (now gray — pushed to markstack) -->
+<circle cx="755" cy="650" r="24" fill="#c8d8e8" stroke="#00468c" stroke-width="2"/>
+<text x="755" y="655" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#0d1a2e">C</text>
+<text x="755" y="688" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#00468c">gray (pushed)</text>
+
+<!-- Arrow A → C (new pointer) -->
+<line x1="614" y1="650" x2="729" y2="650" stroke="#cc4444" stroke-width="2" marker-end="url(#arrr)"/>
+<text x="671" y="641" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#cc4444">new</text>
+
+<!-- Cell X (gray — old value pushed to markstack) -->
+<circle cx="920" cy="650" r="24" fill="#c8d8e8" stroke="#00468c" stroke-width="2"/>
+<text x="920" y="655" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="18.0" font-weight="bold" fill="#0d1a2e">X</text>
+<text x="920" y="688" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" font-style="italic" fill="#00468c">gray (pushed)</text>
+
+<!-- Markstack box -->
+<rect x="840" y="596" width="220" height="34" rx="3" fill="#dde8ff" stroke="#00468c" stroke-width="1"/>
+<text x="950" y="617" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13.5" fill="#00468c">markstack: [ X ][ C ]</text>
+
+<!-- Arrow from markstack to X and C -->
+<line x1="920" y1="630" x2="920" y2="626" stroke="#00468c" stroke-width="1.2" marker-end="url(#arr)"/>
+<line x1="755" y1="630" x2="860" y2="626" stroke="#00468c" stroke-width="1.2"/>
+<line x1="860" y1="626" x2="860" y2="626" stroke="#00468c" stroke-width="0"/>
+
+<!-- Guarantee note -->
+<text x="810" y="726" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.0" font-style="italic" fill="#228844">Both old and new values survive the current GC cycle.</text>
+
+</svg>

@@ -1,0 +1,89 @@
+# windows_x86_64 (P174 Phase 1) -- native Windows LambLisp.exe, cross-built with MinGW-w64.
+#
+# DELIBERATELY FILE-FOR-FILE IDENTICAL TO linux_x86_64.manifest, and that is the whole point of
+# the target: Phase 1 asks one question -- does the LANGUAGE behave the same on Windows? -- and it
+# can only be answered by giving Windows exactly the library the reference host gets.  A trimmed
+# manifest would turn every conform difference into "is that the port, or is that the smaller
+# filesystem?", which is the question the wasm envs deliberately avoided asking too.
+#
+# So: when you add or remove a file in linux_x86_64.manifest, do the same here.  The two are meant
+# to diverge only when Windows genuinely cannot run something, and no such file exists today.
+#
+# NOTE the socket/terminal surface is NOT excluded here, because a manifest lists .scm FILES, not
+# capabilities.  The exclusion is in the build: -DLL_NETWORK=0 -DLL_TERMIOS=0 -DLL_NCG=0 via the
+# shared demo_profile in w3_pio/boards.json.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/linux.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+
+# R5RS/R7RS overrides (full set including syntax-rules)
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_continuations.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_library.scm
+rxrs/rxrs_srfi.scm
+rxrs/rxrs_syntax_rules.scm
+
+# Optional features
+features/rxrs_rational.scm
+features/rxrs_complex.scm
+features/base64.scm
+features/rsa.scm
+features/dh_groups.scm
+features/llip-auth.scm
+features/csv.scm
+features/bacnet.scm
+features/Cuda.scm
+features/Neopixel.scm
+
+# Dev tools
+tools/llip-client.scm
+tools/llip-server.scm
+tools/test-framework.scm
+tools/ncg-tests.scm
+tools/ncg_iota_bench.scm
+
+# Demos
+demos/demo-sandbox.scm
+demos/demo-supervisor.scm
+demos/demo-telemetry.scm
+demos/Music.scm
+demos/Personality.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm -> Settings-local.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+optional: runtime-defaults/llip-test-privkey.scm -> llip-test-privkey.scm
+optional: runtime-defaults/llip-test-pubkey.scm -> llip-test-pubkey.scm
+runtime-defaults/Settings-Lamb.scm
+
+# Test suite
+dir: tests/ll_tests -> ll_tests

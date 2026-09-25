@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="460">
+<rect width="1100" height="460" fill="#ffffff"/>
+<text x="550" y="36" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="20" font-weight="bold" fill="#00468c">Relative Speed: Implementation Strategies</text>
+<text x="550" y="56" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="normal" fill="#8899aa">linear scale · 0× to 50×  (Chez Scheme ~9 237×, truncated)</text>
+<line x1="372" y1="80" x2="372" y2="390" stroke="#d0dce8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<line x1="372" y1="390" x2="372" y2="396" stroke="#8899aa" stroke-width="1.2" />
+<text x="372" y="410" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">10×</text>
+<line x1="529" y1="80" x2="529" y2="390" stroke="#d0dce8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<line x1="529" y1="390" x2="529" y2="396" stroke="#8899aa" stroke-width="1.2" />
+<text x="529" y="410" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">20×</text>
+<line x1="686" y1="80" x2="686" y2="390" stroke="#d0dce8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<line x1="686" y1="390" x2="686" y2="396" stroke="#8899aa" stroke-width="1.2" />
+<text x="686" y="410" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">30×</text>
+<line x1="843" y1="80" x2="843" y2="390" stroke="#d0dce8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<line x1="843" y1="390" x2="843" y2="396" stroke="#8899aa" stroke-width="1.2" />
+<text x="843" y="410" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">40×</text>
+<line x1="1000" y1="80" x2="1000" y2="390" stroke="#d0dce8" stroke-width="1.0" stroke-dasharray="4,3"/>
+<line x1="1000" y1="390" x2="1000" y2="396" stroke="#8899aa" stroke-width="1.2" />
+<text x="1000" y="410" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">50×</text>
+<line x1="215" y1="390" x2="1000" y2="390" stroke="#00468c" stroke-width="1.5" />
+<text x="607" y="432" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#0d1a2e">Relative Execution Speed  (higher is faster)</text>
+<text x="225" y="432" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">◀  Slower</text>
+<text x="990" y="432" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#8899aa">Faster  ▶</text>
+<rect x="529" y="178" width="283" height="172" rx="6" fill="#00468c" fill-opacity="0.06" stroke="#00468c" stroke-width="1.2" stroke-dasharray="5,3"/>
+<rect x="215" y="66" width="785" height="48" rx="3" fill="#f8fafc"/>
+<text x="207" y="86" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#0d1a2e">BASIC-style</text>
+<text x="207" y="100" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#8899aa">Interpreter</text>
+<rect x="215" y="75" width="16" height="30" rx="3" fill="#dde8f5" stroke="#1a6abf" stroke-width="1.2"/>
+<text x="233" y="95" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="normal" fill="#00468c">1×</text>
+<text x="1092" y="95" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">baseline</text>
+<rect x="215" y="124" width="785" height="48" rx="3" fill="#f8fafc"/>
+<text x="207" y="144" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#0d1a2e">Tokenize</text>
+<text x="207" y="158" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#8899aa">then Interpret</text>
+<rect x="215" y="133" width="79" height="30" rx="3" fill="#ccddf0" stroke="#1a6abf" stroke-width="1.2"/>
+<text x="288" y="153" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#00468c">~5×</text>
+<text x="1092" y="153" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">rough estimate</text>
+<rect x="215" y="182" width="785" height="48" rx="3" fill="#f4f8ff"/>
+<text x="207" y="202" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#00468c">Compile to AST</text>
+<text x="207" y="216" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#00468c">· Interpret</text>
+<rect x="215" y="191" width="314" height="30" rx="3" fill="#b8d4f0" stroke="#00468c" stroke-width="1.8"/>
+<text x="523" y="211" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">~20×</text>
+<text x="1092" y="211" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">fib(35), measured</text>
+<rect x="215" y="240" width="785" height="48" rx="3" fill="#f4f8ff"/>
+<text x="207" y="260" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#00468c">Compile to Bytecode</text>
+<text x="207" y="274" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#00468c">· Interpret</text>
+<rect x="215" y="249" width="518" height="30" rx="3" fill="#9fc0ec" stroke="#00468c" stroke-width="1.8"/>
+<text x="727" y="269" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">~33×</text>
+<text x="1092" y="269" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">fib(35), measured</text>
+<rect x="215" y="298" width="785" height="48" rx="3" fill="#f4f8ff"/>
+<text x="207" y="318" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="bold" fill="#00468c">Native Code</text>
+<text x="207" y="332" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#00468c">Generator (NCG)</text>
+<rect x="215" y="307" width="597" height="30" rx="3" fill="#7aa8e0" stroke="#00468c" stroke-width="1.8"/>
+<text x="806" y="327" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffffff">~38×</text>
+<text x="1092" y="327" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">fib(35), measured</text>
+<line x1="205" y1="349" x2="1010" y2="349" stroke="#4a90d9" stroke-width="1.5" stroke-dasharray="7,4"/>
+<text x="1014" y="353" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="normal" fill="#4a90d9">offboard compiler</text>
+<text x="1014" y="365" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="normal" fill="#4a90d9">required above</text>
+<rect x="215" y="356" width="785" height="48" rx="3" fill="#f8fafc"/>
+<text x="207" y="376" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#0d1a2e">Optimizing Compiler</text>
+<text x="207" y="390" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" font-weight="normal" fill="#8899aa">(Chez, SBCL)</text>
+<rect x="215" y="365" width="785" height="30" rx="3" fill="#e0e8f4" stroke="#1a6abf" stroke-width="1.2"/>
+<text x="993" y="385" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" fill="#00468c">~9 237× ▶▶</text>
+<text x="1092" y="385" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">Chez fib(35)</text>
+<text x="820" y="258" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="bold" fill="#00468c">LambLisp</text>
+<text x="820" y="273" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="10.5" font-weight="normal" fill="#00468c">20× – 38×</text>
+<text x="1092" y="84" text-anchor="end" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" fill="#8899aa">benchmark</text>
+</svg>

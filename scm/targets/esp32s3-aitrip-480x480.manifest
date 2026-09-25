@@ -1,0 +1,114 @@
+# esp32s3-aitrip-480x480 -- AITRIP / Guition ESP32-4848S040, ESP32-S3 N16R8, 4.0in 480x480 RGB panel.
+# Derived from esp32s3-n8r2.manifest minus hardware this board does not carry:
+#   Sonar, PCA9685, WS2812, LCD1602 -- none are fitted.
+# NO PANEL FILES YET.  [P231] phase 0 extracted the ST7789 (a PUSH panel) behind LL_Panel; the
+# ST7701S path this board needs (16-bit RGB SCAN *plus* a 3-wire SPI init handshake) does not
+# exist.  Staging lcd-* here before that driver exists would ship a callable no-op.
+# esp32s3-n8r2 — same as esp32-s3-devkitc-1.
+#
+# esp32s3-n8r2-00.manifest and -01.manifest are SYMLINKS to this file: two physical N8R2
+# units, one ship-list, so they cannot drift apart.  They are separate ENVS only so a flash
+# and a result bind to one board (see w3_ai_scripts/board_macs.tsv).  An env with no manifest
+# stages no data_staged/<env>/, and uploadfs then dies with
+#   Building FS image from 'data' directory ... warning: can't read source directory
+# which reads as a filesystem problem, not a missing manifest.  If the units ever need
+# different files, replace the symlink -- do not copy this file and edit one.
+
+# Core runtime
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/esp32s3-n8r2.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCF8574.scm
+core/LightSensor.scm
+core/array.scm
+
+# R5RS/R7RS overrides
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_continuations.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_library.scm
+rxrs/rxrs_srfi.scm
+
+# Optional features
+features/Neopixel.scm
+features/base64.scm
+features/rsa.scm
+features/dh_groups.scm
+features/llip-auth.scm
+features/csv.scm
+features/bacnet.scm
+
+# Dev tools
+tools/llip-server.scm
+# LLIP serial receiver -- setup.scm loads it when present (see core/setup.scm).
+# NOTE ON WHAT A MANIFEST DECIDES: every target already RECEIVES all of the Scheme library --
+# w3_make_release_one copies the whole scm/ tree into every package (w3_make.sh ~line 354).
+# A manifest only chooses the DEFAULT on-device FS subset; anything omitted is still shipped
+# and can be staged or loaded at runtime.  This file is listed because it must be RESIDENT AT
+# BOOT to be useful: without it in the FS the board cannot accept `llip --serial PORT send`,
+# so pushing one settings file costs a full filesystem upload through pio -- which also wipes
+# .pio/build for every other env and forces concurrent sessions to rebuild.
+features/llip-serial.scm
+
+tools/test-framework.scm
+
+# Board-specific init
+boards/esp32s3-n8r2.scm
+# Target setup: paints a boot banner so a running panel is distinguishable FROM THE FRONT.
+# Without it a healthy board and a dead one are both just black -- and the only other way to ask
+# is a serial port, which resets this board.  See the file's header.
+boards/setup-esp32s3-aitrip-480x480.scm
+
+# Runtime defaults
+runtime-defaults/Settings.scm
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+optional: runtime-defaults/llip-test-privkey.scm -> llip-test-privkey.scm
+optional: runtime-defaults/llip-test-pubkey.scm -> llip-test-pubkey.scm
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+optional: runtime-defaults/Settings-local.scm.hud -> Settings-local.scm
+runtime-defaults/Settings-Lamb.scm
+
+# Test suite
+# Perf/gcpause bench files only (small).  The correctness tiers (smoke/conform/subsystem/extend)
+# are delivered INCREMENTALLY per-tier by _w3_run_correct_esp32 -- the full ~460KB ll_tests suite
+# is NOT shipped to embedded FS.
+file: tests/ll_tests/bench-runner.scm   -> ll_tests/bench-runner.scm
+file: tests/ll_tests/benchmarks.scm     -> ll_tests/benchmarks.scm
+file: tests/ll_tests/bignum-hw-probe.scm -> ll_tests/bignum-hw-probe.scm
+file: tests/ll_tests/bignum-hw-sweep.scm      -> ll_tests/bignum-hw-sweep.scm
+file: tests/ll_tests/bignum-cost-probe.scm   -> ll_tests/bignum-cost-probe.scm
+file: tests/ll_tests/bignum-hw-cliff.scm     -> ll_tests/bignum-hw-cliff.scm
+file: tests/ll_tests/gc-pause-bench.scm -> ll_tests/gc-pause-bench.scm
+file: tests/ll_tests/pause_bench.scm    -> ll_tests/pause_bench.scm
+file: tests/ll_tests/ncg-fusion-probe.scm -> ll_tests/ncg-fusion-probe.scm
+
+# [P123] Part G -- the mini-HUD: camera frames from the 4WD, metrics around them.
+# llip-vision is Part D's BINARY frame codec (s-expression header + raw bytes, no base64) and is
+# already in the 4WD's manifest -- the SENDER half has shipped there since 2026-09-17.  This panel
+# only needs the same codec to read it, plus the sink that puts a frame on the glass instead of in
+# a file, which is the one thing Part D did not have (its consumer is a VLM, which takes a path).
+features/llip-vision.scm
+# The three-layer display stack: a thin 1:1 shim over LVGL lives in C++; these two are the
+# layers above it.  Widgets compose shim calls into a readout or a gauge; the layout decides
+# which exist, where they sit and what they mean.  Both push over LLIP in seconds, so an
+# arrangement can be changed without a rebuild.
+features/lvgl-widgets.scm
+demos/hud-layout.scm
+demos/hud-panel.scm

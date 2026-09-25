@@ -1,0 +1,11 @@
+{
+    "name": "linux_x86_64_cuda",
+    "title": "Linux x86_64 with CUDA",
+    "description": "Linux x86_64 native build with CUDA support via nvcc.",
+    "homepage": "",
+    "license": "Apache-2.0",
+    "keywords": ["dev-platform", "Linux", "x86-64", "CUDA"],
+    "engines": { "platformio": "^6" },
+    "version": "1.0.0",
+    "packages": {}
+}
