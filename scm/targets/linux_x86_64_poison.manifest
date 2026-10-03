@@ -1,0 +1,15 @@
+# linux_x86_64 — full interactive + dev + test environment.
+# Core runtime
+# R5RS/R7RS overrides (full set including syntax-rules)
+# Optional features
+# Dev tools
+# Demos
+# Runtime defaults
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+# Test suite
+#
+# [P251] This list is base/host verbatim -- it added nothing of its own.
+extends: host

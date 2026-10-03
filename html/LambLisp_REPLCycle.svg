@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="440" viewBox="0 0 900 440">
+<rect width="900" height="440" fill="#ffffff"/>
+<defs>
+  <marker id="arr_b" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker>
+  <marker id="arr_g" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#1a6abf"/></marker>
+  <marker id="arr_o" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#cc8800"/></marker>
+  <marker id="arr_r" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker>
+</defs>
+
+<!-- Title -->
+<text x="450" y="30" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="bold" fill="#00468c">LambLisp REPL Cycle</text>
+
+<!-- ══════════════════════════════════════════════════════
+     MAIN CYCLE ARROWS  (drawn before boxes so boxes paint over endpoints)
+     Triangle: Read top-left, Eval top-right, Print bottom-centre.
+     All three arrows are straight lines — no arcs, no crossings.
+     ══════════════════════════════════════════════════════ -->
+
+<!-- Read → Eval  (horizontal, carries S-expr) -->
+<line x1="232" y1="116" x2="528" y2="116"
+      stroke="#00468c" stroke-width="2" marker-end="url(#arr_b)"/>
+<text x="380" y="100" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#00468c">S-expr</text>
+
+<!-- Eval → Print  (diagonal down-left, carries value) -->
+<line x1="590" y1="146" x2="441" y2="330"
+      stroke="#1a6abf" stroke-width="2" marker-end="url(#arr_g)"/>
+<text x="536" y="248" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#1a6abf">value</text>
+
+<!-- Print → Read  (diagonal up-left, completes cycle) -->
+<line x1="320" y1="360" x2="173" y2="146"
+      stroke="#cc8800" stroke-width="2" marker-end="url(#arr_o)"/>
+<text x="226" y="268" text-anchor="end"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#cc8800">prompt</text>
+
+<!-- ══════════════════════════════════════════════════════
+     MAIN BOXES  (painted over arrow endpoints)
+     ══════════════════════════════════════════════════════ -->
+
+<!-- Read -->
+<rect x="112" y="88" width="120" height="56" rx="8"
+      fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+<text x="172" y="112" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#00468c">Read</text>
+<text x="172" y="130" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">tokenize + parse</text>
+
+<!-- Eval -->
+<rect x="530" y="88" width="120" height="56" rx="8"
+      fill="#d4f7d4" stroke="#1a6abf" stroke-width="2"/>
+<text x="590" y="112" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#1a6abf">Eval</text>
+<text x="590" y="130" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">with env</text>
+
+<!-- Print -->
+<rect x="320" y="332" width="120" height="56" rx="8"
+      fill="#fff3cc" stroke="#cc8800" stroke-width="2"/>
+<text x="380" y="356" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#cc8800">Print</text>
+<text x="380" y="374" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">output</text>
+
+<!-- LL=> prompt label — centre of triangle -->
+<text x="380" y="228" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="26" font-weight="bold" fill="#00468c">LL=&gt;</text>
+<text x="380" y="246" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">prompt</text>
+
+<!-- ══════════════════════════════════════════════════════
+     INTERACTION ENV  — to the right of Eval, same row.
+     Two short horizontal arrows: lookup (→) and define/return (←).
+     No crossing with any other element.
+     ══════════════════════════════════════════════════════ -->
+<rect x="690" y="78" width="196" height="86" rx="7"
+      fill="#ffd6b3" stroke="#cc8800" stroke-width="2"/>
+<text x="788" y="98" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" fill="#cc8800">Interaction Env</text>
+<text x="788" y="115" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#cc8800">T_DICT (persistent)</text>
+<text x="788" y="131" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="11" fill="#8899aa">(define …) mutates here</text>
+<text x="788" y="147" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">every eval looks up here</text>
+
+<!-- Eval → Env  (lookup) -->
+<line x1="651" y1="106" x2="688" y2="106"
+      stroke="#cc8800" stroke-width="1.5" marker-end="url(#arr_o)"/>
+<!-- Env → Eval  (define mutates) -->
+<line x1="690" y1="124" x2="653" y2="124"
+      stroke="#cc4444" stroke-width="1.5" marker-end="url(#arr_r)"/>
+
+<!-- ══════════════════════════════════════════════════════
+     ERROR HANDLER  — below Interaction Env, same column.
+     Exception path: L-shaped (down from Eval, then right).
+     Stays entirely right of x=590, below both main cycle arrows.
+     No crossing with any other element.
+     No arrow back to Read — handled in text: "restart REPL".
+     ══════════════════════════════════════════════════════ -->
+<rect x="690" y="215" width="196" height="86" rx="6"
+      fill="#ffe0e0" stroke="#cc4444" stroke-width="1.5"/>
+<text x="788" y="235" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" fill="#cc4444">Error Handler</text>
+<text x="788" y="252" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="12" fill="#cc4444">with-exception-handler</text>
+<text x="788" y="268" text-anchor="middle"
+      font-family="Courier New, Courier, monospace" font-size="12" fill="#cc4444">/ guard</text>
+<text x="788" y="285" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">→ print error, restart REPL</text>
+
+<!-- Exception path: down from Eval bottom (590,146), then right to Error Handler top-left (690,215).
+     Entirely to the right of x=510 (where Eval→Print is at y=215), so no crossing. -->
+<path d="M 590,146 L 590,215 L 689,215"
+      fill="none" stroke="#cc4444" stroke-width="1.3" stroke-dasharray="5,3"
+      marker-end="url(#arr_r)"/>
+<text x="606" y="192" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#cc4444">exception</text>
+
+<!-- ══════════════════════════════════════════════════════
+     LOAD ANNOTATION  — below Read box, left margin
+     ══════════════════════════════════════════════════════ -->
+<text x="116" y="170" text-anchor="start"
+      font-family="Courier New, Courier, monospace" font-size="12" font-style="italic" fill="#1a6abf">(load "file.scm")</text>
+<text x="116" y="184" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">feeds expressions into Read</text>
+
+</svg>

@@ -1,0 +1,19 @@
+# linux_aarch64_cuda — Jetson native build with CUDA: full interactive + dev + test environment.
+# Core runtime
+# R5RS/R7RS overrides (full set including syntax-rules)
+# Optional features
+# Dev tools
+# P123 Part D: carry a camera frame over LLIP as BINARY (s-expression header + raw bytes).
+# NOT base64 -- every LambLisp port is already a binary port, so a JPEG rides the same TCP
+# connection the move programs use, unencoded.  Codec only: it loads on a board with no camera.
+# Demos
+# Runtime defaults
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+# Test suite
+#
+# [P251] base/host plus ONE line -- which is why this file was a 58-line copy of a 57-line one.
+extends: host
+features/llip-vision.scm

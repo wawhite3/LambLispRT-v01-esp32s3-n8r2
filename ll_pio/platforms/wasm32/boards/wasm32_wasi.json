@@ -1,0 +1,14 @@
+{
+  "build": {
+    "mcu": "wasm32",
+    "wasm_host": "wasi",
+    "extra_flags": "-DLL_WASM=1 -DLL_WASI=1 -DLL_WASM32=1"
+  },
+  "name": "WebAssembly System Interface (wasm32-wasip1)",
+  "upload": {
+    "maximum_ram_size": 1073741824,
+    "maximum_size": 1073741824
+  },
+  "url": "https://wasi.dev/",
+  "vendor": "WebAssembly"
+}

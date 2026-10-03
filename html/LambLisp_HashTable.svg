@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#00468c"/>
+    </marker>
+    <marker id="arrs" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0,0 8,3 0,6" fill="#8899aa"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="500" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="500" y="36" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="21" font-weight="bold" fill="#00468c">Dictionary: Hash Table Layout (djb2)</text>
+
+  <!-- Key + hash function -->
+  <rect x="20" y="65" width="140" height="52" rx="5" fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+  <text x="90" y="86" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="bold" fill="#0d1a2e">key</text>
+  <text x="90" y="107" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#334466">"my-var"</text>
+
+  <line x1="160" y1="91" x2="195" y2="91" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="195" y="60" width="185" height="62" rx="5" fill="#fff3cd" stroke="#cc8800" stroke-width="2"/>
+  <text x="287" y="82" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#0d1a2e">djb2 hash</text>
+  <text x="287" y="101" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#553300">h = 5381</text>
+  <text x="287" y="116" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" fill="#553300">h = h*33 ^ c</text>
+
+  <line x1="380" y1="91" x2="415" y2="91" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="415" y="65" width="155" height="52" rx="5" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="2"/>
+  <text x="492" y="87" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#0d1a2e">index</text>
+  <text x="492" y="107" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#1a4a1a">h &amp; (N-1)</text>
+
+  <line x1="570" y1="91" x2="605" y2="91" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Bucket array -->
+  <text x="660" y="58" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" fill="#0d1a2e">bucket array (N = power of 2)</text>
+
+  <!-- Buckets -->
+  <rect x="605" y="65" width="110" height="38" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1.5"/>
+  <text x="660" y="89" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#0d1a2e">bucket [0]</text>
+
+  <rect x="605" y="105" width="110" height="38" rx="3" fill="#d0e8ff" stroke="#00468c" stroke-width="2"/>
+  <text x="660" y="129" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" fill="#00468c">bucket [2] ◀</text>
+
+  <rect x="605" y="145" width="110" height="38" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1.5"/>
+  <text x="660" y="169" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#0d1a2e">bucket [4]</text>
+
+  <rect x="605" y="185" width="110" height="38" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1.5"/>
+  <text x="660" y="209" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#0d1a2e">bucket [6]</text>
+
+  <rect x="605" y="225" width="110" height="38" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1.5"/>
+  <text x="660" y="249" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#8899aa">…</text>
+
+  <!-- Arrow from index result to bucket [2] -->
+  <line x1="570" y1="91" x2="605" y2="124" stroke="#2d7a2d" stroke-width="2" stroke-dasharray="4,2" marker-end="url(#arr)"/>
+
+  <!-- Alist chain from bucket [2] -->
+  <line x1="715" y1="124" x2="748" y2="124" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="748" y="105" width="180" height="38" rx="5" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="1.5"/>
+  <text x="838" y="129" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#1a4a1a">("my-var" . 42)</text>
+
+  <line x1="928" y1="124" x2="958" y2="124" stroke="#8899aa" stroke-width="1.5" marker-end="url(#arrs)"/>
+  <rect x="958" y="111" width="30" height="24" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1"/>
+  <text x="973" y="128" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#8899aa">nil</text>
+
+  <!-- Bucket [0] chain: empty -->
+  <line x1="715" y1="84" x2="748" y2="84" stroke="#8899aa" stroke-width="1.5" marker-end="url(#arrs)"/>
+  <rect x="748" y="71" width="30" height="24" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1"/>
+  <text x="763" y="88" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#8899aa">nil</text>
+
+  <!-- Bucket [4] chain: two entries (collision) -->
+  <line x1="715" y1="164" x2="748" y2="164" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="748" y="145" width="175" height="38" rx="5" fill="#e8f5e8" stroke="#2d7a2d" stroke-width="1.5"/>
+  <text x="835" y="169" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#1a4a1a">("foo" . 99)</text>
+  <line x1="923" y1="164" x2="940" y2="164" stroke="#00468c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="940" y="145" width="48" height="38" rx="5" fill="#fff3cd" stroke="#cc8800" stroke-width="1.5"/>
+  <text x="964" y="161" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="11" fill="#553300">("bar"</text>
+  <text x="964" y="177" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="11" fill="#553300">. 7)</text>
+
+  <!-- Collision annotation -->
+  <text x="964" y="202" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#cc4444">collision</text>
+  <line x1="964" y1="183" x2="964" y2="195" stroke="#cc4444" stroke-width="1.5"/>
+
+  <!-- Bucket [6] empty -->
+  <line x1="715" y1="204" x2="748" y2="204" stroke="#8899aa" stroke-width="1.5" marker-end="url(#arrs)"/>
+  <rect x="748" y="191" width="30" height="24" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1"/>
+  <text x="763" y="208" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#8899aa">nil</text>
+
+  <!-- Small dict alist section -->
+  <rect x="20" y="290" width="960" height="190" rx="8" fill="#f0f4f8" stroke="#c8d4e0" stroke-width="1.5"/>
+  <text x="500" y="316" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" fill="#00468c">Small dict: association list (alist) — no hash table</text>
+
+  <!-- alist chain -->
+  <rect x="40" y="332" width="170" height="38" rx="5" fill="#d0e8ff" stroke="#00468c" stroke-width="1.5"/>
+  <text x="125" y="356" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">("x" . 3)</text>
+
+  <line x1="210" y1="351" x2="242" y2="351" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="242" y="332" width="170" height="38" rx="5" fill="#d0e8ff" stroke="#00468c" stroke-width="1.5"/>
+  <text x="327" y="356" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">("y" . 7)</text>
+
+  <line x1="412" y1="351" x2="444" y2="351" stroke="#00468c" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="444" y="332" width="170" height="38" rx="5" fill="#d0e8ff" stroke="#00468c" stroke-width="1.5"/>
+  <text x="529" y="356" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#0d1a2e">("f" . #&lt;proc&gt;)</text>
+
+  <line x1="614" y1="351" x2="646" y2="351" stroke="#8899aa" stroke-width="1.5" marker-end="url(#arrs)"/>
+  <rect x="646" y="338" width="30" height="24" rx="3" fill="#c8d4e0" stroke="#8899aa" stroke-width="1"/>
+  <text x="661" y="355" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#8899aa">nil</text>
+
+  <text x="500" y="408" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#553300">Linear search — fast for ≤ ~8 entries. Converts to hash table when it grows.</text>
+
+  <text x="500" y="435" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" fill="#8899aa">Both alist and hash table share the same dict_ref() / dict_bind_bang() API.</text>
+
+  <!-- note on N power of 2 -->
+  <text x="500" y="462" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.5" fill="#8899aa">Power-of-2 bucket count lets index = h &amp; (N−1), a fast bitmask instead of division.</text>
+</svg>

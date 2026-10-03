@@ -1,0 +1,567 @@
+<!doctype html>
+<!--
+  P175 Phase 2 -- the LambLisp browser demo page.
+
+  THIS PAGE IS A LANGUAGE DEMO AND MUST NOT BECOME A PERFORMANCE DEMO.  LambLisp's product claim
+  is a BOUNDED GC PAUSE ON A MICROCONTROLLER, and a browser tab cannot demonstrate that: the
+  engine JITs our interpreter, tiers it up and down while you watch, and throttles the whole tab
+  when it is not focused.  w3_test.sh already draws this line for host builds ("performance is a
+  claim about running on an MCU"), and P175 states it for this page in terms: if it ever displays
+  a timing number, that rule has been broken.  Do not add a benchmark button.
+
+  Served from .pio/build/wasm32_browser/ after `./w3 make one wasm32_browser`.  MUST BE SERVED
+  OVER HTTP, not opened as file:// -- the .wasm and the preloaded .data are fetch()ed, and a
+  file:// origin is opaque, so the page silently stops at "loading" with no error.
+
+  P175 Phase 3 -- PERSISTENCE.  /persist is an IDBFS mount backed by IndexedDB, so files written
+  there survive a reload; /data (the preloaded staged library) is MEMFS and does not.  The two
+  are deliberately separate: /data is the shipped runtime library and a visitor overwriting it
+  would break the VM for themselves with no way back short of clearing site data.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LambLisp &mdash; Scheme in your browser</title>
+<style>
+  :root { color-scheme: dark; --bg:#12141a; --fg:#e6e6e6; --dim:#8a92a6; --accent:#7fd1b9; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  header { padding:16px 20px 10px; border-bottom:1px solid #262a35; }
+  h1 { margin:0; font-size:18px; font-weight:600; letter-spacing:.2px; }
+  h1 span { color:var(--accent); }
+  p.sub { margin:6px 0 0; color:var(--dim); font-size:13px; max-width:70ch; }
+  main { padding:14px 20px 20px; }
+  #status { margin-top:10px; color:var(--dim); font-size:12px; }
+  footer { padding:0 20px 24px; color:var(--dim); font-size:12px; max-width:80ch; }
+  code { color:var(--accent); }
+  #fallback { display:none; width:100%; height:70vh; min-height:320px; background:#0c0e13; color:var(--fg);
+              border:1px solid #262a35; font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;
+              padding:10px; white-space:pre-wrap; overflow:auto; }
+  #fbline { display:none; width:100%; margin-top:8px; padding:8px;
+            background:#0c0e13; color:var(--fg); border:1px solid #262a35;
+            font:13px ui-monospace,SFMono-Regular,Menlo,monospace; }
+
+  /* P175 Phase 3 -- the /persist file drawer. */
+  #files { margin-top:14px; border:1px solid #262a35; border-radius:6px; background:#0f1117; }
+  #files > summary { padding:9px 12px; cursor:pointer; color:var(--fg); font-size:13px;
+                     user-select:none; list-style:none; }
+  #files > summary::-webkit-details-marker { display:none; }
+  #files > summary::before { content:"\25B8\00a0"; color:var(--dim); }
+  #files[open] > summary::before { content:"\25BE\00a0"; }
+  #files > summary b { color:var(--accent); font-weight:600; }
+  .fwrap { padding:0 12px 12px; display:grid; grid-template-columns:220px 1fr; gap:12px; }
+  @media (max-width:720px) { .fwrap { grid-template-columns:1fr; } }
+  #flist { margin:0; padding:0; list-style:none; max-height:210px; overflow:auto;
+           border:1px solid #262a35; border-radius:4px; background:#0c0e13; }
+  #flist li { padding:5px 8px; font:12px ui-monospace,SFMono-Regular,Menlo,monospace;
+              display:flex; align-items:center; gap:6px; border-bottom:1px solid #1a1e27; }
+  #flist li:last-child { border-bottom:none; }
+  #flist .nm { flex:1; cursor:pointer; color:var(--fg); overflow:hidden; text-overflow:ellipsis; }
+  #flist .nm:hover { color:var(--accent); }
+  #flist .empty { color:var(--dim); cursor:default; }
+  #fed { width:100%; min-height:180px; resize:vertical; background:#0c0e13; color:var(--fg);
+         border:1px solid #262a35; border-radius:4px; padding:8px;
+         font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .frow { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  #fname { flex:1; min-width:150px; background:#0c0e13; color:var(--fg);
+           border:1px solid #262a35; border-radius:4px; padding:6px 8px;
+           font:12px ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .frow button { background:#1b2230; color:var(--fg); border:1px solid #2f3646;
+                 border-radius:4px; padding:6px 11px; font-size:12px; cursor:pointer; }
+  .frow button:hover { border-color:var(--accent); color:var(--accent); }
+  .frow button.x { border-color:#3a2a2a; }
+  .frow button.x:hover { border-color:#d98a8a; color:#d98a8a; }
+  #fnote { color:var(--dim); font-size:12px; margin-top:8px; }
+  #fnote code { color:var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Lamb<span>Lisp</span> &mdash; R7RS Scheme, compiled to WebAssembly</h1>
+  <p class="sub">The same interpreter that runs on an ESP32-S3, built for wasm32 and running in
+     this tab. Try <code>(define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))</code> then
+     <code>(fact 30)</code>.</p>
+</header>
+<main>
+  <pre id="fallback"></pre>
+  <input id="fbline" placeholder="(+ 1 2)   -- press Enter" autocomplete="off" spellcheck="false">
+  <div id="status">loading&hellip;</div>
+
+  <details id="files">
+    <summary>Your files &mdash; <b>/persist</b>, kept in this browser across reloads</summary>
+    <div class="fwrap">
+      <ul id="flist"><li class="empty">(no saved files)</li></ul>
+      <div>
+        <textarea id="fed" spellcheck="false"
+                  placeholder="(define (fact n) (if (= n 0) 1 (* n (fact (- n 1)))))"></textarea>
+        <div class="frow">
+          <input id="fname" value="my.scm" autocomplete="off" spellcheck="false">
+          <button id="fsave"  type="button">Save</button>
+          <button id="fload"  type="button">Load into REPL</button>
+          <button id="fdel"   type="button" class="x">Delete</button>
+        </div>
+        <div id="fnote">
+          Saved files live at <code>/persist</code> and are readable from Scheme:
+          <code>(load "/persist/my.scm")</code>. A file named <code>autoload.scm</code> is loaded
+          automatically at start.
+        </div>
+      </div>
+    </div>
+  </details>
+</main>
+<footer>
+  Runtime diagnostics (garbage-collector activity, evaluation traces) are silenced here so your
+  own output is readable &mdash; type <code>(verbose)</code> to switch them on, <code>(quiet)</code>
+  to silence them again.
+  <br><br>
+  This page demonstrates the LANGUAGE. It is not a performance demonstration and deliberately
+  reports no timings: LambLisp's real-time claim is a bounded garbage-collector pause on a
+  microcontroller, and a browser tab &mdash; with its own JIT, its own collector and its own tab
+  throttling between you and the hardware &mdash; cannot show that either way.
+</footer>
+
+<script src="LambLisp.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var statusEl = document.getElementById("status");
+  function setStatus(s) { statusEl.textContent = s; }
+
+  // ---------------------------------------------------------------------------
+  // THE TERMINAL IS OURS, AND DELIBERATELY HAS NO EXTERNAL DEPENDENCY.
+  //
+  // This page used to load xterm.js and xterm.css from jsdelivr, a third-party file host.  That
+  // was never a requirement of the product: it arrived with the first commit of this file (P175,
+  // 56186b5, 2026-09-04) and made a demo whose entire pitch is "click a link, nothing to install"
+  // depend at RUNTIME on a company we have no agreement with.  The consequences were real, not
+  // theoretical:
+  //   * a blocked or unreachable host silently downgraded the page -- observed from the live demo
+  //     as literal `[97m` litter and run-together lines, which reads as a broken product;
+  //   * the container and any air-gapped or industrial network -- the customer this is aimed at --
+  //     could not render the demo at all, while the manual promises "no download, no toolchain";
+  //   * every visitor's browser announced to that third party that someone opened our demo.
+  // Removed 2026-09-16 at the owner's direction.  DO NOT reintroduce a remote script or stylesheet
+  // here, for a terminal or anything else; if a capability needs a library, vendor it or write it.
+  //
+  // What replaced it is the <pre> + <input> that was already here as the fallback path, now the
+  // only path, with ANSI colour rendered into spans so nothing is lost visually.  An <input> also
+  // gives the visitor native text editing and selection for free, which a canvas terminal does not.
+  // ---------------------------------------------------------------------------
+  var fbOut = document.getElementById("fallback");
+  var fbIn  = document.getElementById("fbline");
+  fbOut.style.display = "block";
+  fbIn.style.display  = "block";
+
+  // ---------------------------------------------------------------------------
+  // OUTPUT.  Bytes arrive through Module.stdout/stderr (see the wiring below), so `s` here is
+  // EXACTLY what the VM wrote -- newlines, carriage returns and ANSI included.
+  //
+  // xterm wants CRLF; the VM writes bare LF for a newline and a bare CR to restart a line it is
+  // redrawing.  Normalising /\r?\n/ covers both without turning a VM-emitted CRLF into CRCRLF.
+  // ---------------------------------------------------------------------------
+  function out(s) { fbWrite(String(s)); }
+
+  // ---------------------------------------------------------------------------
+  // THE RENDERER.  Turns the VM's raw byte stream into the page, handling the three things a
+  // terminal would: SGR colour, CR as a line RESTART, and backspace.
+  //
+  // COLOUR IS KEPT, NOT STRIPPED.  The runtime colour-codes its channels -- errors red, notices
+  // green, the prompt white -- and that is real information a visitor uses to tell an error from a
+  // log line.  Stripping ANSI was the quick fix when this was only a fallback; now that it is the
+  // ONLY terminal, the codes become spans instead.
+  //
+  // OUTPUT IS ESCAPED.  It is written by the VM and can contain <, > and & -- a Scheme program can
+  // `(display "<script>")` -- so it is escaped before it becomes innerHTML.  Do not "simplify" this
+  // to innerHTML of raw text.
+  //
+  // CR IS A REDRAW, NOT A LINE BREAK.  The REPL reprints its prompt by emitting CR and rewriting
+  // the line; treating that as a newline stacked every redraw on screen.
+  // ---------------------------------------------------------------------------
+  var SGR_FG = { 30:"#1a1a1a", 31:"#d05050", 32:"#3fae3f", 33:"#c08a1e", 34:"#4a7fd0",
+                 35:"#b060b0", 36:"#1fa5a5", 37:"#b8b8b8",
+                 90:"#6b7280", 91:"#ff6b6b", 92:"#5fd75f", 93:"#ffd75f", 94:"#6fa8ff",
+                 95:"#ff7fff", 96:"#5fe3e3", 97:"#f2f2f2" };
+  var fbHtml = "", fbRuns = [], fbSgr = { c: null, b: false };
+  var FB_MAX = 400000;            //!< cap the committed backlog; a long session must not crawl
+
+  function fbEsc(t) { return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  function fbRunsHtml(runs) {
+    var h = "";
+    for (var i = 0; i < runs.length; i++) {
+      var r = runs[i], st = "";
+      if (r.c) st += "color:" + r.c + ";";
+      if (r.b) st += "font-weight:600;";
+      h += st ? '<span style="' + st + '">' + fbEsc(r.t) + "</span>" : fbEsc(r.t);
+    }
+    return h;
+  }
+
+  function fbSgrApply(params) {
+    var parts = (params || "0").split(";");
+    for (var i = 0; i < parts.length; i++) {
+      var n = parseInt(parts[i] || "0", 10);
+      if      (n === 0)  { fbSgr.c = null; fbSgr.b = false; }
+      else if (n === 1)  { fbSgr.b = true; }
+      else if (n === 22) { fbSgr.b = false; }
+      else if (n === 39) { fbSgr.c = null; }
+      else if (SGR_FG[n]) { fbSgr.c = SGR_FG[n]; }
+    }
+  }
+
+  function fbPush(ch) {
+    var last = fbRuns[fbRuns.length - 1];
+    if (last && last.c === fbSgr.c && last.b === fbSgr.b) last.t += ch;
+    else fbRuns.push({ t: ch, c: fbSgr.c, b: fbSgr.b });
+  }
+
+  function fbWrite(s) {
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charAt(i);
+      if (c === "\x1b") {
+        var m = /^\x1b\[([0-9;?]*)([A-Za-z])/.exec(s.slice(i));
+        if (m) { if (m[2] === "m") fbSgrApply(m[1]); i += m[0].length - 1; continue; }
+        var m2 = /^\x1b[()][A-Za-z0-9]|^\x1b[=>]/.exec(s.slice(i));
+        if (m2) { i += m2[0].length - 1; }
+        continue;                                  //!< lone ESC: drop it, never render it
+      }
+      if      (c === "\n") { fbHtml += fbRunsHtml(fbRuns) + "\n"; fbRuns = []; }
+      else if (c === "\r") { fbRuns = []; }
+      else if (c === "\b") { var l = fbRuns[fbRuns.length - 1];
+                             if (l) { l.t = l.t.slice(0, -1); if (!l.t) fbRuns.pop(); } }
+      else if (c >= " " || c === "\t") { fbPush(c); }
+    }
+    if (fbHtml.length > FB_MAX) {                  //!< trim at a line boundary, never mid-tag
+      var cut = fbHtml.indexOf("\n", fbHtml.length - FB_MAX);
+      if (cut > 0) fbHtml = fbHtml.slice(cut + 1);
+    }
+    fbOut.innerHTML = fbHtml + fbRunsHtml(fbRuns);
+    fbOut.scrollTop = fbOut.scrollHeight;
+  }
+
+  // BYTE-LEVEL OUTPUT, BECAUSE Module.print IS LINE-ORIENTED AND LOSES THE NEWLINE.
+  //
+  // Emscripten's TTY assembles a line and calls print() ONLY on '\n', passing the text WITHOUT
+  // that newline -- the console.log contract, where the sink adds it back.  This page's sink is a
+  // terminal, so nothing added it back and EVERY line ran into the next; the visible symptom is
+  // text that wraps at the window edge instead of breaking where the program said to break.
+  // Measured 2026-09-16 on the published build: via print, 0 newlines survive; via the byte hook,
+  // all 146 of a boot transcript do, along with all 356 ESC bytes.
+  //
+  // Module.stdout/stderr are CHARACTER callbacks (FS.createDevice), so they deliver exactly what
+  // was written, with no line assembly to lose anything.  Setting them supersedes print/printErr
+  // for these streams -- verified: print received 0 chars once stdout was supplied.
+  //
+  // COALESCED THROUGH A MICROTASK, not written per byte.  ll_wasm_eval/boot run synchronously, so
+  // a microtask lands immediately after the call, rendering the whole burst once instead of
+  // repainting per byte.  TextDecoder({stream:true}) holds back an incomplete UTF-8 sequence rather than
+  // emitting a replacement character mid-codepoint.
+  var _odec = new TextDecoder("utf-8"), _opend = "", _oqueued = false;
+  function outByte(c) {
+    if (c === null || c === undefined) { flushOut(); return; }
+    var t = _odec.decode(new Uint8Array([c]), { stream: true });
+    if (!t) return;
+    _opend += t;
+    if (!_oqueued) { _oqueued = true; queueMicrotask(flushOut); }
+  }
+  function flushOut() {
+    _oqueued = false;
+    if (_opend) { var t = _opend; _opend = ""; out(t); }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Module wiring.
+  //
+  // noInitialRun is set at LINK time (-sINVOKE_RUN=0), not here: main() is
+  // `while (true) loop();` and would never return to the event loop, so the tab would never
+  // paint and never see a keystroke.  We call ll_wasm_boot / ll_wasm_eval / ll_wasm_tick
+  // instead -- see src/ll_wasm_browser.cpp.
+  // ---------------------------------------------------------------------------
+  var LL = null, evalLine = null, tick = null, booted = false;
+
+  // ---------------------------------------------------------------------------
+  // P175 Phase 3 -- PERSISTENCE.
+  //
+  // /data is the preloaded staged library and lives in MEMFS: it is rebuilt from LambLisp.data on
+  // every load and nothing written there survives.  /persist is an IDBFS mount, so it does.  They
+  // are separate mounts ON PURPOSE -- a visitor who overwrote /data/setup.scm would break the VM
+  // for themselves on every subsequent visit, with no way back except clearing site data, and
+  // they would have no idea why.
+  //
+  // IDBFS is NOT automatic in either direction.  syncfs(true) pulls IndexedDB -> memory and MUST
+  // finish before the VM boots (it is what makes a reload show yesterday's files); syncfs(false)
+  // pushes memory -> IndexedDB and must be called after anything writes, because the C side just
+  // calls fclose() and has no idea a database is involved.
+  // ---------------------------------------------------------------------------
+  var PERSIST = "/persist", persistOK = false, flushTimer = null;
+
+  //! Push /persist to IndexedDB, coalescing bursts.  Every write path calls this; none awaits it.
+  function flushSoon() {
+    if (!persistOK) return;
+    if (flushTimer) clearTimeout(flushTimer);
+    flushTimer = setTimeout(function () {
+      flushTimer = null;
+      try { LL.FS.syncfs(false, function (e) { if (e) console.warn("syncfs out:", e); }); }
+      catch (e) { console.warn("syncfs out threw:", e); }
+    }, 400);
+  }
+
+  //! Mount /persist and pull it in.  Resolves either way: persistence is a bonus, not a
+  //! precondition -- private-browsing windows and blocked site data must still get a REPL.
+  function mountPersist() {
+    return new Promise(function (resolve) {
+      try {
+        try { LL.FS.mkdir(PERSIST); } catch (e) { /* already there */ }
+        LL.FS.mount(LL.FS.filesystems.IDBFS, {}, PERSIST);
+        LL.FS.syncfs(true, function (err) {
+          if (err) { console.warn("syncfs in:", err); persistOK = false; }
+          else       persistOK = true;
+          resolve();
+        });
+      } catch (e) {
+        console.warn("IDBFS unavailable:", e);
+        persistOK = false;
+        resolve();
+      }
+    });
+  }
+
+  function listFiles() {
+    if (!persistOK) return [];
+    try {
+      return LL.FS.readdir(PERSIST).filter(function (n) { return n !== "." && n !== ".."; }).sort();
+    } catch (e) { return []; }
+  }
+
+  // ---------------------------------------------------------------------------
+  // file:// GUARD -- SAY WHY, BECAUSE THE REAL FAILURE IS UNREADABLE.
+  //
+  // This page ships inside every customer package as demo/index.html, so the FIRST thing a
+  // customer does with a download is double-click it -- which opens file:// and cannot work: the
+  // .wasm and the preloaded .data are fetch()ed, and a file:// origin is opaque.  Without this
+  // guard the visible result is Emscripten's own abort,
+  //
+  //     failed to asynchronously prepare wasm: both async and sync fetching of the wasm failed
+  //     Aborted(both async and sync fetching of the wasm failed)
+  //
+  // which names neither the cause nor the fix and reads as a broken product rather than a wrong
+  // URL scheme.  The comment at the top of this file has warned about it since Phase 2 -- in a
+  // file the customer never opens.  Catch it here instead, where they are standing.
+  // ---------------------------------------------------------------------------
+  if (location.protocol === "file:") {
+    var here = "";
+    try { here = decodeURIComponent(location.pathname.replace(/\/[^\/]*$/, "")); } catch (e) {}
+    setStatus("This page must be served over HTTP -- it cannot run from a file:// URL.");
+    out("\nLambLisp cannot start from a file:// URL.\n\n");
+    out("WHY:  the WebAssembly module and its filesystem image are fetched, and a browser gives\n");
+    out("      a file:// page no origin to fetch from.  Nothing is wrong with the download.\n\n");
+    out("FIX:  serve this directory and open it over http://, for example:\n\n");
+    out("        cd " + (here || "<this demo directory>") + "\n");
+    out("        python3 -m http.server 8000\n\n");
+    out("      then open  http://localhost:8000/index.html\n\n");
+    out("      (any static web server will do -- there is nothing to install and nothing\n");
+    out("       leaves your machine; the server is only so the browser has an origin.)\n\n");
+    out("Or use the hosted copy, which is always served correctly:\n");
+    out("        https://lamblisp.com\n");
+    return;   //!< do not call createLambLisp -- it would abort with the unreadable message above
+  }
+
+  // DO NOT PASS setStatus INTO THE MODULE.  Emscripten's runtime OWNS Module.setStatus and calls
+  // it with an empty string when its own loading finishes -- which happens AFTER our boot, so the
+  // page silently cleared its own "ready" line and looked stuck.  Measured 2026-09-04 in headless
+  // Chrome: the VM had booted and the REPL was live, and the only visible sign was a blank status.
+  createLambLisp({
+    // stdout/stderr are the BYTE hooks and are what actually carry VM output -- see outByte().
+    // print/printErr stay wired for the few messages Emscripten routes through them itself
+    // (abort text, for one), which never reach the stdout device.
+    stdout:   outByte,
+    stderr:   outByte,
+    print:    out,
+    printErr: out
+  }).then(function (mod) {
+    LL = mod;
+    evalLine = LL.cwrap("ll_wasm_eval", null, ["string"]);
+    tick     = LL.cwrap("ll_wasm_tick", null, []);
+    setStatus("restoring your files...");
+    // Mount BEFORE booting: the VM loads its library during ll_wasm_boot(), and an autoload file
+    // has to be on the filesystem before anything can load it.
+    return mountPersist();
+  }).then(function () {
+    setStatus("booting the VM (loading the Scheme library)...");
+    // Yield once so that status text actually paints: ll_wasm_boot() loads the whole staged .scm
+    // library and blocks the only thread for as long as that takes.
+    setTimeout(function () {
+      LL.ccall("ll_wasm_boot", null, [], []);
+      booted = true;
+      refreshFiles();
+      autoload();
+      setStatus(persistOK
+                ? "ready -- files saved to /persist stay in this browser"
+                : "ready -- persistence unavailable in this browser, so saved files will not survive a reload");
+      prompt();
+      // The idle tick is not decoration: Lamb::loop() is where the Scheme-level (loop) procedure
+      // runs and where the incremental collector gets its idle quantum.  A page that only calls
+      // ll_wasm_eval() does all of its collecting inside the user's keystrokes.
+      // B436: requestAnimationFrame, NOT a 250 ms interval.  `tick` is ll_wasm_tick(), whose whole
+      // body is loop() -- so at 250 ms the Scheme-level (loop) hook and the collector's ENTIRE idle
+      // quantum got four opportunities per second.  The comment above argues that a tick must EXIST
+      // and says nothing about its rate; 250 was never a measured choice.
+      // rAF rather than a faster setInterval: the browser already throttles it in a background tab,
+      // which is the behaviour wanted -- an unfocused tab should not spin the collector -- and it
+      // cannot accumulate a backlog the way a fixed interval does when a tick outlasts its period.
+      // NOTE this does NOT affect eval latency: a typed line goes through ll_wasm_eval, and on
+      // Emscripten monitor_commandline() returns the whole pushed line at once (ll_vm_term.cpp:173),
+      // so one loop() consumes it.  This tick is the IDLE path only.
+      (function raf() {
+        if (booted) tick();
+        requestAnimationFrame(raf);
+      })();
+    }, 0);
+  }).catch(function (e) {
+    setStatus("failed to load: " + e);
+  });
+
+  //! Load /persist/autoload.scm if the visitor left one.  This is the whole point of Phase 3:
+  //! a definition typed yesterday is in scope today.
+  function autoload() {
+    if (!persistOK || listFiles().indexOf("autoload.scm") < 0) return;
+    out("\n; loading /persist/autoload.scm\n");
+    try { evalLine('(load "' + PERSIST + '/autoload.scm" 0)'); }
+    catch (e) { out("\n[host] autoload failed: " + e + "\n"); }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Line editing, deliberately in JavaScript.
+  //
+  // The C++ line editor (arrow keys, history, paren hints) needs raw terminal mode, which no wasm
+  // host can provide -- this build sets LL_TERMIOS=0 and LambLisp therefore expects WHOLE LINES.
+  // xterm.js already does line editing better than a raw-mode editor could, so the split is: JS
+  // owns the keystrokes, LambLisp owns the language.
+  // ---------------------------------------------------------------------------
+  var line = "", history = [], hpos = -1;
+
+  function prompt() { out("\nLL=> "); }
+
+  function submit(text) {
+    if (!booted) return;
+    if (text.trim() !== "") { history.push(text); hpos = -1; }
+    try { evalLine(text); }
+    catch (e) { out("\n[host] " + e + "\n"); }
+    // The evaluated form may have written to /persist itself -- (with-output-to-file
+    // "/persist/x.scm" ...) is ordinary R7RS and reaches IDBFS through plain fopen/fclose, which
+    // knows nothing about IndexedDB.  So flush and re-list after EVERY eval, not only after the
+    // drawer's Save button.
+    flushSoon();
+    refreshFiles();
+    prompt();
+  }
+
+  // INPUT.  One path now that the terminal is ours.  An <input> gives native editing, selection
+  // and IME for free; history is the one terminal affordance it lacks, so it is added here.
+  fbIn.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") {
+      var t = fbIn.value; fbIn.value = ""; hpos = -1;
+      out("\nLL=> " + t + "\n");
+      submit(t);
+      return;
+    }
+    if (!history.length) return;
+    if (ev.key === "ArrowUp") {
+      hpos = (hpos < 0) ? history.length - 1 : Math.max(0, hpos - 1);
+      fbIn.value = history[hpos];
+      ev.preventDefault();                 //!< keep the caret at the end, not at column 0
+    } else if (ev.key === "ArrowDown") {
+      hpos = (hpos < 0) ? -1 : Math.min(history.length - 1, hpos + 1);
+      fbIn.value = (hpos < 0) ? "" : history[hpos];
+      ev.preventDefault();
+    }
+  });
+
+  // ---------------------------------------------------------------------------
+  // P175 Phase 3 -- the /persist drawer.
+  //
+  // A REPL alone cannot demonstrate persistence: there is nowhere to put a definition and no way
+  // to see that it came back.  These four controls are the demonstration -- save, reload the tab,
+  // and the file is still listed.  Loading goes through the SCHEME `load` rather than replaying
+  // text into the terminal, so what the visitor sees is the language reading its own file, which
+  // is the thing being shown.
+  // ---------------------------------------------------------------------------
+  var listEl = document.getElementById("flist");
+  var edEl   = document.getElementById("fed");
+  var nameEl = document.getElementById("fname");
+
+  function fpath(n) { return PERSIST + "/" + n; }
+
+  //! Reject anything that is not a plain filename.  A name with a slash would escape /persist and
+  //! could land in /data, where it would be read at boot by every later visit to this page.
+  function safeName(n) {
+    n = String(n || "").trim();
+    if (!n || n === "." || n === ".." || /[\/\\]/.test(n)) return "";
+    return n;
+  }
+
+  function refreshFiles() {
+    var names = listFiles();
+    listEl.textContent = "";
+    if (!names.length) {
+      var li = document.createElement("li");
+      li.className = "empty";
+      li.textContent = persistOK ? "(no saved files)" : "(persistence unavailable)";
+      listEl.appendChild(li);
+      return;
+    }
+    names.forEach(function (n) {
+      var li = document.createElement("li");
+      var s  = document.createElement("span");
+      s.className = "nm";
+      s.textContent = n;
+      s.title = "open " + fpath(n) + " in the editor";
+      s.addEventListener("click", function () {
+        try {
+          edEl.value  = LL.FS.readFile(fpath(n), { encoding: "utf8" });
+          nameEl.value = n;
+        } catch (e) { out("\n[host] cannot read " + n + ": " + e + "\n"); }
+      });
+      li.appendChild(s);
+      listEl.appendChild(li);
+    });
+  }
+
+  document.getElementById("fsave").addEventListener("click", function () {
+    var n = safeName(nameEl.value);
+    if (!n)         { out("\n[host] give the file a plain name, with no directory part\n"); return; }
+    if (!persistOK) { out("\n[host] this browser will not keep files -- saving anyway, for this session only\n"); }
+    try {
+      LL.FS.writeFile(fpath(n), edEl.value);
+      flushSoon();
+      refreshFiles();
+      out("\n; saved " + fpath(n) + "\n");
+      prompt();
+    } catch (e) { out("\n[host] cannot save " + n + ": " + e + "\n"); }
+  });
+
+  document.getElementById("fload").addEventListener("click", function () {
+    var n = safeName(nameEl.value);
+    if (!n || !booted) return;
+    out("\n; (load \"" + fpath(n) + "\")\n");
+    submit('(load "' + fpath(n) + '" 0)');
+  });
+
+  document.getElementById("fdel").addEventListener("click", function () {
+    var n = safeName(nameEl.value);
+    if (!n) return;
+    try {
+      LL.FS.unlink(fpath(n));
+      flushSoon();
+      refreshFiles();
+      out("\n; deleted " + fpath(n) + "\n");
+      prompt();
+    } catch (e) { out("\n[host] cannot delete " + n + ": " + e + "\n"); }
+  });
+})();
+</script>
+</body>
+</html>

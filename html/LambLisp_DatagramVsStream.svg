@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420">
+<rect width="980" height="420" fill="#ffffff"/>
+<text x="490" y="32" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" fill="#00468c" text-anchor="middle" font-weight="bold">Why a UDP port is not an input-port?</text>
+<text x="490" y="54" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#8899aa" text-anchor="middle" font-style="italic">a stream keeps the bytes and loses the boundaries · a datagram keeps both</text>
+<text x="56" y="112" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#0d1a2e" text-anchor="start" font-weight="bold">sent</text>
+<rect x="150" y="92" width="75" height="36" rx="4" fill="#f4f6f9" stroke="#8899aa" stroke-width="1.3"/>
+<text x="187.5" y="115" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e" text-anchor="middle">HELLO</text>
+<rect x="241" y="92" width="58" height="36" rx="4" fill="#f4f6f9" stroke="#8899aa" stroke-width="1.3"/>
+<text x="270.0" y="115" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e" text-anchor="middle">OK</text>
+<rect x="315" y="92" width="58" height="36" rx="4" fill="#f4f6f9" stroke="#8899aa" stroke-width="1.3"/>
+<text x="344.0" y="115" font-family="Courier New, Courier, monospace" font-size="11" fill="#8899aa" text-anchor="middle" font-style="italic">(empty)</text>
+<rect x="389" y="92" width="90" height="36" rx="4" fill="#f4f6f9" stroke="#8899aa" stroke-width="1.3"/>
+<text x="434.0" y="115" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e" text-anchor="middle">DATA42</text>
+<text x="503" y="115" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa" text-anchor="start" font-style="italic">4 messages</text>
+<rect x="40" y="160" width="900" height="74" rx="7" fill="#d0e8ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="56" y="182" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#1a6abf" text-anchor="start" font-weight="bold">TCP / TLS</text>
+<text x="56" y="200" font-family="Courier New, Courier, monospace" font-size="10" fill="#1a6abf" text-anchor="start">read-u8</text>
+<rect x="150" y="172" width="560" height="40" rx="4" fill="#ffffff" stroke="#1a6abf" stroke-width="1.4"/>
+<text x="430" y="197" font-family="Courier New, Courier, monospace" font-size="13" fill="#0d1a2e" text-anchor="middle">HELLOOKDATA42</text>
+<text x="760" y="186" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#1a6abf" text-anchor="start">one byte stream</text>
+<text x="760" y="202" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#c03030" text-anchor="start" font-style="italic">boundaries are gone</text>
+<rect x="40" y="272" width="900" height="86" rx="7" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.5"/>
+<text x="56" y="294" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#b35c00" text-anchor="start" font-weight="bold">UDP</text>
+<text x="56" y="312" font-family="Courier New, Courier, monospace" font-size="10" fill="#b35c00" text-anchor="start">udp-recv</text>
+<rect x="150" y="284" width="75" height="40" rx="4" fill="#ffffff" stroke="#b35c00" stroke-width="1.4"/>
+<text x="187.5" y="309" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e" text-anchor="middle">HELLO</text>
+<text x="187.5" y="340" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" fill="#b35c00" text-anchor="middle">5 B</text>
+<rect x="241" y="284" width="58" height="40" rx="4" fill="#ffffff" stroke="#b35c00" stroke-width="1.4"/>
+<text x="270.0" y="309" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e" text-anchor="middle">OK</text>
+<text x="270.0" y="340" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" fill="#b35c00" text-anchor="middle">2 B</text>
+<rect x="315" y="284" width="58" height="40" rx="4" fill="#ffffff" stroke="#b35c00" stroke-width="1.4"/>
+<text x="344.0" y="309" font-family="Courier New, Courier, monospace" font-size="11" fill="#8899aa" text-anchor="middle" font-style="italic">(empty)</text>
+<text x="344.0" y="340" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" fill="#b35c00" text-anchor="middle">0 B</text>
+<rect x="389" y="284" width="90" height="40" rx="4" fill="#ffffff" stroke="#b35c00" stroke-width="1.4"/>
+<text x="434.0" y="309" font-family="Courier New, Courier, monospace" font-size="11" fill="#0d1a2e" text-anchor="middle">DATA42</text>
+<text x="434.0" y="340" font-family="Helvetica Neue, Arial, sans-serif" font-size="9" fill="#b35c00" text-anchor="middle">6 B</text>
+<text x="503" y="302" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#b35c00" text-anchor="start">four calls, four datagrams</text>
+<text x="490" y="392" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#b35c00" text-anchor="middle" font-weight="bold">udp-recv returns #f on timeout — not an empty bytevector, because the third datagram above is a real message.</text>
+</svg>

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="510" viewBox="0 0 820 510">
+<rect width="820" height="510" fill="#ffffff"/>
+<defs>
+  <marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#00468c"/>
+  </marker>
+  <marker id="arrd" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#8899aa"/>
+  </marker>
+  <marker id="arrg" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0,9 3.5,0 7" fill="#228844"/>
+  </marker>
+</defs>
+
+<!-- Title -->
+<text x="410" y="28" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="20.0" font-weight="bold" fill="#00468c">LLIP Hot-Reload — Live Update Without Reboot</text>
+
+<!-- Control loop background band (ESP32 side, entire sequence) -->
+<rect x="596" y="86" width="90" height="348" rx="4" fill="#e8f8e8" stroke="#228844" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="641" y="102" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="10.5" font-style="italic" fill="#228844">control loop</text>
+<text x="641" y="114" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="10.5" font-style="italic" fill="#228844">10 ms · continuous</text>
+
+<!-- Lifeline headers -->
+<rect x="70" y="48" width="140" height="36" rx="6" fill="#4a90d9" stroke="#00468c" stroke-width="1.5"/>
+<text x="140" y="71" text-anchor="middle" font-family="Courier New, monospace" font-size="15" font-weight="bold" fill="#ffffff">developer</text>
+
+<rect x="550" y="48" width="140" height="36" rx="6" fill="#4a90d9" stroke="#00468c" stroke-width="1.5"/>
+<text x="620" y="71" text-anchor="middle" font-family="Courier New, monospace" font-size="15" font-weight="bold" fill="#ffffff">ESP32</text>
+
+<!-- Lifelines -->
+<line x1="140" y1="84" x2="140" y2="450" stroke="#4a90d9" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="620" y1="84" x2="620" y2="450" stroke="#4a90d9" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+<!-- Activation boxes -->
+<rect x="134" y="130" width="12" height="290" rx="2" fill="#d0e8ff" stroke="#4a90d9" stroke-width="1"/>
+<rect x="614" y="84"  width="12" height="350" rx="2" fill="#d0e8ff" stroke="#4a90d9" stroke-width="1"/>
+
+<!-- ── Step 0: TCP connection ── -->
+<line x1="152" y1="130" x2="614" y2="130" stroke="#8899aa" stroke-width="1.4" stroke-dasharray="4,2" marker-end="url(#arrd)"/>
+<text x="380" y="123" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.0" font-style="italic" fill="#8899aa">TCP / WiFi connection established</text>
+
+<!-- ── Step 1: edit (internal action) ── -->
+<rect x="60" y="148" width="160" height="26" rx="4" fill="#fff8e0" stroke="#e8a020" stroke-width="1"/>
+<text x="140" y="165" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13.0" fill="#c07800">edit  behavior.scm</text>
+
+<!-- ── Step 2: write op ── -->
+<line x1="152" y1="200" x2="614" y2="200" stroke="#00468c" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="380" y="193" text-anchor="middle" font-family="Courier New, monospace" font-size="13" fill="#00468c">(write "/behavior.scm"  content)</text>
+<!-- annotation on ESP32 side -->
+<text x="700" y="196" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.0" font-style="italic" fill="#8899aa">LLIP server</text>
+<text x="700" y="208" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.0" font-style="italic" fill="#8899aa">→ LambLisp FS</text>
+
+<!-- ── Step 3: (ok) ── -->
+<line x1="614" y1="232" x2="152" y2="232" stroke="#00468c" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="380" y="225" text-anchor="middle" font-family="Courier New, monospace" font-size="13" fill="#00468c">(ok)</text>
+<text x="380" y="246" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.0" font-style="italic" fill="#8899aa">file stored</text>
+
+<!-- ── Step 4: load op ── -->
+<line x1="152" y1="278" x2="614" y2="278" stroke="#00468c" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="380" y="271" text-anchor="middle" font-family="Courier New, monospace" font-size="13" fill="#00468c">(load "/behavior.scm")</text>
+<!-- annotation on ESP32 side -->
+<text x="700" y="274" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.0" font-style="italic" fill="#8899aa">LambLisp FS</text>
+<text x="700" y="286" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.0" font-style="italic" fill="#8899aa">→ eval in interp</text>
+
+<!-- eval box on ESP32 side -->
+<rect x="558" y="290" width="124" height="22" rx="3" fill="#e0f0e0" stroke="#228844" stroke-width="1"/>
+<text x="620" y="305" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11.5" fill="#228844">eval · new bindings set</text>
+
+<!-- ── Step 5: (ok result) ── -->
+<line x1="614" y1="330" x2="152" y2="330" stroke="#00468c" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="380" y="323" text-anchor="middle" font-family="Courier New, monospace" font-size="13" fill="#00468c">(ok  result)</text>
+
+<!-- "new behavior live" callout -->
+<rect x="558" y="342" width="124" height="34" rx="4" fill="#228844"/>
+<text x="620" y="357" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.0" font-weight="bold" fill="#ffffff">new behavior</text>
+<text x="620" y="370" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.0" font-weight="bold" fill="#ffffff">live</text>
+
+<!-- ── Step 6: bye ── -->
+<line x1="152" y1="400" x2="614" y2="400" stroke="#8899aa" stroke-width="1.4" stroke-dasharray="4,2" marker-end="url(#arrd)"/>
+<text x="380" y="393" text-anchor="middle" font-family="Courier New, monospace" font-size="13" fill="#8899aa">(bye)</text>
+
+<!-- End caps -->
+<line x1="125" y1="450" x2="155" y2="450" stroke="#4a90d9" stroke-width="2"/>
+<line x1="605" y1="438" x2="635" y2="438" stroke="#4a90d9" stroke-width="2"/>
+
+<!-- Key property note -->
+<rect x="50" y="464" width="720" height="34" rx="5" fill="#f4f8ff" stroke="#8899aa" stroke-width="1"/>
+<text x="410" y="478" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#0d1a2e">The control loop runs throughout.  LLIP write and load complete in the gaps between loop iterations.</text>
+<text x="410" y="492" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#0d1a2e">No reboot.  No recompile.  No interruption to sensors or actuators.</text>
+
+</svg>

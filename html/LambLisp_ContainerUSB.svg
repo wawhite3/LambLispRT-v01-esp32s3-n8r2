@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="530" viewBox="0 0 960 530">
+<rect width="960" height="530" fill="#ffffff"/>
+<defs><marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker><marker id="arrg" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#228844"/></marker><marker id="arrr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker></defs>
+<text x="480" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="bold" fill="#00468c">Flashing from a container: the host OS decides, not Docker</text>
+<text x="480" y="56" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">The container must reach a real device node. Whether it can depends on whether a VM is in the way.</text>
+<line x1="480" y1="72" x2="480" y2="505" stroke="#8899aa" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="240" y="96" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" font-weight="bold" font-style="normal" fill="#228844">LINUX HOST</text>
+<text x="240" y="116" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">container shares the host kernel</text>
+<rect x="70" y="132" width="340" height="300" rx="8" fill="#f4fbf4" stroke="#228844" stroke-width="1.5"/>
+<rect x="100" y="152" width="280" height="58" rx="6" fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<text x="240" y="176" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" font-style="normal" fill="#1a6633">container</text>
+<text x="240" y="198" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15" font-weight="normal" font-style="normal" fill="#00468c">pio run --target upload</text>
+<line x1="240" y1="214" x2="240" y2="254" stroke="#228844" stroke-width="2" marker-end="url(#arrg)"/>
+<rect x="100" y="258" width="280" height="44" rx="6" fill="#e8f2ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="240" y="285" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="16" font-weight="normal" font-style="normal" fill="#00468c">host kernel  (shared)</text>
+<line x1="240" y1="306" x2="240" y2="344" stroke="#228844" stroke-width="2" marker-end="url(#arrg)"/>
+<rect x="100" y="348" width="280" height="46" rx="6" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<text x="240" y="377" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="17" font-weight="bold" font-style="normal" fill="#8a5a00">/dev/ttyUSB0</text>
+<text x="240" y="418" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15" font-weight="bold" font-style="normal" fill="#228844">--device=/dev/ttyUSB0   works</text>
+<text x="720" y="96" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" font-style="normal" fill="#cc4444">macOS / WINDOWS  (Docker Desktop)</text>
+<text x="720" y="116" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">container runs inside a virtual machine</text>
+<rect x="550" y="132" width="340" height="300" rx="8" fill="#fdf6f6" stroke="#cc4444" stroke-width="1.5"/>
+<rect x="576" y="148" width="288" height="150" rx="8" fill="#ffffff" stroke="#8899aa" stroke-width="1.5"/>
+<text x="720" y="166" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" font-style="normal" fill="#667788">VIRTUAL MACHINE</text>
+<rect x="596" y="176" width="248" height="54" rx="6" fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<text x="720" y="198" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" font-style="normal" fill="#1a6633">container</text>
+<text x="720" y="219" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" font-weight="normal" font-style="normal" fill="#00468c">pio run --target upload</text>
+<rect x="596" y="240" width="248" height="40" rx="6" fill="#e8f2ff" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="720" y="265" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15" font-weight="normal" font-style="normal" fill="#00468c">VM kernel</text>
+<line x1="720" y1="283" x2="720" y2="316" stroke="#cc4444" stroke-width="2.4" marker-end="url(#arrr)"/>
+<line x1="566" y1="322" x2="874" y2="322" stroke="#cc4444" stroke-width="3"/>
+<text x="720" y="341" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" font-style="normal" fill="#cc4444">no USB bridge across this boundary</text>
+<rect x="596" y="352" width="248" height="46" rx="6" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<text x="720" y="381" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15" font-weight="normal" font-style="normal" fill="#8a5a00">USB device (on the host)</text>
+<text x="720" y="418" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="15" font-weight="bold" font-style="normal" fill="#cc4444">--device   cannot reach it</text>
+<rect x="70" y="450" width="820" height="58" rx="8" fill="#f2f6fb" stroke="#1a6abf" stroke-width="1.5"/>
+<text x="480" y="472" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" font-style="normal" fill="#00468c">Build firmware in the container anywhere. FLASH it from the host on macOS and Windows.</text>
+<text x="480" y="494" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">The symptom otherwise is an upload that hangs or cannot open the port — which reads as broken hardware.</text>
+</svg>

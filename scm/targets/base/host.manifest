@@ -1,0 +1,68 @@
+# base/host.manifest -- the ship-list every HOST target shares.
+#
+# [P251] EXTRACTED 2026-09-28 from six byte-identical manifests: linux_x86_64_bc,
+# linux_x86_64_floatprof, linux_x86_64_ncg, linux_x86_64_poison, wasm32_wasi, windows_x86_64.
+# Four more (linux_aarch64_cuda, linux_x86_64, linux_x86_64_hip, linux_x86_64_profile) were
+# identical to these EXCEPT for one line -- features/llip-vision.scm -- so ten files existed to
+# express two lists, and a one-line difference was stored as a 58-line copy.
+#
+# A target extending this adds what it DIFFERS by.  Drop an inherited entry with `-<destination>`.
+# Nothing here is arch-specific: the name is `host` because these are the non-board targets, and a
+# board manifest should NOT extend it -- the board lists are genuinely different, not duplicated.
+core/setup.scm
+core/Compiler.scm
+core/Lobs.scm
+core/Behaviors.scm
+core/Terminal.scm
+file: boards/pins/linux.scm -> Pins.scm
+core/Timers.scm
+core/ESP32.scm
+core/CommonIO.scm
+core/Buzzer.scm
+core/Sonar.scm
+core/WiFi.scm
+core/I2C.scm
+core/Wire.scm
+core/PCA9685.scm
+core/PCF8574.scm
+core/WS2812.scm
+core/LightSensor.scm
+core/LCD1602.scm
+core/array.scm
+rxrs/rxrs.scm
+rxrs/rxrs_cxr.scm
+rxrs/rxrs_exceptions.scm
+rxrs/rxrs_continuations.scm
+rxrs/rxrs_promises.scm
+rxrs/rxrs_quasiquote.scm
+rxrs/rxrs_syntax.scm
+rxrs/rxrs_library.scm
+rxrs/rxrs_srfi.scm
+rxrs/rxrs_syntax_rules.scm
+features/rxrs_rational.scm
+features/rxrs_complex.scm
+features/base64.scm
+features/rsa.scm
+features/dh_groups.scm
+features/llip-auth.scm
+features/csv.scm
+features/bacnet.scm
+features/Cuda.scm
+features/Neopixel.scm
+tools/llip-client.scm
+tools/llip-server.scm
+tools/test-framework.scm
+tools/ncg-tests.scm
+tools/ncg_iota_bench.scm
+demos/demo-sandbox.scm
+demos/demo-supervisor.scm
+demos/demo-telemetry.scm
+demos/Music.scm
+demos/Personality.scm
+runtime-defaults/Settings.scm
+optional: runtime-defaults/Settings-local.scm.bench -> Settings-local.scm
+optional: runtime-defaults/net-test-ca.pem -> net-test-ca.pem
+optional: runtime-defaults/llip-test-privkey.scm -> llip-test-privkey.scm
+optional: runtime-defaults/llip-test-pubkey.scm -> llip-test-pubkey.scm
+runtime-defaults/Settings-Lamb.scm
+dir: tests/ll_tests -> ll_tests

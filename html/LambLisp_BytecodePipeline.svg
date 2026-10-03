@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="400">
+<rect width="1100" height="400" fill="#ffffff"/>
+<defs><marker id="arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker><marker id="arrp" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#7755aa"/></marker></defs>
+<text x="550" y="32" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" font-style="normal" fill="#00468c">LambLisp Bytecode Compilation Pipeline</text>
+<text x="8" y="135" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="bold" font-style="normal" fill="#00468c">Interpreter</text>
+<text x="8" y="283" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="bold" font-style="normal" fill="#7755aa">Bytecode</text>
+<rect x="30" y="108" width="80" height="44" rx="5" fill="#f0f0f0" stroke="#8899aa" stroke-width="1.4"/>
+<text x="70" y="130" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" fill="#8899aa">Source</text>
+<text x="70" y="144" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" fill="#8899aa">text</text>
+<rect x="160" y="99" width="110" height="62" rx="7" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<text x="215" y="124" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="bold" fill="#00468c">Reader</text>
+<text x="215" y="142" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="10" font-weight="normal" fill="#8899aa">tokenize+parse</text>
+<rect x="315" y="99" width="120" height="62" rx="7" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<text x="375" y="124" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="bold" fill="#00468c">AST</text>
+<text x="375" y="142" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="10" font-weight="normal" fill="#8899aa">T_PAIR tree</text>
+<rect x="640" y="99" width="120" height="62" rx="7" fill="#d0e8ff" stroke="#00468c" stroke-width="1.8"/>
+<text x="700" y="124" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="bold" fill="#00468c">Eval</text>
+<text x="700" y="142" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="10" font-weight="normal" fill="#8899aa">interpreter</text>
+<rect x="830" y="99" width="100" height="62" rx="7" fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<text x="880" y="134" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="bold" fill="#228844">Result</text>
+<rect x="150" y="247" width="130" height="62" rx="7" fill="#e8d4ff" stroke="#7755aa" stroke-width="1.8"/>
+<text x="215" y="272" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" font-weight="bold" fill="#7755aa">Bytecode</text>
+<text x="215" y="290" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="10" font-weight="normal" fill="#7755aa">Compiler</text>
+<rect x="361" y="247" width="138" height="62" rx="7" fill="#e8d4ff" stroke="#7755aa" stroke-width="1.8"/>
+<text x="430" y="272" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" font-weight="bold" fill="#7755aa">T_BYTECODE</text>
+<text x="430" y="290" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="10" font-weight="normal" fill="#8899aa">object</text>
+<rect x="586" y="247" width="128" height="62" rx="7" fill="#e8d4ff" stroke="#7755aa" stroke-width="1.8"/>
+<text x="650" y="272" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="12" font-weight="bold" fill="#7755aa">Executor</text>
+<text x="650" y="290" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="10" font-weight="normal" fill="#7755aa">bytecode VM</text>
+<rect x="830" y="247" width="100" height="62" rx="7" fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<text x="880" y="282" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="bold" fill="#228844">Result</text>
+<line x1="110" y1="130" x2="160" y2="130" stroke="#00468c" stroke-width="1.7" marker-end="url(#arr)"/>
+<line x1="270" y1="130" x2="315" y2="130" stroke="#00468c" stroke-width="1.7" marker-end="url(#arr)"/>
+<text x="292" y="120" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="normal" font-style="italic" fill="#00468c">S-exprs</text>
+<line x1="435" y1="130" x2="640" y2="130" stroke="#00468c" stroke-width="1.7" marker-end="url(#arr)"/>
+<text x="537" y="120" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="normal" font-style="italic" fill="#00468c">direct</text>
+<line x1="760" y1="130" x2="830" y2="130" stroke="#00468c" stroke-width="1.7" marker-end="url(#arr)"/>
+<path d="M 375,161 C 375,204 150,204 150,278" fill="none" stroke="#7755aa" stroke-width="1.5"  marker-end="url(#arrp)"/>
+<text x="393" y="204" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" fill="#7755aa">compile</text>
+<text x="393" y="218" text-anchor="start" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" fill="#7755aa">(explicit)</text>
+<line x1="280" y1="278" x2="361" y2="278" stroke="#7755aa" stroke-width="1.5" marker-end="url(#arrp)"/>
+<line x1="499" y1="278" x2="586" y2="278" stroke="#7755aa" stroke-width="1.5" marker-end="url(#arrp)"/>
+<line x1="714" y1="278" x2="830" y2="278" stroke="#7755aa" stroke-width="1.5" marker-end="url(#arrp)"/>
+<rect x="30" y="348" width="1040" height="36" rx="5" fill="#fff3cc" stroke="#cc8800" stroke-width="1"/>
+<text x="550" y="362" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-weight="bold" font-style="normal" fill="#cc8800">Both paths share: GC heap  ·  environment chain  ·  interaction env</text>
+<text x="550" y="376" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="normal" font-style="italic" fill="#8899aa">Bytecode compiler is optional — triggered explicitly; interpreter path always available</text>
+</svg>

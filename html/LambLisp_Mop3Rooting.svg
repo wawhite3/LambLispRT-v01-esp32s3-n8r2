@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+<rect width="960" height="560" fill="#ffffff"/>
+<defs><marker id="arrr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker><marker id="arrg" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#228844"/></marker></defs>
+<text x="480" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="bold" font-style="normal" fill="#00468c">Rooting inside a mop3: what survives an allocation</text>
+<text x="480" y="56" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">Every allocating call may run a collection quantum. A C-stack Sexpr_t is not a root, so a value that is not</text>
+<text x="480" y="74" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="normal" font-style="italic" fill="#445566">reachable from the root stack at that moment is collected — and the fault appears later, somewhere else.</text>
+<line x1="120" y1="120" x2="880" y2="120" stroke="#8899aa" stroke-width="1.4"/>
+<line x1="150" y1="112" x2="150" y2="128" stroke="#8899aa" stroke-width="1.4"/>
+<text x="150" y="104" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#445566">enter mop3</text>
+<line x1="330" y1="112" x2="330" y2="128" stroke="#8899aa" stroke-width="1.4"/>
+<text x="330" y="104" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#445566">cons #1</text>
+<line x1="510" y1="112" x2="510" y2="128" stroke="#8899aa" stroke-width="1.4"/>
+<text x="510" y="104" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#445566">cons #2</text>
+<line x1="690" y1="112" x2="690" y2="128" stroke="#8899aa" stroke-width="1.4"/>
+<text x="690" y="104" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#445566">cons #3</text>
+<line x1="850" y1="112" x2="850" y2="128" stroke="#8899aa" stroke-width="1.4"/>
+<text x="850" y="104" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#445566">return</text>
+<text x="480" y="146" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" font-style="italic" fill="#667788">each allocating call is a point where the collector may run</text>
+<rect x="120" y="164" width="760" height="46" rx="6" fill="#d4f7d4" stroke="#228844" stroke-width="1.8"/>
+<text x="480" y="184" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" font-style="normal" fill="#1a6633">ROOTED FOR YOU — the argument list, and everything reachable by walking it</text>
+<text x="480" y="202" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" font-style="italic" fill="#445566">apply_proc_partial pushes sexpr for the whole call: args, their cdrs, list elements need no protection</text>
+<rect x="120" y="232" width="760" height="104" rx="8" fill="#fdf6f6" stroke="#cc4444" stroke-width="1.8"/>
+<text x="480" y="254" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" font-style="normal" fill="#cc4444">WITHOUT PROTECTION — a value you built yourself</text>
+<text x="140" y="278" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#00468c">Sexpr_t acc = lamb.cons(a, NIL, env);</text>
+<rect x="330" y="290" width="180" height="22" rx="3" fill="#d4f7d4" stroke="#228844" stroke-width="1.4"/>
+<text x="420" y="306" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="normal" font-style="normal" fill="#1a6633">acc is reachable</text>
+<rect x="510" y="290" width="340" height="22" rx="3" fill="#fdecec" stroke="#cc4444" stroke-width="1.4"/>
+<text x="680" y="306" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" fill="#8a2020">acc is NOT a root — collectable here</text>
+<line x1="510" y1="290" x2="510" y2="282" stroke="#cc4444" stroke-width="1.6"/>
+<text x="680" y="328" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="normal" font-style="italic" fill="#445566">the cell is reused, and the fault surfaces later in unrelated code</text>
+<rect x="120" y="356" width="760" height="104" rx="8" fill="#f4fbf4" stroke="#228844" stroke-width="1.8"/>
+<text x="480" y="378" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" font-style="normal" fill="#228844">WITH mop3_gc_protect — pushed on the root stack for the span that needs it</text>
+<text x="140" y="402" text-anchor="start" font-family="Courier New, Courier, monospace" font-size="13" font-weight="normal" font-style="normal" fill="#00468c">mop3_gc_protect(acc, {  acc = lamb.cons(b, acc, env);  });</text>
+<rect x="330" y="414" width="520" height="22" rx="3" fill="#d4f7d4" stroke="#228844" stroke-width="1.4"/>
+<text x="590" y="430" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="bold" font-style="normal" fill="#1a6633">acc is a root for the whole block — traced, never collected</text>
+<text x="480" y="452" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="normal" font-style="italic" fill="#445566">push happens at the { and pop at the } — which is why a return inside the block leaks a root</text>
+<rect x="120" y="478" width="370" height="66" rx="8" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<text x="305" y="500" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#8a5a00">NEVER return FROM INSIDE THE BLOCK</text>
+<text x="305" y="520" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" font-style="italic" fill="#445566">it jumps over the pop and leaks a root</text>
+<text x="305" y="537" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" font-style="italic" fill="#445566">assign to a result, return after the block</text>
+<rect x="510" y="478" width="370" height="66" rx="8" fill="#ffe8b0" stroke="#cc8800" stroke-width="1.8"/>
+<text x="695" y="500" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="bold" font-style="normal" fill="#8a5a00">THE BODY MUST BE MULTI-LINE</text>
+<text x="695" y="520" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" font-style="italic" fill="#445566">a comma inside a call splits the macro argument;</text>
+<text x="695" y="537" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="normal" font-style="italic" fill="#445566">put the statement on its own line inside { }</text>
+</svg>

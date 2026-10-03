@@ -1,0 +1,28 @@
+# windows_x86_64 (P174 Phase 1) -- native Windows LambLisp.exe, cross-built with MinGW-w64.
+#
+# DELIBERATELY FILE-FOR-FILE IDENTICAL TO linux_x86_64.manifest, and that is the whole point of
+# the target: Phase 1 asks one question -- does the LANGUAGE behave the same on Windows? -- and it
+# can only be answered by giving Windows exactly the library the reference host gets.  A trimmed
+# manifest would turn every conform difference into "is that the port, or is that the smaller
+# filesystem?", which is the question the wasm envs deliberately avoided asking too.
+#
+# So: when you add or remove a file in linux_x86_64.manifest, do the same here.  The two are meant
+# to diverge only when Windows genuinely cannot run something, and no such file exists today.
+#
+# NOTE the socket/terminal surface is NOT excluded here, because a manifest lists .scm FILES, not
+# capabilities.  The exclusion is in the build: -DLL_NETWORK=0 -DLL_TERMIOS=0 -DLL_NCG=0 via the
+# shared demo_profile in w3_pio/boards.json.
+# Core runtime
+# R5RS/R7RS overrides (full set including syntax-rules)
+# Optional features
+# Dev tools
+# Demos
+# Runtime defaults
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+# Test suite
+#
+# [P251] This list is base/host verbatim -- it added nothing of its own.
+extends: host
