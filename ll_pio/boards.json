@@ -1,0 +1,224 @@
+{
+  "_comment": "LambLisp board registry.  Edit this file to add/modify boards.",
+  "_comment2": "Run: python3 w3_ai_scripts/gen_platformio.py  to regenerate platformio.ini",
+  "_core_dir_note": "core_dir gives THIS TREE its own PlatformIO home instead of the shared ~/.platformio. It is required here and must not be removed while this branch is on a different Arduino/IDF than master. REASON: a git worktree separates TREES, NOT ENVIRONMENTS. pioarduino's platform.json declares name=espressif32 and its Arduino core installs to the same packages/framework-arduinoespressif32 path as the official platform, so the two OVERWRITE each other in a shared home -- whichever built last wins and the other breaks. Observed twice on 2026-09-03: a master build silently reinstalled Arduino 2.0.17 over 3.3.11 and broke this branch with FRAMEWORK_DIR=None; a branch build then broke master's ESP32 targets for other sessions. The version pin does NOT protect against this -- it selects the platform, it does not stop the platform from rewriting a shared package. Setting it HERE rather than exporting PLATFORMIO_CORE_DIR per command is the point: an env var is a habit and one forgotten prefix re-contaminates the shared home, which is exactly how it happened the second time. UPDATED 2026-09-04: this note used to end 'Absent on master, which correctly keeps the default home' -- that is no longer true, because the migration merged (29ec1ff) and master IS pioarduino now. It is KEPT rather than removed: ~/.platformio still holds the Arduino 2.0.17 / IDF 4.4.7 toolchain untouched, so it remains the rollback path, and keeping the two homes separate means reverting master does not require re-downloading a toolchain. Remove core_dir only if that rollback is deliberately abandoned.",
+  "core_dir": "~/.platformio-idf55",
+  "common": {
+    "build_type": "release",
+    "variants_dir": "w3_pio/variants",
+    "variant": "ll_variant-generic",
+    "monitor_speed": 115200,
+    "upload_speed": 460800,
+    "build_flags": [
+      "-Wformat",
+      "-O3",
+      "-DNDEBUG",
+      "-DCONFIG_DISABLE_HAL_LOCKS",
+      "-DETHERNET_SPI_SPEED=26000000",
+      "-DETHERNET_MAX_SOCK_NUM=2",
+      "-DETHERNET_LARGE_BUFFERS",
+      "-DCONFIG_LWIP_IPV6=1",
+      "-DCONFIG_LWIP_IPV6_AUTOCONFIG=1",
+      "-DCONFIG_LWIP_IPV6_NUM_ADDRESSES=3"
+    ]
+  },
+  "feature_flags": {
+    "comment": "Map feature name \u2192 compile flag(s)",
+    "arduino": [
+      "-DLL_ESP_ARDUINO=1"
+    ],
+    "commonio": [
+      "-DLL_COMMONIO=1"
+    ],
+    "complex": [
+      "-DLL_COMPLEX=1"
+    ],
+    "cuda": [
+      "-DLL_CUDA=1",
+      "-lcudart"
+    ],
+    "hip": [
+      "-DLL_HIP=1"
+    ],
+    "i2c": [
+      "-DLL_I2C=1"
+    ],
+    "lcd1602": [
+      "-DLL_LCD1602=1"
+    ],
+    "pca9685": [
+      "-DLL_PCA9685=1"
+    ],
+    "posix": [
+      "-DLL_POSIX=1"
+    ],
+    "_psram_note": "-mfix-esp32-psram-cache-issue is NOT here and must not come back here: it is an ESP32-CLASSIC (LX6) flag for the rev<3 PSRAM cache erratum, and xtensa-esp32s3-elf does not have the option at all. It lived in this shared block until 2026-09-03, which meant all five S3 boards were passing a flag their compiler does not implement -- tolerated silently by the old GCC 8.4.0 toolchain, and an unrecognized -m option is an error on the GCC 15.x toolchain that comes with Arduino 3.x/IDF 5.x. It now sits in chip_flags on the two LX6 boards (Freenove-4WD-Car-Kit-ESP32, Freenove-ESP32-WROVER), which is where a chip-specific flag belongs and where it cannot leak onto an S3 board by being added to a shared feature.",
+    "psram": [
+      "-DBOARD_HAS_PSRAM"
+    ],
+    "bignum": [
+      "-DLL_BIGNUM=1"
+    ],
+    "modbus": [
+      "-DLL_MODBUS=1"
+    ],
+    "profibus": [
+      "-DLL_PROFIBUS=1"
+    ],
+    "profinet": [
+      "-DLL_PROFINET=1"
+    ],
+    "rational": [
+      "-DLL_RATIONAL=1"
+    ],
+    "sonar": [
+      "-DLL_SONAR=1"
+    ],
+    "camera": [
+      "-DLL_CAMERA=1"
+    ],
+    "spi": [
+      "-DLL_SPI=1"
+    ],
+    "onewire": [
+      "-DLL_ONEWIRE=1"
+    ],
+    "littlefs": [
+      "-DLL_LITTLEFS=1"
+    ],
+    "wifi": [
+      "-DLL_WIFI=1"
+    ],
+    "wire": [
+      "-DLL_WIRE=1"
+    ],
+    "ws2812": [
+      "-DLL_WS2812=1"
+    ],
+    "lto": [
+      "-flto=auto"
+    ],
+    "native_march": [
+      "-march=native"
+    ],
+    "march_x86_64_v2": [
+      "-march=x86-64-v2",
+      "-mtune=native"
+    ],
+    "armv82": [
+      "-march=armv8.2-a"
+    ],
+    "_glibc_compat_note": "B274.  Each --wrap needs a MATCHING --undefined, and the pair must name a symbol src/ll_glibc_compat.cpp actually defines.  A --wrap with no --undefined links clean and does NOTHING (nothing references the object, so it is never pulled from the archive) -- the binary keeps its GLIBC_2.38 requirement and refuses to start on Debian 12 / Ubuntu 22.04 / RHEL 9, with no build-time signal at all.  An --undefined naming a symbol nobody defines fails at LINK, which is the safe direction.  The seven symbols this exists to remove, from objdump -T on the shipped binary: fmod fmodf __isoc23_fscanf __isoc23_sscanf __isoc23_strtol __isoc23_strtoll __isoc23_strtoul.  VERIFY WITH: objdump -T LambLisp.bin | grep GLIBC_2.3[89] -- it must print nothing.",
+    "glibc_compat": [
+      "-D_POSIX_C_SOURCE=200809L",
+      "-Wl,--wrap=fmod",
+      "-Wl,--wrap=fmodf",
+      "-Wl,--wrap=strtol",
+      "-Wl,--wrap=strtoll",
+      "-Wl,--wrap=strtoul",
+      "-Wl,--wrap=__isoc23_strtol",
+      "-Wl,--wrap=__isoc23_strtoll",
+      "-Wl,--wrap=__isoc23_strtoul",
+      "-Wl,--wrap=__isoc23_sscanf",
+      "-Wl,--wrap=__isoc23_fscanf",
+      "-Wl,--undefined=__wrap_fmod",
+      "-Wl,--undefined=__wrap_fmodf",
+      "-Wl,--undefined=__wrap_strtol",
+      "-Wl,--undefined=__wrap_strtoll",
+      "-Wl,--undefined=__wrap_strtoul",
+      "-Wl,--undefined=__wrap___isoc23_strtol",
+      "-Wl,--undefined=__wrap___isoc23_strtoll",
+      "-Wl,--undefined=__wrap___isoc23_strtoul",
+      "-Wl,--undefined=__wrap___isoc23_sscanf",
+      "-Wl,--undefined=__wrap___isoc23_fscanf"
+    ],
+    "llarduino": [
+      "-DLL_ARDUINO=1"
+    ],
+    "_demo_profile_note": "P174/P175 SHARED DEMO PROFILE.  Both the MinGW/Windows proposal and the WebAssembly one need byte-for-byte the SAME exclusion set -- no sockets, no raw terminal, no native code generator -- and P175 says explicitly to factor it ONCE rather than let two proposals each carry a copy that can drift apart.  This is that one copy.  IT SETS ONLY THE THREE SWITCHES NOTHING ELSE SETS: modbus/profibus/profinet are excluded by simply NOT listing them in a board's `features`, not by a -DLL_MODBUS=0 here -- adding one would collide with the -DLL_MODBUS=1 a board that lists both would also get, and a macro redefinition is a warning you will scroll past, not an error.  Meaning of each: LL_NETWORK=0 removes the TCP client/server ports and the whole BSD socket surface; LL_TERMIOS=0 removes raw terminal mode so input is line-at-a-time stdio; LL_NCG=0 compiles out all three NCG backends (the bytecode interpreter is unaffected -- its arithmetic shims live in ll_vm_ncg_core.cpp, which is always compiled).",
+    "demo_profile": [
+      "-DLL_NETWORK=0",
+      "-DLL_TERMIOS=0",
+      "-DLL_NCG=0"
+    ],
+    "gpiod": [
+      "-DLL_GPIOD=1",
+      "-lgpiod"
+    ],
+    "llarduino_idf": [
+      "-DLL_IDF_GPIO=1"
+    ],
+    "panel_st7701_aitrip": [
+      "-DLL_PANEL_ST7701_AITRIP=1"
+    ],
+    "panel_st7789_eye": [
+      "-DLL_PANEL_ST7789_EYE=1"
+    ],
+    "lvgl": [
+      "-DLL_LVGL=1",
+      "-DLV_CONF_PATH=\\\"${PROJECT_DIR}/src/lv_conf.h\\\"",
+      "-DLV_CONF_SKIP=0"
+    ]
+  },
+  "partitions": {
+    "comment": "Map flash_mb -> partition CSV.  ALL ENTRIES ARE llloader LAYOUTS (factory=llloader / ota_0=VM / storage=FS), NOT duplicate-app A/B.  A board gets a recovery root only if its table has a `factory` slot, and the A/B tables have none -- so an env on one cannot be given a loader at all, no matter what flash_loader does.  gen_platformio.py derives board_build.app_partition_name and board_upload.offset_address from the table, so an env does not restate them.  The non-OTA tables (partitions_4M/8M/32M.csv, _ota_trim) are kept for reference and for anything that deliberately wants A/B; nothing maps to them.  ||  16 MB MAPS TO THE 8 MB TABLE ON PURPOSE (2026-09-21): there is no partitions_16M_ota.csv, and 8M_ota is the only OTA layout with a matching S3 loader (llloader-esp32s3-8m), so a 16 MB board keeps a recovery root -- which is what [B531] found the C5 lacking.  The top 8 MB is unused.  A board with flash_mb=16 and NO entry here got NO `board_build.partitions` line at all and silently fell back to the Arduino default 1.25 MB app slot: the first 16 MB board failed to link at 127.3% of 1,310,720 bytes while its own board JSON declared maximum_size 16777216.  A MISSING KEY HERE IS NOT A DEFAULT, IT IS A CLIFF.",
+    "4": "w3_pio/partitions/partitions_4M_ota.csv",
+    "8": "w3_pio/partitions/partitions_8M_ota.csv",
+    "16": "w3_pio/partitions/partitions_8M_ota.csv",
+    "32": "w3_pio/partitions/partitions_32M_ota.csv"
+  },
+  "lib_deps": {
+    "esp32_arduino": [
+      "h2zero/NimBLE-Arduino@^1.4.0",
+      "arduino-libraries/ArduinoHttpClient@^0.4.0",
+      "bblanchon/ArduinoJson@^6.19.4"
+    ],
+    "esp32_arduino_lvgl": [
+      "h2zero/NimBLE-Arduino@^1.4.0",
+      "arduino-libraries/ArduinoHttpClient@^0.4.0",
+      "bblanchon/ArduinoJson@^6.19.4",
+      "lvgl/lvgl@9.3.0"
+    ]
+  },
+  "boards": {
+    "esp32s3-n8r2": {
+      "comment": "ESP32-S3 N8R2: 8MB flash, 2MB PSRAM",
+      "default": false,
+      "platform": "https://github.com/pioarduino/platform-espressif32/releases/download/55.03.311/platform-espressif32.zip",
+      "framework": "arduino",
+      "board": "ll_board-esp32s3-n8r2",
+      "nxry": "N8R2",
+      "flash_mb": 8,
+      "filesystem": "littlefs",
+      "lib_deps": "esp32_arduino",
+      "monitor_filters": "esp8266_exception_decoder",
+      "chip_flags": [
+        "-DLL_ESP32=1",
+        "-DLL_XTENSA=1",
+        "-DLL_ESP32S3=1",
+        "-DLL_ESP32S3_N8R2=1",
+        "-DCONFIG_ESP_INT_WDT_TIMEOUT_MS=300"
+      ],
+      "psram": "quad",
+      "usb_console": "bridge",
+      "features": [
+        "arduino",
+        "commonio",
+        "i2c",
+        "lcd1602",
+        "modbus",
+        "profibus",
+        "pca9685",
+        "psram",
+        "sonar",
+        "littlefs",
+        "wifi",
+        "wire",
+        "ws2812",
+        "bignum",
+        "rational",
+        "complex"
+      ]
+    }
+  }
+}

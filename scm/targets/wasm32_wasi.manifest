@@ -1,0 +1,28 @@
+# P175 -- WebAssembly (wasm32_wasi).
+#
+# DELIBERATELY THE SAME FILE LIST AS linux_x86_64.  The wasm demo profile removes C++ FEATURES
+# (sockets, termios, NCG); it does not remove Scheme library files, and keeping the two lists
+# identical is what makes "does it behave like the Linux build?" a meaningful question -- a
+# divergence here would show up as a conform failure that is really a missing file.
+#
+# tools/llip-*.scm ARE staged even though LL_NETWORK=0 leaves this build with no
+# open-tcp-server-port.  They are not loaded at startup; staging them keeps the FS identical and
+# lets the demo SHOW the protocol source.  Loading one will fail at the first socket call, which
+# is the correct and visible outcome, not a silent one.
+#
+# NOTHING IN HERE MAY PRODUCE A TIMING NUMBER FOR PUBLICATION.  A wasm host JITs our interpreter
+# and a browser tab throttles it; P175 is explicit that this is a LANGUAGE demo.
+# Core runtime
+# R5RS/R7RS overrides (full set including syntax-rules)
+# Optional features
+# Dev tools
+# Demos
+# Runtime defaults
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+# Test suite
+#
+# [P251] This list is base/host verbatim -- it added nothing of its own.
+extends: host

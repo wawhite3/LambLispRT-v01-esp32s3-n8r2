@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="430">
+<rect width="980" height="430" fill="#ffffff"/>
+<defs><marker id="a" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#c03030"/></marker></defs>
+<text x="490" y="34" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" fill="#00468c" text-anchor="middle" font-weight="bold">The native-code pool is a budget, not a cache</text>
+<text x="490" y="56" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" fill="#8899aa" text-anchor="middle" font-style="italic">ESP32-S3 · 32 KB internal D/IRAM · measured on esp32s3-n8r2-00</text>
+<rect x="60" y="96" width="860" height="66" rx="5" fill="#eef2f7" stroke="#8899aa" stroke-width="1.4"/>
+<rect x="60.0" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="103.55523003472223" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="147.11046006944446" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="190.66569010416666" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="234.22092013888889" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="277.7761501736111" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="321.3313802083333" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="364.88661024305554" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="408.44184027777777" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="451.9970703125" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="495.55230034722223" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="539.1075303819445" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="582.6627604166666" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="626.2179904513889" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="669.7732204861111" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="713.3284505208334" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="756.8836805555555" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<rect x="800.4389105902777" y="96" width="41.55523003472222" height="66" rx="2" fill="#ffe0c2" stroke="#b35c00" stroke-width="1.1"/>
+<text x="451.9970703125" y="192" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#b35c00" text-anchor="middle" font-weight="bold">18 procedures · 29,872 bytes · 91% of the pool</text>
+<text x="881.9970703125" y="128" font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#8899aa" text-anchor="middle">2,896 B</text>
+<text x="881.9970703125" y="144" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa" text-anchor="middle" font-style="italic">free</text>
+<line x1="812.5" y1="84" x2="812.5" y2="174" stroke="#c03030" stroke-width="1.6" stroke-dasharray="5,3"/>
+<text x="812.5" y="78" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#c03030" text-anchor="middle" font-style="italic">budget floor — stops below 4,096 B free</text>
+<text x="60" y="176" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa" text-anchor="start">0</text>
+<text x="920" y="176" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa" text-anchor="end">32,768 bytes</text>
+<rect x="60" y="210" width="266" height="118" rx="6" fill="#ffffff" stroke="#8899aa" stroke-width="1.2"/>
+<text x="193" y="236" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#00468c" text-anchor="middle" font-weight="bold">~1,659 bytes each</text>
+<text x="193" y="260" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">measured average per procedure. The devkitc-1 run</text>
+<text x="193" y="276" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">measured 1,346 B — so the pool holds</text>
+<text x="193" y="292" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">roughly twenty procedures, not hundreds.</text>
+<rect x="346" y="210" width="266" height="118" rx="6" fill="#ffffff" stroke="#8899aa" stroke-width="1.2"/>
+<text x="479" y="236" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#00468c" text-anchor="middle" font-weight="bold">Never reclaimed</text>
+<text x="479" y="260" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">ncg_pool_used only ever increases and resets at boot.</text>
+<text x="479" y="276" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">ncg_code_deleter frees nc->base, which</text>
+<text x="479" y="292" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">the pool path sets to nullptr: "no free".</text>
+<rect x="632" y="210" width="266" height="118" rx="6" fill="#ffffff" stroke="#8899aa" stroke-width="1.2"/>
+<text x="765" y="236" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#00468c" text-anchor="middle" font-weight="bold">Spend it deliberately</text>
+<text x="765" y="260" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">A whole-environment pass spends the budget in</text>
+<text x="765" y="276" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">hash-walk order. Measured, it bought</text>
+<text x="765" y="292" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#0d1a2e" text-anchor="middle">WS2812.setAll and Buzzer.click — not hot paths.</text>
+<text x="490" y="372" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#b35c00" text-anchor="middle" font-weight="bold">So the question is never "compile everything" — it is "which twenty".</text>
+<text x="490" y="398" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" fill="#8899aa" text-anchor="middle" font-style="italic">See P171 for the selection policy.</text>
+</svg>

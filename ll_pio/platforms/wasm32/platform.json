@@ -1,0 +1,24 @@
+{
+  "name": "wasm32",
+  "title": "WebAssembly (wasm32)",
+  "description": "P175: LambLisp as a WebAssembly module.  Two hosts share this platform: wasm32-wasip1 via wasi-sdk (a CLI module for wasmtime/wasmer/node), and wasm32-emscripten via emcc (a browser page).  WASM IS A BUILD TARGET, NOT AN NCG BACKEND -- the AST and bytecode tiers are the runtime and the host engine supplies the native speed.",
+  "homepage": "https://webassembly.org/",
+  "license": "Apache-2.0",
+  "keywords": [
+    "dev-platform",
+    "WebAssembly",
+    "wasm",
+    "WASI",
+    "Emscripten"
+  ],
+  "engines": {
+    "platformio": "^6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WebAssembly/wasi-sdk.git"
+  },
+  "version": "1.0.0",
+  "frameworks": {},
+  "packages": {}
+}

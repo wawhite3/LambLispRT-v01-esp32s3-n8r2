@@ -1,0 +1,29 @@
+# HISTORICAL NOTE -- a GC reproduction case that this FS NO LONGER CONTAINS.
+# Until P139 (faec5f4, "unify typed numeric arrays onto one array-* surface") this was the only
+# default FS staging ndarray.scm and tvec.scm.  Those read numeric VECTOR LITERALS heavily at load,
+# and car/cdr ALLOCATE for packed immediates (P70/P76), so a vector being filled is exactly where an
+# unrooted aggregate gets swept mid-fill (B43, fixed 2026-08-25 in 474e779 list_to_vector).
+# Measured 2026-08-25: the 08-04 cuda package binary segfaulted 10/10 during STARTUP on that old
+# filesystem, while the same binary on the x86 FS ran 0/10 -- neither the old binary nor that FS
+# reproduced it alone.  The rebuilt package is 0/10.
+# WHAT IS TRUE NOW: ndarray.scm and tvec.scm no longer exist (superseded by array.scm, which every
+# target stages), and this FS is file-for-file identical to the x86 one -- so it is NOT a canary any
+# more, and testing a rooting change here buys nothing over testing on x86.  The reproduction
+# survives only in bench_results/backup and the pre-rebuild package.  If you need that stress path
+# again, load numeric vector literals explicitly rather than expecting this manifest to do it.
+# x86 startup proves very little; this one exercises the failing path on every boot.
+# linux_x86_64 — full interactive + dev + test environment.
+# Core runtime
+# R5RS/R7RS overrides (full set including syntax-rules)
+# Optional features
+# Dev tools
+# Demos
+# Runtime defaults
+# Bench WiFi credentials: untracked, absent by default, silent when absent (see .example).
+# Peer CA for the `network` test_id: written by _w3_run_network, absent otherwise (untracked).
+# [P69] LLIP auth test key pair for llip-auth-tests.scm: written by w3_ai_scripts/llip_test_keys.sh,
+# absent otherwise (untracked, and deliberately so -- see that script's header).
+# Test suite
+#
+# [P251] This list is base/host verbatim -- it added nothing of its own.
+extends: host

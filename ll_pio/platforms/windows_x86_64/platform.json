@@ -1,0 +1,23 @@
+{
+  "name": "windows_x86_64",
+  "title": "Windows x86_64 (MinGW-w64)",
+  "description": "P174: LambLisp as a native Windows LambLisp.exe, cross-built from Linux with the MinGW-w64 toolchain.  MinGW-w64 rather than MSVC because the codebase is written against GCC (__attribute__ format/inline, __builtin_*, -Wl,--wrap=), so MSVC would add a second, unrelated porting problem on top of the platform one.  Phase 1 is a LANGUAGE demo: no sockets, no raw terminal, no native code generator.",
+  "homepage": "https://www.mingw-w64.org/",
+  "license": "Apache-2.0",
+  "keywords": [
+    "dev-platform",
+    "Windows",
+    "MinGW",
+    "x86-64"
+  ],
+  "engines": {
+    "platformio": "^6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mingw-w64/mingw-w64.git"
+  },
+  "version": "1.0.0",
+  "frameworks": {},
+  "packages": {}
+}

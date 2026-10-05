@@ -1,0 +1,51 @@
+# ESP32 4 MB -- streaming-loader layout (OTA). Sum below factory base = 0x3F0000.
+# Tier1 factory=llloader (C, fallback-only) / Tier2 ota_0=LambLisp VM / Tier3 storage=LittleFS apps.
+# Single ota_0 (no ota_1): rollback = re-fetch from the image source, freeing FS (retires B65).
+# factory grown to 0x120000 (1152 KB): the trusted root carries WiFi+lwIP (~0.5 MB) AND a
+# BLE/NimBLE console (~0.2 MB) on top of the ~144 KB skeleton + OTA writer; 704 KB did not fit both.
+#
+# STORAGE RIGHT-SIZED 1152 KB -> 512 KB, ota_0 1728 KB -> 2368 KB (2026-09-03).
+# WHY: storage held 1152 KB for a staged filesystem of 168 KB (WROVER) / 284 KB (4WD) -- measured
+# with `du -sh data_staged/<env>`.  That 640 KB of slack was the difference between ota_0 at 97%
+# and ota_0 at 71%: on ESP-IDF 5.5.5 the WROVER VM is 1,751,871 B, which is 99.0% of the old
+# 1728 KB slot -- it linked, with 17,601 bytes spare, and would have failed on any addition.
+# 512 KB still leaves 1.8x headroom over the largest staged FS.
+#
+# WHY llloader STILL BEATS A/B HERE, since the margin has eroded and the question recurs:
+# on 4032 KB of usable app+fs region, A/B costs 2N while llloader costs N+k.  At storage=512 KB
+# that is A/B 1760 KB/slot (VM at 96%) versus llloader 2368 KB (VM at 71%) -- a 608 KB gain, and
+# A/B does not fit AT ALL once storage exceeds ~512 KB.  Break-even: llloader wins while the
+# loader k < (4032 - storage)/2, i.e. k < 1760 KB at this storage size.
+#
+# THE EROSION, STATED SO IT IS NOT REDISCOVERED: the design assumed a "~144 KB skeleton".  The
+# built llloader is 1,073,808 B (1048 KB) -- 7x that -- because it took on WiFi+lwIP+BLE and became
+# nearly a second VM.  It occupies 91.0% of its 1152 KB factory slot, MEASURED ON ESP-IDF 4.4.7.
+# The VM grew +121 KB on the 4.4.7 -> 5.5.5 move on identical source.  The worry was that the
+# loader would grow comparably, land near 1170 KB and OVERFLOW factory, forcing factory to grow at
+# ota_0's expense.
+#
+# MEASURED 2026-09-04 on ESP-IDF 5.5.5, and the worry does NOT materialise:
+#     1,036,080 B = 87.8% of the 0x120000 factory slot, 143,568 B spare.  IT FITS.
+# So factory stays at 0x120000 and nothing comes out of ota_0.  Loader pinned to pioarduino
+# 55.03.311 in w3_loader/platformio.ini, matching the VM, so the two now share one toolchain.
+#
+# DO NOT read this as "the loader shrank 37 KB on the 4.4.7 -> 5.5.5 jump".  That comparison does
+# not hold up: the 1,073,808 B figure above is recorded as 4.4.7, but the loader built UNPINNED out
+# of the shared ~/.platformio, and that home holds framework-espidf 6.0.1 today (w3_loader/
+# dependencies.lock had `idf: version: 6.0.1` committed).  So the toolchain behind the old number
+# is uncertain and the old number was never re-measured.  What is measured is the 5.5.5 figure.
+# The VM's +121 KB growth is a separate, independently measured fact and is NOT evidence about the
+# loader -- which is the whole reason this table demanded the loader be re-measured on its own.
+#
+# HEADROOM, for the next person who wants to add to the loader: 143,568 B spare in factory.  If
+# that runs out, the largest single lever is BLUETOOTH -- measured from the 4.4.7 link map, BT
+# (libbt + libbtdm_app) is 161,164 B of flash/RAM-resident bytes against WiFi's 322,779 B.  A
+# recovery root needs WiFi to fetch an image; whether it needs a BLE console is a product call.
+#
+# Name,   Type, SubType,  Offset,   Size,     Flags
+nvs,      data, nvs,      0x9000,   0x5000,
+otadata,  data, ota,      0xE000,   0x2000,
+factory,  app,  factory,  0x10000,  0x120000,
+ota_0,    app,  ota_0,    0x130000, 0x250000,
+storage,  data, spiffs,   0x380000, 0x080000,
+# 0x10000 + 0x120000 + 0x250000 + 0x80000 = 0x400000 (4 MB) OK

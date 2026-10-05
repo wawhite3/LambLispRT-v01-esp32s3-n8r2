@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520">
+<rect width="1000" height="520" fill="#ffffff"/>
+
+<!-- Title -->
+<text x="500" y="26" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="22" font-weight="bold" fill="#00468c">ESP32-S3 Hardware Context — LambLisp Target Platform</text>
+
+<!-- ══════════════════════════════════════════════════════
+     I2C SHARED BUS (left side)
+     Bus bar at x=213; devices stub right to bus; single tap to ESP32.
+     ══════════════════════════════════════════════════════ -->
+
+<!-- Device stubs: right edge of each box → bus -->
+<line x1="180" y1="114" x2="213" y2="114" stroke="#1a6abf" stroke-width="1.8"/>
+<line x1="180" y1="239" x2="213" y2="239" stroke="#1a6abf" stroke-width="1.8"/>
+
+<!-- T-junction dots at bus -->
+<circle cx="213" cy="114" r="4.5" fill="#1a6abf"/>
+<circle cx="213" cy="239" r="4.5" fill="#1a6abf"/>
+
+<!-- Vertical I2C bus bar -->
+<line x1="213" y1="107" x2="213" y2="246" stroke="#1a6abf" stroke-width="3.5"/>
+
+<!-- Tap from I2C bus midpoint to ESP32 left side -->
+<line x1="213" y1="176" x2="390" y2="263" stroke="#1a6abf" stroke-width="1.8"/>
+<text x="288" y="206" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a6abf">I2C bus</text>
+
+<!-- ══════════════════════════════════════════════════════
+     SPI SHARED BUS (right side)
+     Bus bar at x=687; devices stub left to bus; single tap to ESP32.
+     ══════════════════════════════════════════════════════ -->
+
+<!-- Device stubs: left edge of each box → bus -->
+<line x1="718" y1="114" x2="687" y2="114" stroke="#cc8800" stroke-width="1.8"/>
+<line x1="718" y1="239" x2="687" y2="239" stroke="#cc8800" stroke-width="1.8"/>
+
+<!-- T-junction dots at bus -->
+<circle cx="687" cy="114" r="4.5" fill="#cc8800"/>
+<circle cx="687" cy="239" r="4.5" fill="#cc8800"/>
+
+<!-- Vertical SPI bus bar -->
+<line x1="687" y1="107" x2="687" y2="246" stroke="#cc8800" stroke-width="3.5"/>
+
+<!-- Tap from SPI bus midpoint to ESP32 right side -->
+<line x1="687" y1="176" x2="610" y2="263" stroke="#cc8800" stroke-width="1.8"/>
+<text x="660" y="206" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#cc8800">SPI bus</text>
+
+<!-- ══════════════════════════════════════════════════════
+     GPIO: Sonar (top)
+     ══════════════════════════════════════════════════════ -->
+<line x1="500" y1="195" x2="490" y2="80"
+      stroke="#8899aa" stroke-width="2"/>
+<text x="510" y="140" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#8899aa">GPIO</text>
+
+<!-- ══════════════════════════════════════════════════════
+     SPI/GPIO: WS2812 (bottom-left)
+     ══════════════════════════════════════════════════════ -->
+<line x1="238" y1="415" x2="435" y2="370"
+      stroke="#4a90d9" stroke-width="2"/>
+<text x="322" y="402" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#4a90d9">SPI/GPIO</text>
+
+<!-- ══════════════════════════════════════════════════════
+     UART: Serial Console (bottom-right)
+     ══════════════════════════════════════════════════════ -->
+<line x1="610" y1="328" x2="668" y2="388"
+      stroke="#8899aa" stroke-width="2"/>
+<text x="652" y="360" text-anchor="start"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="bold" fill="#8899aa">UART</text>
+
+<!-- ══════════════════════════════════════════════════════
+     PERIPHERAL BOXES
+     ══════════════════════════════════════════════════════ -->
+
+<!-- ── Sonar (top) ── -->
+<rect x="425" y="28" width="130" height="52" rx="7"
+      fill="#f0f0f0" stroke="#8899aa" stroke-width="1.6"/>
+<rect x="425" y="28" width="130" height="20" rx="7" fill="#8899aa" stroke="none"/>
+<rect x="425" y="42"  width="130" height="6"  fill="#8899aa" stroke="none"/>
+<text x="490" y="42" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">Sonar</text>
+<text x="490" y="57" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#333">HC-SR04</text>
+<text x="490" y="71" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#666">ultrasonic distance</text>
+
+<!-- ── LCD1602 (left, top) ── -->
+<rect x="30" y="88" width="150" height="52" rx="7"
+      fill="#d4f7d4" stroke="#1a6abf" stroke-width="1.6"/>
+<rect x="30" y="88"  width="150" height="20" rx="7" fill="#1a6abf" stroke="none"/>
+<rect x="30" y="102" width="150" height="6"  fill="#1a6abf" stroke="none"/>
+<text x="105" y="102" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">LCD1602</text>
+<text x="105" y="118" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#0d1a2e">16×2 character</text>
+<text x="105" y="132" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">I2C display</text>
+
+<!-- ── PCA9685 (left, lower) ── -->
+<rect x="30" y="213" width="150" height="52" rx="7"
+      fill="#d4f7d4" stroke="#1a6abf" stroke-width="1.6"/>
+<rect x="30" y="213" width="150" height="20" rx="7" fill="#1a6abf" stroke="none"/>
+<rect x="30" y="227" width="150" height="6"  fill="#1a6abf" stroke="none"/>
+<text x="105" y="227" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">PCA9685</text>
+<text x="105" y="243" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#0d1a2e">16-ch PWM</text>
+<text x="105" y="257" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">servo / motor driver</text>
+
+<!-- ── PSRAM (right, top) ── -->
+<rect x="718" y="88" width="155" height="52" rx="7"
+      fill="#fff3cc" stroke="#cc8800" stroke-width="1.6"/>
+<rect x="718" y="88"  width="155" height="20" rx="7" fill="#cc8800" stroke="none"/>
+<rect x="718" y="102" width="155" height="6"  fill="#cc8800" stroke="none"/>
+<text x="795" y="102" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">PSRAM</text>
+<text x="795" y="118" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#0d1a2e">8 MB octal-SPI</text>
+<text x="795" y="132" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">GC heap + cell pool</text>
+
+<!-- ── SPIFFS flash (right, lower) ── -->
+<rect x="718" y="213" width="155" height="52" rx="7"
+      fill="#fff3cc" stroke="#cc8800" stroke-width="1.6"/>
+<rect x="718" y="213" width="155" height="20" rx="7" fill="#cc8800" stroke="none"/>
+<rect x="718" y="227" width="155" height="6"  fill="#cc8800" stroke="none"/>
+<text x="795" y="227" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">SPIFFS flash</text>
+<text x="795" y="243" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#0d1a2e">4 MB filesystem</text>
+<text x="795" y="257" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">.scm files, setup.scm</text>
+
+<!-- ── WS2812 (bottom-left) ── -->
+<rect x="155" y="415" width="165" height="52" rx="7"
+      fill="#d4f7d4" stroke="#4a90d9" stroke-width="1.6"/>
+<rect x="155" y="415" width="165" height="20" rx="7" fill="#4a90d9" stroke="none"/>
+<rect x="155" y="429" width="165" height="6"  fill="#4a90d9" stroke="none"/>
+<text x="237" y="429" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">WS2812</text>
+<text x="237" y="445" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#0d1a2e">addressable LED strip</text>
+<text x="237" y="459" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">SPI / bit-bang GPIO</text>
+
+<!-- ── Serial Console (bottom-right) ── -->
+<rect x="668" y="388" width="175" height="52" rx="7"
+      fill="#f0f0f0" stroke="#8899aa" stroke-width="1.6"/>
+<rect x="668" y="388" width="175" height="20" rx="7" fill="#8899aa" stroke="none"/>
+<rect x="668" y="402" width="175" height="6"  fill="#8899aa" stroke="none"/>
+<text x="755" y="402" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#ffffff">Serial Console</text>
+<text x="755" y="418" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#333">UART → USB</text>
+<text x="755" y="432" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#555">REPL: LL=></text>
+
+<!-- ══════════════════════════════════════════════════════
+     ESP32-S3  (centre)
+     WiFi and BLE are integrated silicon — no separate box or line.
+     ══════════════════════════════════════════════════════ -->
+<rect x="390" y="195" width="220" height="175" rx="10"
+      fill="#d0e8ff" stroke="#00468c" stroke-width="2.5"/>
+<text x="500" y="217" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="21" font-weight="bold" fill="#00468c">ESP32-S3</text>
+<text x="500" y="233" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="14" fill="#00468c">240 MHz dual-core</text>
+<text x="500" y="247" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-style="italic" fill="#8899aa">Xtensa LX7</text>
+
+<!-- LambLisp inner box -->
+<rect x="404" y="255" width="192" height="58" rx="6"
+      fill="#ffe0a0" stroke="#cc8800" stroke-width="2"/>
+<text x="500" y="272" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="16" font-weight="bold" fill="#cc8800">LambLisp runs here</text>
+<text x="500" y="287" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="13" fill="#cc8800">R5RS Scheme · incr. GC</text>
+<text x="500" y="303" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" font-style="italic" fill="#8899aa">real-time safe</text>
+
+<text x="500" y="330" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#556677">SPI · I2C · UART · GPIO</text>
+<text x="500" y="346" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="12" fill="#556677">WiFi 2.4/5 GHz · BLE 5.0</text>
+<text x="500" y="360" text-anchor="middle"
+      font-family="Helvetica Neue, Arial, sans-serif" font-size="11" font-style="italic" fill="#8899aa">integrated silicon</text>
+
+</svg>

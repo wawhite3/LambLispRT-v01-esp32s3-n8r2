@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600">
+<rect width="960" height="600" fill="#ffffff"/>
+<defs>
+  <marker id="ab" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00468c"/></marker>
+  <marker id="ag" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#228844"/></marker>
+  <marker id="ar" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#cc4444"/></marker>
+</defs>
+<text x="480" y="34" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="24" font-weight="bold" fill="#00468c">Three states, three answers: how a read decides</text>
+<text x="480" y="56" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-style="italic" fill="#445566">A socket can hold data, be open and empty, or be finished. A file has only two of those, which is why</text>
+<text x="480" y="74" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-style="italic" fill="#445566">file reads never need the middle column and socket reads do.</text>
+
+<rect x="60" y="110" width="250" height="132" rx="7" fill="#eef6ee" stroke="#228844" stroke-width="1.6"/>
+<text x="185" y="136" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" fill="#228844">bytes available</text>
+<text x="185" y="162" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">read-u8    -&gt; the byte</text>
+<text x="185" y="184" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">peek-u8    -&gt; the byte</text>
+<text x="185" y="206" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">read-bv!   -&gt; count &gt; 0</text>
+<text x="185" y="228" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">u8-ready?  -&gt; #t</text>
+
+<rect x="355" y="110" width="250" height="132" rx="7" fill="#fff6e8" stroke="#b8860b" stroke-width="1.6"/>
+<text x="480" y="136" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" fill="#b8860b">open, none yet</text>
+<text x="480" y="162" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">read-u8    -&gt; WAITS</text>
+<text x="480" y="184" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">peek-u8    -&gt; WAITS</text>
+<text x="480" y="206" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" font-weight="bold" fill="#b8860b">read-bv!   -&gt; 0</text>
+<text x="480" y="228" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">u8-ready?  -&gt; #f</text>
+
+<rect x="650" y="110" width="250" height="132" rx="7" fill="#fdeeee" stroke="#cc4444" stroke-width="1.6"/>
+<text x="775" y="136" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="bold" fill="#cc4444">finished (EOF)</text>
+<text x="775" y="162" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">read-u8    -&gt; eof-object</text>
+<text x="775" y="184" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">peek-u8    -&gt; eof-object</text>
+<text x="775" y="206" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" fill="#223344">read-bv!   -&gt; eof-object</text>
+<text x="775" y="228" text-anchor="middle" font-family="Courier New, Courier, monospace" font-size="14" font-weight="bold" fill="#cc4444">u8-ready?  -&gt; #t</text>
+
+<text x="480" y="272" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#445566">u8-ready? answers #t at EOF on purpose: it promises the next read will not wait, and at EOF it does not.</text>
+
+<line x1="60" y1="300" x2="900" y2="300" stroke="#8899aa" stroke-width="1.2"/>
+<text x="60" y="330" font-family="Helvetica Neue, Arial, sans-serif" font-size="18" font-weight="bold" fill="#00468c">The loop that is always correct</text>
+<rect x="60" y="346" width="400" height="178" rx="7" fill="#f4f7fb" stroke="#8899aa" stroke-width="1.3"/>
+<text x="76" y="372" font-family="Courier New, Courier, monospace" font-size="13" fill="#223344" xml:space="preserve">(let loop ((got 0))</text>
+<text x="92" y="392" font-family="Courier New, Courier, monospace" font-size="13" fill="#223344" xml:space="preserve">(if (&gt;= got n)</text>
+<text x="123" y="412" font-family="Courier New, Courier, monospace" font-size="13" fill="#223344" xml:space="preserve">bv</text>
+<text x="123" y="432" font-family="Courier New, Courier, monospace" font-size="13" fill="#223344" xml:space="preserve">(let ((r (read-bytevector! bv p got n)))</text>
+<text x="138" y="452" font-family="Courier New, Courier, monospace" font-size="13" fill="#cc4444" xml:space="preserve">(cond ((eof-object? r)  #f)</text>
+<text x="138" y="472" font-family="Courier New, Courier, monospace" font-size="13" fill="#b8860b" xml:space="preserve">      ((= r 0)  (yield) (loop got))</text>
+<text x="138" y="492" font-family="Courier New, Courier, monospace" font-size="13" fill="#228844" xml:space="preserve">      (else (loop (+ got r)))))))</text>
+<text x="76" y="516" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#cc4444">eof-object = over</text>
+<text x="215" y="516" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#b8860b">0 = not yet</text>
+<text x="320" y="516" font-family="Helvetica Neue, Arial, sans-serif" font-size="12.5" fill="#228844">count = progress</text>
+<text x="500" y="372" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#223344">A single read is not a frame.</text>
+<text x="500" y="394" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#445566">TCP splits wherever it likes, so a</text>
+<text x="500" y="414" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#445566">4 KB frame arrives as many reads.</text>
+<text x="500" y="444" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="bold" fill="#cc4444">Treating 0 as failure loses data</text>
+<text x="500" y="464" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#445566">that was genuinely sent: the stream</text>
+<text x="500" y="484" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#445566">was mid-flight, not over.</text>
+<text x="500" y="514" font-family="Helvetica Neue, Arial, sans-serif" font-size="15" fill="#445566">Only the eof-object means stop.</text>
+
+
+<text x="480" y="560" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#445566">File, string and bytevector ports never produce the middle column -- empty IS the end -- so ordinary file code</text>
+<text x="480" y="580" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-style="italic" fill="#445566">needs no change. The distinction only arises where a source can be open and empty: sockets.</text>
+</svg>

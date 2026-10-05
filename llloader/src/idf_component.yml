@@ -1,0 +1,5 @@
+## OTA llloader managed-component deps (fetched by the IDF component manager at build time).
+## joltwallet/littlefs is the same LittleFS driver the VM (Arduino core) uses, so the loader can
+## read the `storage` partition the VM writes.
+dependencies:
+  joltwallet/littlefs: "^1.14.8"
